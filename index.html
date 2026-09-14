@@ -1022,6 +1022,29 @@
       }
     }
 
+
+    /* 2K (2560x1440): правое меню не должно начинаться на высоте камеры.
+       Уменьшаем пустой выравнивающий отступ, чтобы QR, таймер и все 3 победителя
+       помещались в экран одновременно. */
+    @media (min-width: 2300px) and (min-height: 1300px) {
+      #camAlignSpacerRight {
+        height: 35px !important;
+      }
+
+      .right-col {
+        gap: 6px !important;
+      }
+
+      .right-col > .panel:last-child .winner-edit-item {
+        padding: 4px 6px;
+        gap: 2px;
+      }
+
+      .right-col > .panel:last-child .winner-edit-item .winner-name {
+        font-size: 11px;
+      }
+    }
+
 </style>
 </head>
 <body>
