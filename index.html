@@ -1057,6 +1057,78 @@
   .race-lane.winner .race-name{color:var(--good);border-color:var(--good);}
 
 </style>
+
+<style id="localCloudStyles">
+.local-cloud-btn{width:100%;margin-top:5px;}
+.local-cloud-modal{position:fixed;inset:0;background:rgba(3,8,5,.78);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:100000;padding:16px;}
+.local-cloud-modal.show{display:flex;}
+.local-cloud-card{width:min(740px,96vw);max-height:90vh;overflow:auto;background:#102b20;border:1px solid #2e6b55;border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.5);position:relative;}
+.local-cloud-card h2{margin:0 0 14px;color:#45e889;font-size:21px;}
+.local-cloud-close{position:absolute;right:16px;top:12px;border:0;background:none;color:#45e889;font-size:27px;cursor:pointer;}
+.local-cloud-section{border:1px solid #376b92;background:rgba(30,48,59,.75);border-radius:11px;padding:14px;margin:10px 0;}
+.local-cloud-section.upload{border-color:#27694b;background:rgba(9,65,40,.5);}
+.local-cloud-section.info{border-color:#8a4b42;background:rgba(55,50,36,.55);}
+.local-cloud-section h3{margin:0 0 7px;font-size:15px;color:#79aef5;}
+.local-cloud-section.upload h3{color:#65ef9c;}
+.local-cloud-section.info h3{color:#ff918b;}
+.local-cloud-desc{font-size:12px;color:#9cc4dd;margin-bottom:9px;}
+.local-cloud-actions{display:grid;grid-template-columns:1fr;gap:7px;}
+.local-cloud-actions button,.local-cloud-file{min-height:43px;border:1px solid #27e878;border-radius:10px;background:#2c2d43;color:#32e979;font-weight:800;letter-spacing:1px;cursor:pointer;}
+.local-cloud-actions button:hover,.local-cloud-file:hover{filter:brightness(1.12);}
+.local-cloud-file{display:flex;align-items:center;justify-content:center;}
+.local-cloud-file input{display:none;}
+.local-cloud-count{font-size:12px;color:#a6d4ea;}
+@media(max-width:600px){.local-cloud-card{padding:14px}.local-cloud-actions button,.local-cloud-file{font-size:11px;}}
+/* ---------- Локал Облако: стиль AZROBOT ---------- */
+.local-cloud-modal{
+  background:radial-gradient(circle at 50% 20%,rgba(137,255,31,.10),rgba(3,8,5,.88) 55%,rgba(0,0,0,.94));
+  backdrop-filter:blur(9px);
+}
+.local-cloud-card{
+  width:min(760px,94vw); max-height:88vh; overflow:auto;
+  background:linear-gradient(180deg,rgba(17,30,11,.98),rgba(8,17,7,.99));
+  border:2px solid var(--accent,#9cff24); border-radius:18px;
+  box-shadow:0 0 0 1px rgba(156,255,36,.14),0 24px 90px rgba(0,0,0,.72),0 0 45px rgba(140,255,30,.08);
+  padding:22px;
+}
+.local-cloud-card:before{
+  content:"AZROBOT • DATA CENTER"; display:block; margin:-4px 0 5px;
+  color:var(--text-dim,#94a57d); font-size:10px; font-weight:900; letter-spacing:2px;
+}
+.local-cloud-card h2{
+  display:flex; align-items:center; gap:9px; margin:0 0 18px;
+  color:#b7ff45; font-size:23px; font-weight:950; letter-spacing:.8px;
+  text-shadow:0 0 18px rgba(151,255,38,.22);
+}
+.local-cloud-close{right:15px;top:13px;color:#aaff35!important;opacity:.8;transition:.15s}
+.local-cloud-close:hover{opacity:1;transform:scale(1.08)}
+.local-cloud-section{
+  border:1px solid rgba(145,255,40,.22); background:linear-gradient(180deg,rgba(27,42,17,.92),rgba(15,27,10,.92));
+  border-radius:13px; padding:15px; margin:11px 0; box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.local-cloud-section.upload{border-color:rgba(47,226,125,.28);background:linear-gradient(180deg,rgba(12,50,31,.68),rgba(8,34,22,.72))}
+.local-cloud-section.info{border-color:rgba(255,175,77,.25);background:linear-gradient(180deg,rgba(55,43,17,.62),rgba(35,29,13,.7))}
+.local-cloud-section h3{margin:0 0 7px;font-size:14px;color:#c5ff71;letter-spacing:.3px}
+.local-cloud-section.upload h3{color:#65f6a4}.local-cloud-section.info h3{color:#ffbd70}
+.local-cloud-desc{font-size:12px;color:#93ad83;margin-bottom:10px}
+.local-cloud-actions{display:grid;grid-template-columns:1fr;gap:8px}
+.local-cloud-actions button,.local-cloud-file{
+  min-height:44px; border:1px solid rgba(155,255,40,.78); border-radius:10px;
+  background:linear-gradient(180deg,#29302a,#20261f); color:#9fff32;
+  font-weight:900; letter-spacing:1.1px; cursor:pointer; transition:.15s;
+  box-shadow:0 2px 0 rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.035);
+}
+.local-cloud-actions button:hover,.local-cloud-file:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:0 0 18px rgba(151,255,38,.10),0 3px 0 rgba(0,0,0,.35)}
+.local-cloud-file{display:flex;align-items:center;justify-content:center}
+.local-cloud-count{font-size:12px;color:#b0c79e;line-height:1.6}
+.local-cloud-count b{color:#baff50}
+.az-cloud-setting-btn{border-color:rgba(156,255,36,.72)!important;color:#aaff3e!important;background:linear-gradient(180deg,rgba(32,47,21,.95),rgba(22,32,15,.95))!important;font-weight:900!important}
+.az-cloud-setting-btn span{font-size:18px;opacity:.7}
+.az-ss-divider{height:1px;background:rgba(156,255,36,.14);margin:5px 0 2px}
+@media(max-width:600px){.local-cloud-card{padding:15px}.local-cloud-actions button,.local-cloud-file{font-size:11px;}}
+
+</style>
+
 </head>
 <body>
 <div id="azLoginGate">
@@ -1169,6 +1241,7 @@
         </div>
 
         <button id="openCooldownBtn" style="width:100%; margin-top:5px;">⏳ Кулдаун прокачки</button>
+
       </div>
 
     </div>
@@ -1658,6 +1731,9 @@
 <!-- Кнопка и панель настроек экрана (разрешение) -->
 <button id="azScreenSettingsBtn" title="Настройки экрана">⚙️</button>
 <div id="azScreenSettingsPanel">
+  <div class="az-ss-title">Настройки бота</div>
+  <button type="button" id="openLocalCloudBtn" class="az-cloud-setting-btn">☁️ ЛОКАЛ ОБЛАКО <span>›</span></button>
+  <div class="az-ss-divider"></div>
   <div class="az-ss-title">Разрешение экрана</div>
   <button type="button" data-az-res="normal">Обычный <span class="az-ss-check">✓</span></button>
   <button type="button" data-az-res="2k">2K <span class="az-ss-check">✓</span></button>
@@ -1799,6 +1875,108 @@
 })();
 </script>
 
+
+
+<!-- ЛОКАЛ ОБЛАКО -->
+<div class="local-cloud-modal" id="localCloudModal">
+  <div class="local-cloud-card">
+    <button class="local-cloud-close" id="localCloudClose" aria-label="Закрыть">✕</button>
+    <h2>☁️ ЛОКАЛ ОБЛАКО</h2>
+
+    <div class="local-cloud-section">
+      <h3>📥 СКАЧАТЬ ДАННЫЕ</h3>
+      <div class="local-cloud-desc">Скачать текущие данные в JSON-файл для резервной копии.</div>
+      <div class="local-cloud-actions">
+        <button id="downloadAllLocalBtn">📦 ВСЁ (ТОП + СТАТИСТИКА)</button>
+        <button id="downloadTopLocalBtn">🏆 ТОЛЬКО ТОП (ВЫВОДЫ)</button>
+        <button id="downloadStatsLocalBtn">📊 ТОЛЬКО ВСЯ СТАТИСТИКА</button>
+      </div>
+    </div>
+
+    <div class="local-cloud-section upload">
+      <h3>📥 ЗАГРУЗИТЬ ДАННЫЕ</h3>
+      <div class="local-cloud-desc">Загрузить ранее скачанный JSON-файл для восстановления данных.</div>
+      <label class="local-cloud-file">📁 ВЫБРАТЬ ФАЙЛ ДЛЯ ЗАГРУЗКИ<input type="file" id="localCloudFileInput" accept=".json,application/json"></label>
+    </div>
+
+    <div class="local-cloud-section info">
+      <h3>⚠️ ИНФОРМАЦИЯ</h3>
+      <div class="local-cloud-count" id="localCloudInfo">Текущие данные: загрузка...</div>
+    </div>
+  </div>
+</div>
+
+
+<script id="localCloudScript">
+(function(){
+  const modal=document.getElementById('localCloudModal');
+  const open=document.getElementById('openLocalCloudBtn');
+  const close=document.getElementById('localCloudClose');
+  const file=document.getElementById('localCloudFileInput');
+  const info=document.getElementById('localCloudInfo');
+  if(!modal||!open) return;
+
+  function readData(){
+    try{ return JSON.parse(localStorage.getItem('azrobot_data')||'{}'); }
+    catch(e){ return {}; }
+  }
+  function arr(v){ return Array.isArray(v)?v:[]; }
+  function count(){
+    const d=readData();
+    const participants=arr(d.participants);
+    const withdrawals=arr(d.withdrawals||d.withdrawHistory||d.withdrawHistoryList);
+    const history=arr(d.history||d.logs||d.chatHistory);
+    const keys=Object.keys(d).length;
+    return 'Текущие данные: <b>'+participants.length+'</b> участников, <b>'+withdrawals.length+'</b> записей выводов, <b>'+history.length+'</b> записей истории, <b>'+keys+'</b> полей';
+  }
+  function refresh(){info.innerHTML=count();}
+  function download(obj,name){
+    const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+  }
+  function allData(){ return readData(); }
+  function topData(){
+    const d=readData(); const r={};
+    ['withdrawals','withdrawHistory','withdrawHistoryList','top','leaders','leaderboard','winners','lastWinners'].forEach(k=>{if(k in d) r[k]=d[k];});
+    if(!Object.keys(r).length){ r.withdrawals=arr(d.withdrawals||d.withdrawHistory||d.withdrawHistoryList); }
+    r._exportType='top'; r._exportedAt=new Date().toISOString(); return r;
+  }
+  function statsData(){
+    const d=readData(); const r={};
+    Object.keys(d).forEach(k=>{ if(!['participants','withdrawals','withdrawHistory','withdrawHistoryList','top','leaders','leaderboard','winners','lastWinners'].includes(k)) r[k]=d[k]; });
+    r._exportType='statistics'; r._exportedAt=new Date().toISOString(); return r;
+  }
+  open.addEventListener('click',(e)=>{e.stopPropagation();refresh();modal.classList.add('show'); const sp=document.getElementById('azScreenSettingsPanel'); if(sp) sp.classList.remove('show'); const sb=document.getElementById('azScreenSettingsBtn'); if(sb) sb.classList.remove('active');});
+  close.addEventListener('click',()=>modal.classList.remove('show'));
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
+  document.getElementById('downloadAllLocalBtn').addEventListener('click',()=>download(allData(),'azrobot_all_'+new Date().toISOString().slice(0,10)+'.json'));
+  document.getElementById('downloadTopLocalBtn').addEventListener('click',()=>download(topData(),'azrobot_top_'+new Date().toISOString().slice(0,10)+'.json'));
+  document.getElementById('downloadStatsLocalBtn').addEventListener('click',()=>download(statsData(),'azrobot_statistics_'+new Date().toISOString().slice(0,10)+'.json'));
+  file.addEventListener('change',()=>{
+    const f=file.files&&file.files[0]; if(!f) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const parsed=JSON.parse(reader.result);
+        if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)) throw new Error('bad');
+        const current=readData();
+        // Полный экспорт восстанавливаем целиком; частичные экспортируемые файлы аккуратно вливаем.
+        let next;
+        if(parsed._exportType==='top'){ next=Object.assign({},current); Object.keys(parsed).filter(k=>!k.startsWith('_')).forEach(k=>next[k]=parsed[k]); }
+        else if(parsed._exportType==='statistics'){ next=Object.assign({},current); Object.keys(parsed).filter(k=>!k.startsWith('_')).forEach(k=>next[k]=parsed[k]); }
+        else { next=parsed; }
+        localStorage.setItem('azrobot_data',JSON.stringify(next));
+        alert('Данные успешно загружены. Страница будет перезагружена.');
+        location.reload();
+      }catch(e){ alert('Не удалось загрузить JSON-файл. Проверь формат файла.'); }
+      file.value='';
+    };
+    reader.readAsText(f);
+  });
+})();
+</script>
 
 </body>
 </html>
