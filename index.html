@@ -994,6 +994,14 @@
   }
   #azScreenSettingsPanel button .az-ss-check{ opacity:0; }
   #azScreenSettingsPanel button.az-ss-active .az-ss-check{ opacity:1; }
+
+    /* Чат: на 2K (2560x1440) немного выше, чтобы был виден его нижний край */
+    @media (min-width: 2300px) and (min-height: 1300px) {
+      .chat-panel {
+        transform: translateY(-60px);
+      }
+    }
+
 </style>
 </head>
 <body>
