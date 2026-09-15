@@ -996,6 +996,22 @@
 .right-col .winner-edit-item select,
 .right-col .winner-edit-item input[type=number] { font-size: 14px !important; }
 
+  /* 2K: немного поднимаем левый чат и все правые меню, чтобы на 2560x1440
+     интерфейс был удобнее и нижние блоки не упирались в край экрана. */
+  html.az-2k .left-col,
+  html.az-2k .right-col{
+    position:relative;
+    top:-28px; /* примерно 1 см на физическом 2K-экране при zoom 1.333 */
+  }
+
+  /* 2K: немного поднимаем левый чат и все правые меню, чтобы на 2560x1440
+     интерфейс был удобнее и нижние блоки не упирались в край экрана. */
+  html.az-2k .left-col,
+  html.az-2k .right-col{
+    position:relative;
+    top:-28px; /* примерно 1 см на физическом 2K-экране при zoom 1.333 */
+  }
+
   /* 2K mode: the interface is scaled from a 1920x1080 layout to 2560x1440.
      Keep the layout viewport at the corresponding 1080px height so the right
      column is not pushed below the physical bottom edge. */
@@ -2216,7 +2232,7 @@
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["JABKA","DASTSKIN","CSJOKER","SKINITY"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
