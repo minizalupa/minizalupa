@@ -695,6 +695,31 @@
   @media(max-width:400px){
     .prokachka-row{ flex-direction:column; }
   }
+  button.prokachka-btn.prokachka-outline{
+    background:var(--panel-2); color:var(--text); border:2px solid var(--line); text-align:center;
+  }
+  button.prokachka-btn.prokachka-outline:hover{ border-color:var(--accent); color:var(--accent-soft); }
+
+  /* ---------- Модалка "Добавить вручную" ---------- */
+  .manual-add-row{ display:flex; gap:8px; margin:14px 0 12px; }
+  .manual-add-row input[type=text]{ flex:1; min-width:0; }
+  .manual-add-list{
+    display:flex; flex-direction:column; gap:7px; max-height:260px; overflow-y:auto;
+    margin-bottom:4px;
+  }
+  .manual-add-empty{ font-size:12px; color:var(--text-dim); text-align:center; padding:14px 0; }
+  .manual-add-item{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
+    padding:8px 10px; font-size:13px; font-weight:700;
+  }
+  .manual-add-item .manual-add-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .manual-add-item button{
+    padding:3px 9px; font-size:11px; border-radius:7px; background:var(--panel);
+    border:1px solid var(--line); color:var(--bad);
+  }
+  .manual-add-item button:hover{ border-color:var(--bad); color:var(--bad); }
+  .manual-add-count{ font-size:12px; color:var(--text-dim); margin-bottom:2px; }
 
   /* Wheel Modal Styles */
   .wheel-modal-card {
@@ -1046,15 +1071,27 @@
     }
 
 
-  /* ---------- Гонка 5 участников ---------- */
-  .race-track{margin:14px 0;display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--bg);border:1px solid var(--line);border-radius:14px;}
-  .race-lane{position:relative;height:46px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(90deg,var(--panel-2),#101608);overflow:hidden;}
-  .race-lane::after{content:"🏁";position:absolute;right:7px;top:9px;font-size:20px;opacity:.85;}
-  .race-runner{position:absolute;left:5px;top:5px;display:flex;align-items:center;gap:6px;max-width:calc(100% - 45px);transition:left .18s linear;z-index:2;}
-  .race-avatar{font-size:25px;display:inline-block;transform:scaleX(-1);filter:drop-shadow(0 0 5px rgba(163,230,53,.5));}
-  .race-name{font-size:10px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;background:var(--panel);padding:4px 7px;border-radius:7px;border:1px solid var(--line);}
-  .race-lane.winner{border-color:var(--good);box-shadow:0 0 16px rgba(190,242,100,.25);}
-  .race-lane.winner .race-name{color:var(--good);border-color:var(--good);}
+  /* ---------- Гонка 5 участников: круговая трасса ---------- */
+  .race-track-oval{position:relative;width:100%;padding-bottom:58%;margin:14px 0;background:radial-gradient(120% 120% at 50% 10%,#152109,var(--bg));border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:inset 0 0 24px rgba(0,0,0,.4);}
+  .race-track-oval svg{position:absolute;inset:0;width:100%;height:100%;}
+  .race-lane-ellipse{fill:none;stroke:var(--line);stroke-width:.4;stroke-dasharray:1.6 1.4;opacity:.55;}
+  .race-track-surface{fill:#0d1406;stroke:var(--line);stroke-width:.6;}
+  .race-finish-line{stroke:#fff;stroke-width:1.1;stroke-dasharray:1 1;opacity:.9;}
+  #raceCarsLayer{position:absolute;inset:0;}
+  .race-car{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;left:50%;top:50%;transition:left .09s linear, top .09s linear;z-index:2;pointer-events:none;}
+  .race-car .car-emoji{font-size:20px;display:inline-block;filter:drop-shadow(0 0 5px rgba(163,230,53,.55));}
+  .race-car .car-name{font-size:9px;line-height:1.1;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px;background:var(--panel);padding:2px 6px;border-radius:6px;border:1px solid var(--line);margin-top:1px;}
+  .race-car.winner .car-emoji{filter:drop-shadow(0 0 9px rgba(190,242,100,.9));}
+  .race-car.winner .car-name{color:var(--good);border-color:var(--good);box-shadow:0 0 12px rgba(190,242,100,.35);}
+  .race-leaderboard{display:flex;flex-direction:column;gap:7px;margin-top:12px;}
+  .race-leaderboard-item{display:flex;align-items:center;gap:8px;font-size:11px;}
+  .race-leaderboard-item .rlb-pos{width:16px;text-align:center;font-weight:900;color:var(--text-dim);}
+  .race-leaderboard-item .rlb-dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .race-leaderboard-item .rlb-name{width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;}
+  .race-leaderboard-item .rlb-bar-wrap{flex:1;height:8px;background:var(--panel-2);border-radius:5px;overflow:hidden;border:1px solid var(--line);}
+  .race-leaderboard-item .rlb-bar{height:100%;border-radius:5px;transition:width .09s linear;}
+  .race-leaderboard-item .rlb-laps{width:34px;text-align:right;font-size:10px;color:var(--text-dim);}
+  .race-leaderboard-item.leader .rlb-name{color:var(--good);}
 
 </style>
 
@@ -1501,8 +1538,14 @@
     <span class="close-modal-x" id="raceModalCloseX">✕</span>
     <h2 style="margin:0;font-size:20px;">🏎️ Гонка прокачки</h2>
     <div style="font-size:12px;color:var(--text-dim);margin-top:4px;" id="raceSubtitle">Участники скрыты до старта. После нажатия будут выбраны и показаны 5 случайных участников.</div>
-    <div class="race-track" id="raceTrack" style="display:none;"></div>
-    <div id="raceResult" style="font-size:18px;font-weight:900;color:var(--good);min-height:28px;"></div>
+    <div class="race-track-oval" id="raceTrackOval" style="display:none;">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <g id="raceLanesG"></g>
+      </svg>
+      <div id="raceCarsLayer"></div>
+    </div>
+    <div class="race-leaderboard" id="raceLeaderboard"></div>
+    <div id="raceResult" style="font-size:18px;font-weight:900;color:var(--good);min-height:28px;margin-top:8px;"></div>
     <button class="primary" id="startRaceBtn" style="width:100%;padding:12px;font-size:15px;">🏁 НАЧАТЬ ГОНКУ</button>
   </div>
 </div>
@@ -1554,7 +1597,24 @@
       <button class="primary prokachka-btn prokachka-gold" id="openSlotMachineBtn">🎰 Слот-машина (5 +)</button>
       <button class="primary prokachka-btn prokachka-light" id="openRaceBtn">🏎️ Гонка (5 +)</button>
       <button class="primary prokachka-btn" id="openWheelBtn">🎡 Колесо фортуны активных</button>
+      <button class="primary prokachka-btn prokachka-outline" id="openManualAddBtn">➕ Добавить участника вручную</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal: Добавить участника вручную -->
+<div class="modal-bg" id="manualAddModalBg">
+  <div class="modal-card prokachka-modal-card">
+    <span class="close-modal-x" id="manualAddModalCloseX">✕</span>
+    <div class="prokachka-icon">➕</div>
+    <div class="prokachka-title">Добавить вручную</div>
+    <div class="prokachka-subtitle">Ники добавятся в общий пул участников прокачки (рулетка, батл, гонка и т.д.), как будто они написали «+» в чат</div>
+    <div class="manual-add-row">
+      <input type="text" id="manualAddInput" placeholder="Ник в Twitch...">
+      <button class="primary" id="manualAddSubmitBtn">Добавить</button>
+    </div>
+    <div class="manual-add-count" id="manualAddCount">Добавлено вручную: 0</div>
+    <div class="manual-add-list" id="manualAddList"></div>
   </div>
 </div>
 
@@ -1818,26 +1878,91 @@
     return names.filter(function(n){ var k=n.trim().toLowerCase(); if(!k||seen[k]) return false; seen[k]=true; return true; });
   }
   var racePlayers=[], raceTimer=null, running=false;
+  var RACE_LAPS=3;                     // сколько кругов нужно проехать, чтобы победить
+  var RACE_CX=50, RACE_CY=53;          // центр овала (в % от контейнера)
+  var RACE_RX0=43, RACE_RY0=35;        // радиусы внешней дорожки
+  var RACE_GAP_X=7.2, RACE_GAP_Y=5.4;  // шаг сужения радиуса на каждую внутреннюю дорожку
+  var RACE_COLORS=['#a3e635','#38bdf8','#fb7185','#fbbf24','#c084fc'];
   function esc(v){ return String(v).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function closeRace(){ if(raceTimer) clearInterval(raceTimer); raceTimer=null; running=false; el('raceModalBg').classList.remove('show'); }
+
+  function raceLaneRadii(i){ return { rx: RACE_RX0 - i*RACE_GAP_X, ry: RACE_RY0 - i*RACE_GAP_Y }; }
+
+  // Точка на дорожке i для доли круга t (0..1), старт/финиш наверху (угол -90°), движение по часовой стрелке
+  function racePointAt(i, t){
+    var r=raceLaneRadii(i);
+    var angle=-Math.PI/2 + t*Math.PI*2;
+    return { x: RACE_CX + r.rx*Math.cos(angle), y: RACE_CY + r.ry*Math.sin(angle) };
+  }
+
+  function drawRaceTrack(){
+    var svgNs='http://www.w3.org/2000/svg';
+    var g=el('raceLanesG'); if(!g) return;
+    g.innerHTML='';
+    for(var i=0;i<5;i++){
+      var r=raceLaneRadii(i);
+      var ell=document.createElementNS(svgNs,'ellipse');
+      ell.setAttribute('cx',RACE_CX); ell.setAttribute('cy',RACE_CY);
+      ell.setAttribute('rx',r.rx); ell.setAttribute('ry',r.ry);
+      ell.setAttribute('class','race-lane-ellipse');
+      g.appendChild(ell);
+      // финишная чёрточка на этой дорожке (в верхней точке)
+      var fl=document.createElementNS(svgNs,'line');
+      fl.setAttribute('x1',RACE_CX); fl.setAttribute('x2',RACE_CX);
+      fl.setAttribute('y1',(RACE_CY-r.ry-1.4)); fl.setAttribute('y2',(RACE_CY-r.ry+1.4));
+      fl.setAttribute('class','race-finish-line');
+      g.appendChild(fl);
+    }
+  }
+
   function openRace(){
     var names=getNames();
     if(names.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас: '+names.length); return; }
     for(var j=names.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)),t=names[j]; names[j]=names[r]; names[r]=t; }
-    racePlayers=names.slice(0,5).map(function(name,i){ return {name:name,p:0,i:i}; });
-    el('raceTrack').innerHTML=''; el('raceTrack').style.display='none';
+    racePlayers=names.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i]}; });
+    el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none';
+    el('raceLeaderboard').innerHTML='';
     el('raceSubtitle').textContent='Участники скрыты. Нажми «НАЧАТЬ ГОНКУ», чтобы показать выбранных 5 человек.';
     el('raceResult').textContent=''; el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🏁 НАЧАТЬ ГОНКУ';
     el('raceModalBg').classList.add('show');
   }
+
   function renderRace(){
-    el('raceTrack').innerHTML=racePlayers.map(function(p){
-      return '<div class="race-lane" id="raceLane'+p.i+'"><div class="race-runner" id="raceRunner'+p.i+'"><span class="race-avatar">🏎️</span><span class="race-name">'+esc(p.name)+'</span></div></div>';
+    drawRaceTrack();
+    el('raceCarsLayer').innerHTML=racePlayers.map(function(p){
+      return '<div class="race-car" id="raceCar'+p.i+'"><span class="car-emoji" style="filter:drop-shadow(0 0 5px '+p.color+'88);">🏎️</span><span class="car-name" style="border-color:'+p.color+'55;">'+esc(p.name)+'</span></div>';
+    }).join('');
+    updateRacePositions();
+    renderRaceLeaderboard();
+  }
+
+  function updateRacePositions(){
+    racePlayers.forEach(function(p){
+      var lapProgress=(p.dist%100)/100;
+      var pt=racePointAt(p.i, p.finished?0:lapProgress);
+      var node=el('raceCar'+p.i);
+      if(node){ node.style.left=pt.x+'%'; node.style.top=pt.y+'%'; }
+    });
+  }
+
+  function renderRaceLeaderboard(){
+    var ranked=racePlayers.slice().sort(function(a,b){ return b.dist-a.dist; });
+    el('raceLeaderboard').innerHTML=ranked.map(function(p,idx){
+      var pct=p.finished?100:(p.dist%100);
+      var laps=Math.min(RACE_LAPS, Math.floor(p.dist/100));
+      return '<div class="race-leaderboard-item'+(idx===0?' leader':'')+'">\
+        <span class="rlb-pos">'+(idx+1)+'</span>\
+        <span class="rlb-dot" style="background:'+p.color+';"></span>\
+        <span class="rlb-name">'+esc(p.name)+'</span>\
+        <span class="rlb-bar-wrap"><span class="rlb-bar" style="width:'+pct.toFixed(1)+'%;background:'+p.color+';"></span></span>\
+        <span class="rlb-laps">'+laps+'/'+RACE_LAPS+'</span>\
+      </div>';
     }).join('');
   }
+
   function finish(w){
     running=false; clearInterval(raceTimer); raceTimer=null;
-    var lane=el('raceLane'+w.i); if(lane) lane.classList.add('winner');
+    var node=el('raceCar'+w.i); if(node) node.classList.add('winner');
     el('raceResult').textContent='🏆 Победитель гонки: '+w.name+'!';
     el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🔄 НОВАЯ ГОНКА';
     if(typeof confetti==='function') confetti({particleCount:120,spread:80,origin:{y:.6}});
@@ -1850,22 +1975,33 @@
       } else {
         alert('Основной модуль победителя ещё не готов. Попробуй запустить гонку через секунду.');
       }
-    },900);
+    },1100);
   }
+
   function startRace(){
     if(running) return;
     if(el('startRaceBtn').textContent.indexOf('НОВАЯ')>=0){ openRace(); return; }
-    renderRace(); el('raceTrack').style.display='flex'; el('raceSubtitle').textContent='🔥 Участники выбраны! Гонка начинается...';
+    renderRace(); el('raceTrackOval').style.display='block';
+    el('raceSubtitle').textContent='🔥 Участники выбраны! Гонка на '+RACE_LAPS+' круга началась — соревнуются автономно!';
     running=true; el('startRaceBtn').disabled=true;
-    var winner=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+    var total=RACE_LAPS*100;
     raceTimer=setInterval(function(){
+      var winner=null;
       racePlayers.forEach(function(p){
-        var step=p===winner?5+Math.random()*7:2+Math.random()*5;
-        p.p=Math.min(p===winner?100:94,p.p+step);
-        var node=el('raceRunner'+p.i); if(node) node.style.left=(5+p.p*.82)+'%';
+        if(p.finished) return;
+        // автономное, полностью случайное поведение каждой машины: базовая скорость + рывки/провалы
+        var step=1.1 + Math.random()*2.1;
+        var roll=Math.random();
+        if(roll<0.12) step+=1.6+Math.random()*1.4;      // рывок ускорения
+        else if(roll>0.90) step*=0.35;                    // небольшая заминка
+        p.dist=Math.min(total, p.dist+step);
+        if(p.dist>=total) p.finished=true;
       });
-      if(winner.p>=100) finish(winner);
-    },180);
+      updateRacePositions();
+      renderRaceLeaderboard();
+      winner=racePlayers.find(function(p){ return p.finished; });
+      if(winner) finish(winner);
+    },90);
   }
   document.addEventListener('click',function(e){
     if(e.target&&e.target.id==='openRaceBtn') openRace();
@@ -1875,7 +2011,110 @@
 })();
 </script>
 
+<!-- ---------- Ручное добавление участников в прокачку ---------- -->
+<script>
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function esc(v){ return String(v).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
+  function readData(){
+    try{ return JSON.parse(localStorage.getItem('azrobot_data')||'{}'); }catch(e){ return {}; }
+  }
+  function writeData(d){
+    try{ localStorage.setItem('azrobot_data', JSON.stringify(d)); }catch(e){}
+  }
+  function normalizedNames(list){
+    // participants может содержать строки или объекты {name}
+    return (Array.isArray(list)?list:[]).map(function(x){
+      return typeof x==='string' ? x : (x&&(x.name||x.username||x.login||x.displayName)) || '';
+    }).filter(Boolean);
+  }
+
+  // Ручные участники храним отдельным списком (чтобы можно было убирать именно их),
+  // и одновременно синхронизируем их с общим "participants" — тем же массивом,
+  // из которого рулетка/гонка/батл и т.д. берут участников, написавших «+».
+  function getManual(){
+    var d=readData();
+    return normalizedNames(d.manualParticipants);
+  }
+  function dedupe(list){
+    var seen={}, out=[];
+    list.forEach(function(n){
+      var k=String(n).trim().toLowerCase();
+      if(!k||seen[k]) return;
+      seen[k]=true;
+      out.push(String(n).trim());
+    });
+    return out;
+  }
+
+  function render(){
+    var list=getManual();
+    var listEl=el('manualAddList'), countEl=el('manualAddCount');
+    if(!listEl) return;
+    countEl.textContent='Добавлено вручную: '+list.length;
+    if(!list.length){
+      listEl.innerHTML='<div class="manual-add-empty">Пока никого не добавили</div>';
+      return;
+    }
+    listEl.innerHTML=list.map(function(name){
+      return '<div class="manual-add-item"><span class="manual-add-name">'+esc(name)+'</span>'+
+             '<button type="button" data-remove-manual="'+esc(name)+'">Убрать</button></div>';
+    }).join('');
+  }
+
+  function addName(){
+    var input=el('manualAddInput');
+    if(!input) return;
+    var name=input.value.trim().replace(/^@/,'');
+    if(!name){ input.focus(); return; }
+    var list=getManual();
+    var exists=list.some(function(n){ return n.toLowerCase()===name.toLowerCase(); });
+    if(!exists){
+      list.push(name);
+      // удаляем из общего participants (на случай если уже там был не как ручной, оставляем как есть — дедуп ниже)
+      var d=readData();
+      d.participants = dedupe(normalizedNames(d.participants).concat(list));
+      d.manualParticipants = list;
+      writeData(d);
+    }
+    input.value='';
+    render();
+    input.focus();
+  }
+
+  function removeName(name){
+    var manual=getManual().filter(function(n){ return n.toLowerCase()!==name.toLowerCase(); });
+    var d=readData();
+    // убираем участника и из общего пула, если он был добавлен именно вручную
+    d.participants = normalizedNames(d.participants).filter(function(n){ return n.toLowerCase()!==name.toLowerCase(); });
+    d.manualParticipants = manual;
+    writeData(d);
+    render();
+  }
+
+  function openModal(){
+    render();
+    el('manualAddModalBg').classList.add('show');
+    var sp=document.getElementById('prokachkaModalBg'); if(sp) sp.classList.remove('show');
+    setTimeout(function(){ var i=el('manualAddInput'); if(i) i.focus(); },50);
+  }
+  function closeModal(){ el('manualAddModalBg').classList.remove('show'); }
+
+  document.addEventListener('click', function(e){
+    if(!e.target) return;
+    if(e.target.id==='openManualAddBtn') openModal();
+    if(e.target.id==='manualAddModalCloseX') closeModal();
+    if(e.target.id==='manualAddSubmitBtn') addName();
+    if(e.target===el('manualAddModalBg')) closeModal();
+    var rm=e.target.getAttribute && e.target.getAttribute('data-remove-manual');
+    if(rm) removeName(rm);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && document.activeElement===el('manualAddInput')) addName();
+  });
+})();
+</script>
 
 <!-- ЛОКАЛ ОБЛАКО -->
 <div class="local-cloud-modal" id="localCloudModal">
