@@ -125,6 +125,17 @@
   .panel{transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;}
   .panel:hover{border-color:#526c24; box-shadow:5px 5px 0 rgba(0,0,0,.28), 0 0 22px rgba(163,230,53,.05);}
   input[type=text], input[type=number], select{transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;}
+  /* Убираем белые стрелки/ползунок у числовых полей */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    appearance:none;
+    margin:0;
+  }
+  input[type=number]{
+    -moz-appearance:textfield;
+    appearance:textfield;
+  }
   input[type=text]:focus, input[type=number]:focus, select:focus{box-shadow:0 0 0 3px rgba(163,230,53,.09), 0 0 16px rgba(163,230,53,.08);}
 
   /* Header */
