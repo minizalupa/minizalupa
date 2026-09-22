@@ -1197,6 +1197,24 @@
     pointer-events: none;
     user-select: none;
   }
+
+  /* ---------- 🍀 Родился в белой рубашке ---------- */
+  .white-shirt-modal-card{max-width:560px;width:92%;overflow:hidden;}
+  .white-shirt-icon{font-size:46px;line-height:1;margin-bottom:5px;}
+  .white-shirt-list{margin:12px 0;max-height:300px;overflow:auto;text-align:left;display:flex;flex-direction:column;gap:6px;padding-right:3px;}
+  .white-shirt-line{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.025);font-size:12px;animation:whiteShirtIn .35s ease both;}
+  .white-shirt-line.loser{color:var(--text-dim);}
+  .white-shirt-line.winner{color:var(--good);border-color:var(--good);background:rgba(163,230,53,.09);font-weight:800;box-shadow:0 0 18px rgba(163,230,53,.12);}
+  .white-shirt-winner{margin:10px 0;padding:14px;border:1px solid var(--good);border-radius:12px;background:rgba(163,230,53,.08);}
+  .white-shirt-winner-title{font-size:14px;font-weight:900;color:var(--good);}
+  .white-shirt-winner-name{font-size:25px;font-weight:900;color:var(--accent);margin-top:4px;}
+  .white-shirt-timer-box{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.12);}
+  .white-shirt-timer-num{font-size:32px;font-weight:900;color:var(--bad);line-height:1;}
+  .white-shirt-timer-status{margin-top:5px;font-size:12px;color:var(--text-dim);font-weight:700;}
+  .white-shirt-chat{margin-top:8px;max-height:110px;overflow:auto;text-align:left;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:11px;}
+  .white-shirt-chat-placeholder{color:var(--text-dim);text-align:center;padding:5px;}
+  .white-shirt-actions{display:flex;gap:7px;margin-top:10px;}
+  @keyframes whiteShirtIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 
 </head>
@@ -1625,12 +1643,39 @@
     <div class="prokachka-subtitle">Выбери, кого и как разыграть</div>
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn" id="spinBtn">🏆 Выбрать победителя (+)</button>
+      <button class="primary prokachka-btn prokachka-gold" id="openWhiteShirtBtn">🍀 Родился в белой рубашке</button>
       <button class="primary prokachka-btn" id="openBattleChoiceBtn">⚔️ Батл</button>
             <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
       <button class="primary prokachka-btn prokachka-gold" id="openSlotMachineBtn">🎰 Слот-машина (5 +)</button>
       <button class="primary prokachka-btn prokachka-light" id="openRaceBtn">🏎️ Гонка (5 +)</button>
       <button class="primary prokachka-btn" id="openWheelBtn">🎡 Колесо фортуны активных</button>
       <button class="primary prokachka-btn prokachka-outline" id="openManualAddBtn">➕ Добавить участника вручную</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Родился в белой рубашке -->
+<div class="modal-bg" id="whiteShirtModalBg">
+  <div class="modal-card white-shirt-modal-card">
+    <span class="close-modal-x" id="whiteShirtCloseX">✕</span>
+    <div class="white-shirt-icon">🍀</div>
+    <div class="prokachka-title">РОДИЛСЯ В БЕЛОЙ РУБАШКЕ</div>
+    <div class="prokachka-subtitle" id="whiteShirtSubtitle">Судьба выбирает счастливчика...</div>
+    <div class="white-shirt-list" id="whiteShirtList"></div>
+    <div class="white-shirt-winner" id="whiteShirtWinner" style="display:none;">
+      <div class="white-shirt-winner-title">✨ РОДИЛСЯ В БЕЛОЙ РУБАШКЕ!</div>
+      <div class="white-shirt-winner-name" id="whiteShirtWinnerName">—</div>
+    </div>
+    <div class="white-shirt-timer-box" id="whiteShirtTimerBox" style="display:none;">
+      <div class="white-shirt-timer-num" id="whiteShirtTimerNum">15</div>
+      <div class="white-shirt-timer-status" id="whiteShirtTimerStatus">Ожидание ответа в чате...</div>
+      <div class="white-shirt-chat" id="whiteShirtChat">
+        <div class="white-shirt-chat-placeholder" id="whiteShirtChatPlaceholder">Сообщений от игрока пока нет...</div>
+      </div>
+    </div>
+    <div class="white-shirt-actions">
+      <button class="danger" id="whiteShirtRerollBtn" style="display:none; width:100%; padding:10px; font-size:13px;">🔄 ЗАНОВО</button>
+      <button class="primary" id="whiteShirtCloseBtn" style="width:100%; padding:10px; font-size:13px;">Закрыть</button>
     </div>
   </div>
 </div>
@@ -6055,6 +6100,201 @@ function startAzrobotApp(){
   } else {
     init();
   }
+})();
+</script>
+
+
+<script id="whiteShirtWinnerScript">
+(function(){
+  'use strict';
+  const openBtn=document.getElementById('openWhiteShirtBtn');
+  const bg=document.getElementById('whiteShirtModalBg');
+  const closeX=document.getElementById('whiteShirtCloseX');
+  const closeBtn=document.getElementById('whiteShirtCloseBtn');
+  const rerollBtn=document.getElementById('whiteShirtRerollBtn');
+  const listEl=document.getElementById('whiteShirtList');
+  const winnerBox=document.getElementById('whiteShirtWinner');
+  const winnerNameEl=document.getElementById('whiteShirtWinnerName');
+  const subtitleEl=document.getElementById('whiteShirtSubtitle');
+  const timerBox=document.getElementById('whiteShirtTimerBox');
+  const timerNum=document.getElementById('whiteShirtTimerNum');
+  const timerStatus=document.getElementById('whiteShirtTimerStatus');
+  const chatEl=document.getElementById('whiteShirtChat');
+  const chatPlaceholder=document.getElementById('whiteShirtChatPlaceholder');
+  if(!openBtn||!bg) return;
+
+  let currentWinner='';
+  let previousWinner='';
+  let timer=null;
+  let seconds=15;
+  let active=false;
+  let observer=null;
+
+  function readState(){
+    try{return JSON.parse(localStorage.getItem('azrobot_data')||'{}');}catch(e){return {};}
+  }
+  function saveState(st){
+    try{localStorage.setItem('azrobot_data',JSON.stringify(st));}catch(e){}
+  }
+  function key(n){return String(n||'').trim().toLowerCase();}
+  function esc(n){
+    return String(n??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+  function shuffle(a){
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  }
+  function cleanCooldowns(st){
+    st.prokachkaCooldowns=st.prokachkaCooldowns&&typeof st.prokachkaCooldowns==='object'?st.prokachkaCooldowns:{};
+    const now=Date.now();
+    Object.keys(st.prokachkaCooldowns).forEach(k=>{const x=st.prokachkaCooldowns[k];if(!x||!x.expireAt||x.expireAt<=now)delete st.prokachkaCooldowns[k];});
+  }
+  function getCandidates(exclude){
+    const st=readState(); cleanCooldowns(st);
+    const blocked=st.blacklist||[];
+    const bset=new Set(blocked.map(key));
+    const ex=key(exclude);
+    const arr=(Array.isArray(st.participants)?st.participants:[]).map(p=>typeof p==='string'?p:p&&p.name).filter(Boolean);
+    const unique=[]; const seen=new Set();
+    arr.forEach(n=>{
+      const k=key(n);
+      if(!k||seen.has(k)||bset.has(k)||ex===k) return;
+      const cd=st.prokachkaCooldowns[k];
+      if(cd&&cd.expireAt>Date.now()) return;
+      seen.add(k); unique.push(String(n));
+    });
+    saveState(st);
+    return unique;
+  }
+  function updateCount(){
+    const st=readState();
+    const c=document.getElementById('pCount');
+    if(c)c.textContent=Array.isArray(st.participants)?st.participants.length:0;
+  }
+  function applyCooldown(name){
+    const st=readState(); cleanCooldowns(st);
+    const k=key(name), now=Date.now();
+    st.prokachkaCooldowns[k]={name:String(name),drawnAt:now,expireAt:now+24*60*60*1000,withdrawn:false};
+    if(Array.isArray(st.participants)) st.participants=st.participants.filter(p=>key(typeof p==='string'?p:p&&p.name)!==k);
+    if(!st.winnerStats)st.winnerStats={};
+    st.winnerStats[k]={name:String(name),count:Number(st.winnerStats[k]?.count||0)+1,lastAt:now};
+    if(!Array.isArray(st.lastDrawnWinners))st.lastDrawnWinners=[];
+    st.lastDrawnWinners.unshift(String(name));
+    st.lastDrawnWinners=st.lastDrawnWinners.slice(0,20);
+    st.lastWinner=String(name);
+    saveState(st); updateCount();
+    return st;
+  }
+  function releaseWinner(name){
+    if(!name)return;
+    const st=readState(); const k=key(name);
+    if(st.prokachkaCooldowns)delete st.prokachkaCooldowns[k];
+    if(Array.isArray(st.lastDrawnWinners))st.lastDrawnWinners=st.lastDrawnWinners.filter(x=>key(x)!==k);
+    if(Array.isArray(st.participants)&&!st.participants.some(p=>key(typeof p==='string'?p:p&&p.name)===k)){
+      st.participants.push({name:String(name),lastActive:Date.now()});
+    }
+    saveState(st); updateCount();
+  }
+  function clearTimer(){if(timer){clearInterval(timer);timer=null;}}
+  function resetUI(){
+    clearTimer(); active=false; currentWinner='';
+    listEl.innerHTML=''; winnerBox.style.display='none'; timerBox.style.display='none';
+    rerollBtn.style.display='none';
+    closeBtn.style.display='block';
+    subtitleEl.textContent='Судьба выбирает счастливчика...';
+    chatEl.innerHTML='<div class="white-shirt-chat-placeholder" id="whiteShirtChatPlaceholder">Сообщений от игрока пока нет...</div>';
+  }
+  function addChatLine(user,text){
+    if(chatPlaceholder&&chatPlaceholder.parentNode)chatPlaceholder.remove();
+    const d=document.createElement('div'); d.style.marginBottom='4px';
+    d.innerHTML='<b>'+esc(user)+':</b> '+esc(text);
+    chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight;
+  }
+  function finishExpired(){
+    clearTimer(); active=false;
+    timerNum.textContent='0'; timerStatus.textContent='❌ Время вышло! Игрок не успел.'; timerStatus.style.color='var(--bad)';
+    rerollBtn.style.display='block'; closeBtn.style.display='block';
+  }
+  function startTimer(){
+    clearTimer(); seconds=15; active=true;
+    timerNum.textContent='15'; timerNum.style.color='var(--bad)';
+    timerStatus.textContent='Ожидание ответа в чате...'; timerStatus.style.color='var(--text-dim)';
+    timer=setInterval(()=>{
+      seconds--; timerNum.textContent=String(Math.max(0,seconds));
+      if(seconds<=0)finishExpired();
+    },1000);
+  }
+  function revealWinner(winner){
+    currentWinner=winner;
+    applyCooldown(winner);
+    winnerNameEl.textContent=winner;
+    winnerBox.style.display='block'; timerBox.style.display='block';
+    subtitleEl.textContent='🍀 Сегодня удача на его стороне!';
+    try{
+      if(window.azrobotRaceBridge&&typeof window.azrobotRaceBridge.sendChatMessage==='function'){
+        window.azrobotRaceBridge.sendChatMessage('🍀 '+winner+' — РОДИЛСЯ В БЕЛОЙ РУБАШКЕ! | У тебя 15 секунд, чтобы отписать в чат!');
+      }
+    }catch(e){}
+    startTimer();
+  }
+  function runDraw(){
+    resetUI();
+    const candidates=getCandidates(previousWinner);
+    if(!candidates.length){
+      subtitleEl.textContent='Нет доступных участников для выбора.';
+      listEl.innerHTML='<div class="white-shirt-line loser">Нужны участники «+», которые не находятся на кулдауне.</div>';
+      return;
+    }
+    const winner=candidates[Math.floor(Math.random()*candidates.length)];
+    const order=shuffle(candidates.slice());
+    const wi=order.findIndex(n=>key(n)===key(winner));
+    if(wi>=0)order.splice(wi,1);
+    order.push(winner);
+    const step=900;
+    order.forEach((name,i)=>{
+      setTimeout(()=>{
+        if(!bg.classList.contains('show'))return;
+        const isW=i===order.length-1;
+        const d=document.createElement('div');
+        d.className='white-shirt-line '+(isW?'winner':'loser');
+        if(isW)d.innerHTML='👤 '+esc(name)+' — ✨ <b>РОДИЛСЯ В БЕЛОЙ РУБАШКЕ!</b>';
+        else{
+          const variants=[
+            '❌ увы, вы не в белой рубашке',
+            '❌ увы, но вы тоже не в белой рубашке',
+            '❌ увы, вы не в белой рубашке, сегодня....'
+          ];
+          d.innerHTML='👤 '+esc(name)+' — '+variants[i%variants.length];
+        }
+        listEl.appendChild(d); listEl.scrollTop=listEl.scrollHeight;
+        if(isW)revealWinner(name);
+      },i*step);
+    });
+  }
+  function handleChatNode(node){
+    if(!active||!currentWinner||!node||node.nodeType!==1)return;
+    const user=node.dataset&&node.dataset.chatUser;
+    if(!user||key(user)!==key(currentWinner))return;
+    addChatLine(user,(node.querySelector('.chat-message-text')?.textContent)||'');
+    if(seconds<=0)return;
+    clearTimer(); active=false; timerNum.textContent='УСПЕЛ!'; timerNum.style.color='var(--good)';
+    timerStatus.textContent='✅ Игрок успел ответить в чат!'; timerStatus.style.color='var(--good)';
+  }
+  observer=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{
+    if(n.nodeType===1){if(n.matches&&n.matches('#chatLog .msg'))handleChatNode(n); if(n.querySelectorAll)n.querySelectorAll('#chatLog .msg').forEach(handleChatNode);}
+  })));
+  observer.observe(document.body,{childList:true,subtree:true});
+
+  function open(){bg.classList.add('show'); previousWinner=''; runDraw();}
+  function close(){clearTimer();bg.classList.remove('show');}
+  openBtn.onclick=open; closeX.onclick=close; closeBtn.onclick=close;
+  bg.addEventListener('click',e=>{if(e.target===bg)close();});
+  rerollBtn.onclick=()=>{
+    const old=currentWinner;
+    if(old)releaseWinner(old);
+    previousWinner=old;
+    runDraw();
+  };
 })();
 </script>
 
