@@ -1081,24 +1081,6 @@
     background:var(--accent-dim);
   }
   #azScreenSettingsPanel button .az-ss-check{ opacity:0; }
-  #azScreenSettingsPanel .az-ss-toggle-row{
-    position:relative; display:flex; align-items:center; gap:9px; padding:7px 2px;
-    font-size:12px; color:var(--text); cursor:pointer; user-select:none;
-  }
-  #azScreenSettingsPanel .az-ss-toggle-row input{ position:absolute; opacity:0; pointer-events:none; }
-  #azScreenSettingsPanel .az-ss-switch{
-    margin-left:auto; width:38px; height:21px; border-radius:999px;
-    border:1px solid var(--line); background:#182016; position:relative; flex:0 0 auto; transition:.15s ease;
-  }
-  #azScreenSettingsPanel .az-ss-switch::after{
-    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%;
-    background:#71805f; transition:.15s ease;
-  }
-  #azScreenSettingsPanel .az-ss-toggle-row input:checked + .az-ss-switch{
-    border-color:var(--accent); background:rgba(163,230,53,.16);
-  }
-  #azScreenSettingsPanel .az-ss-toggle-row input:checked + .az-ss-switch::after{ left:19px; background:var(--accent); }
-  #azScreenSettingsPanel .az-ss-hint{ padding:0 2px 5px; color:var(--text-dim); font-size:10px; line-height:1.35; }
   #azScreenSettingsPanel button.az-ss-active .az-ss-check{ opacity:1; }
 
   /* ---------- Гонка 5 участников: круговая трасса ---------- */
@@ -1123,34 +1105,6 @@
   .race-leaderboard-item .rlb-laps{width:34px;text-align:right;font-size:10px;color:var(--text-dim);}
   .race-leaderboard-item.leader .rlb-name{color:var(--good);}
 
-
-  /* ---------- Twitch карточка победителя внутри бота ---------- */
-  .winner-card-modal-card{
-    width:min(760px,94vw); max-width:760px; height:min(760px,90vh);
-    padding:0; overflow:hidden; display:flex; flex-direction:column;
-  }
-  .winner-card-header{
-    min-height:54px; display:flex; align-items:center; gap:10px; padding:10px 14px;
-    background:var(--panel-2); border-bottom:1px solid var(--line); flex-shrink:0;
-  }
-  .winner-card-title{font-size:14px;font-weight:800;flex:1;}
-  .winner-card-title span{color:var(--accent-soft);}
-  .winner-card-frame-wrap{position:relative;flex:1;min-height:0;background:#0b0e0d;}
-  .winner-card-frame{width:100%;height:100%;border:0;display:block;background:#0b0e0d;}
-  .winner-card-footer{padding:8px 10px;background:var(--panel-2);border-top:1px solid var(--line);display:flex;gap:7px;flex-shrink:0;}
-  .winner-card-footer button{flex:1;}
-  .winner-viewer-native{width:min(620px,92%);margin:auto;padding:26px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#151b0d,#0d120a);box-shadow:0 14px 40px rgba(0,0,0,.35);}
-  .winner-viewer-profile{display:flex;align-items:center;gap:18px;padding-bottom:22px;border-bottom:1px solid var(--line);}
-  .winner-viewer-avatar{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;background:var(--accent-dim);border:2px solid var(--accent);color:var(--accent-soft);flex-shrink:0;}
-  .winner-viewer-main{min-width:0;}
-  .winner-viewer-name{font-size:20px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .winner-viewer-login{margin-top:6px;color:var(--text-dim);font-size:12px;}
-  .winner-viewer-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
-  .winner-viewer-info{padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.16);}
-  .winner-viewer-info span{display:block;color:var(--text-dim);font-size:10px;margin-bottom:7px;}
-  .winner-viewer-info b{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
-  .winner-viewer-note{margin-top:16px;padding:13px 14px;border-radius:10px;background:var(--accent-dim);color:var(--text-dim);font-size:11px;line-height:1.65;}
-  @media(max-width:600px){.winner-viewer-native{padding:18px}.winner-viewer-info-grid{grid-template-columns:1fr}.winner-viewer-avatar{width:62px;height:62px}.winner-viewer-name{font-size:17px;}}
 </style>
 
 <style id="localCloudStyles">
@@ -1404,7 +1358,7 @@
               <option value="JABKA">JABKA</option>
               <option value="ECOCASE">ECOCASE</option>
               <option value="DASTSKIN">DASTSKIN</option>
-              <option value="DOG">DOG</option>
+              <option value="CSJOKER">CSJOKER</option>
               <option value="SKINITY">SKINITY</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
@@ -1672,11 +1626,25 @@
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn" id="spinBtn">🏆 Выбрать победителя (+)</button>
       <button class="primary prokachka-btn" id="openBattleChoiceBtn">⚔️ Батл</button>
-      <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
+            <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
       <button class="primary prokachka-btn prokachka-gold" id="openSlotMachineBtn">🎰 Слот-машина (5 +)</button>
       <button class="primary prokachka-btn prokachka-light" id="openRaceBtn">🏎️ Гонка (5 +)</button>
       <button class="primary prokachka-btn" id="openWheelBtn">🎡 Колесо фортуны активных</button>
       <button class="primary prokachka-btn prokachka-outline" id="openManualAddBtn">➕ Добавить участника вручную</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Сбросить участников -->
+<div class="modal-bg" id="resetParticipantsModalBg">
+  <div class="modal-card prokachka-modal-card">
+    <span class="close-modal-x" id="resetParticipantsModalCloseX">✕</span>
+    <div class="prokachka-icon">🧹</div>
+    <div class="prokachka-title">Сбросить участников</div>
+    <div class="prokachka-subtitle">Выбери, кого удалить из текущего списка</div>
+    <div class="prokachka-buttons">
+      <button class="danger prokachka-btn" id="resetBattleFromMainBtn">⚔️ Сбросить участников батла</button>
+      <button class="danger prokachka-btn" id="resetProkachkaFromMainBtn">🎯 Сбросить участников прокачки (+)</button>
     </div>
   </div>
 </div>
@@ -1778,7 +1746,7 @@
         <option value="JABKA">JABKA</option>
         <option value="ECOCASE">ECOCASE</option>
         <option value="DASTSKIN">DASTSKIN</option>
-        <option value="DOG">DOG</option>
+        <option value="CSJOKER">CSJOKER</option>
         <option value="SKINITY">SKINITY</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
@@ -1854,39 +1822,6 @@
   </div>
 </div>
 
-
-<!-- Modal: Twitch-карточка победителя внутри бота -->
-<div class="modal-bg" id="winnerViewerCardModalBg" style="z-index:90;">
-  <div class="modal-card winner-card-modal-card">
-    <div class="winner-card-header">
-      <div class="winner-card-title">💬 Карточка Twitch: <span id="winnerViewerCardUser">—</span></div>
-      <span class="close-modal-x" id="winnerViewerCardCloseX">✕</span>
-    </div>
-    <div class="winner-card-frame-wrap">
-      <div id="winnerViewerCardNative" class="winner-viewer-native">
-        <div class="winner-viewer-profile">
-          <div class="winner-viewer-avatar" id="winnerViewerAvatar">💬</div>
-          <div class="winner-viewer-main">
-            <div class="winner-viewer-name" id="winnerViewerDisplayName">—</div>
-            <div class="winner-viewer-login" id="winnerViewerLogin">@—</div>
-          </div>
-        </div>
-        <div class="winner-viewer-info-grid">
-          <div class="winner-viewer-info"><span>Канал</span><b id="winnerViewerChannel">—</b></div>
-          <div class="winner-viewer-info"><span>Карточка</span><b>Twitch Viewer Card</b></div>
-        </div>
-        <div class="winner-viewer-note">
-          Карточка открыта внутри бота. Системную страницу Viewer Card Twitch нельзя надёжно встроить через iframe — Twitch блокирует такое встраивание.
-          Кнопка ниже открывает настоящую карточку Twitch для этого пользователя.
-        </div>
-      </div>
-    </div>
-    <div class="winner-card-footer">
-      <button id="winnerViewerCardOpenBtn" class="primary">↗ ОТКРЫТЬ КАРТОЧКУ TWITCH</button>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Site Stats -->
 <div class="modal-bg" id="siteStatsModalBg">
   <div class="modal-card">
@@ -1946,14 +1881,6 @@
     <input id="timerVolume" type="range" min="0" max="100" value="70" step="1" aria-label="Громкость звука таймера" style="flex:1;min-width:110px;accent-color:var(--accent);cursor:pointer;">
     <span id="timerVolumeValue" style="width:38px;text-align:right;">70%</span>
   </div>
-  <div class="az-ss-divider"></div>
-  <div class="az-ss-title">Участники</div>
-  <label class="az-ss-toggle-row" for="autoRemoveInactiveToggle">
-    <span>⏱️ Автовыброс неактивных</span>
-    <input id="autoRemoveInactiveToggle" type="checkbox" />
-    <span class="az-ss-switch" aria-hidden="true"></span>
-  </label>
-  <div class="az-ss-hint">Если выключено — участники не удаляются из списка со временем.</div>
   <div class="az-ss-divider"></div>
   <div class="az-ss-title">Разрешение экрана</div>
   <button type="button" data-az-res="normal">Обычный <span class="az-ss-check">✓</span></button>
@@ -2042,17 +1969,16 @@ function startAzrobotApp(){
     botWs = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
     botWs.onopen = () => {
-      botWs.send(`PASS ${BOT_CONFIG.oauthToken}\r\n`);
-      botWs.send(`NICK ${BOT_CONFIG.username.toLowerCase()}\r\n`);
-      botWs.send(`JOIN #${BOT_CONFIG.channel.toLowerCase()}\r\n`);
+      botWs.send(`PASS ${BOT_CONFIG.oauthToken}`);
+      botWs.send(`NICK ${BOT_CONFIG.username.toLowerCase()}`);
+      botWs.send(`JOIN #${BOT_CONFIG.channel.toLowerCase()}`);
       console.log("Бот miniazro: соединение открыто, ждём подтверждения авторизации...");
     };
 
     botWs.onmessage = (evt) => {
       const data = evt.data;
-      console.log('Twitch IRC <-', data);
       if (data.startsWith('PING')) {
-        botWs.send('PONG :tmi.twitch.tv\r\n');
+        botWs.send('PONG :tmi.twitch.tv');
         return;
       }
       if (data.includes('Login authentication failed') || data.includes('Improperly formatted auth')) {
@@ -2060,14 +1986,13 @@ function startAzrobotApp(){
         console.error("Бот miniazro: ошибка авторизации в чате Twitch — проверьте oauthToken. Сообщения не будут отправляться.");
         return;
       }
-      if (!botAuthenticated && (data.includes(' 001 ') || data.includes(' 376 ') || data.includes('GLOBALUSERSTATE') || data.includes('GLHF'))) {
+      if (!botAuthenticated && (data.includes(' 001 ') || data.includes(' 376 ') || data.includes('GLHF'))) {
         botAuthenticated = true;
         console.log("Бот miniazro успешно авторизован и подключён к чату Twitch");
         flushPendingChatMessages();
       }
-      if (typeof handleWinnerMessagesBotLine === 'function') {
-        // Ответ команды /user может прийти не только как PRIVMSG, но и как NOTICE/WHISPER.
-        data.split(/\r?\n/).forEach(line => { if (line.trim()) handleWinnerMessagesBotLine(line); });
+      if (data.includes('PRIVMSG') && typeof handleWinnerMessagesBotLine === 'function') {
+        handleWinnerMessagesBotLine(data);
       }
     };
 
@@ -2083,30 +2008,27 @@ function startAzrobotApp(){
 
   let msgToggle = false;
 
-  function sendChatMessage(msg, isRetry, rawCommand) {
+  function sendChatMessage(msg, isRetry) {
     if (botWs && botWs.readyState === WebSocket.OPEN && botAuthenticated) {
-      const text = String(msg ?? '');
-      // Обычные сообщения продолжают идти ровно тем же путём, что и раньше.
-      // Для /user используем ТОТ ЖЕ botWs и тот же PRIVMSG, только без суффикса !/!!.
-      const finalMsg = rawCommand ? text : (() => {
-        msgToggle = !msgToggle;
-        return text + (msgToggle ? ' !' : ' !!');
-      })();
+      msgToggle = !msgToggle;
+      const ending = msgToggle ? ' !' : ' !!';
+      const finalMsg = msg + ending;
 
-      console.log('miniazro -> Twitch:', finalMsg);
-      botWs.send(`PRIVMSG #${BOT_CONFIG.channel.toLowerCase()} :${finalMsg}\r\n`);
-      return true;
+      botWs.send(`PRIVMSG #${BOT_CONFIG.channel.toLowerCase()} :${finalMsg}`);
+    } else {
+      console.warn("Бот не подключён к чату Twitch — сообщение поставлено в очередь и будет отправлено после подключения.");
+      if (!isRetry) pendingChatMessages.push(msg);
     }
-
-    console.warn("Бот не подключён к чату Twitch — сообщение поставлено в очередь.");
-    if (!isRetry) pendingChatMessages.push(rawCommand ? { raw: true, text: String(msg ?? '') } : String(msg ?? ''));
-    return false;
   }
 
-  // Команда отправляется через ТОТ ЖЕ механизм, которым miniazro уже успешно
-  // пишет обычные сообщения в чат.
+  // Отправка команды без суффиксов "! / !!".
   function sendRawChatMessage(msg, isRetry) {
-    return sendChatMessage(msg, isRetry, true);
+    if (botWs && botWs.readyState === WebSocket.OPEN && botAuthenticated) {
+      botWs.send(`PRIVMSG #${BOT_CONFIG.channel.toLowerCase()} :${msg}`);
+      return true;
+    }
+    if (!isRetry) pendingChatMessages.push({ raw: true, text: msg });
+    return false;
   }
 
   /* ---------- Confetti & Winner Announcement ---------- */
@@ -2134,14 +2056,9 @@ function startAzrobotApp(){
     saveState();
   }
 
-  function announceWinner(winnerName, options = {}) {
+  function announceWinner(winnerName) {
     triggerConfetti();
-    // Победители батла — это отдельный режим прокачки. Они НЕ получают
-    // обычный кулдаун победителя прокачки. Для остальных розыгрышей
-    // поведение остаётся прежним.
-    if (!options.skipProkachkaCooldown) {
-      registerProkachkaWinner(winnerName);
-    }
+    registerProkachkaWinner(winnerName);
     recordWinner(winnerName);
     checkWinnerForModAlert(winnerName);
     if (winnerName && winnerName !== '—') {
@@ -2167,7 +2084,6 @@ function startAzrobotApp(){
     isWithdrawsCollapsed: false,
     lastDrawnWinners: [],
     participantInactivityMinutes: 20,
-    autoRemoveInactiveParticipants: false, // автоматически удалять участников за отсутствие сообщений
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
     prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
@@ -2187,7 +2103,6 @@ function startAzrobotApp(){
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
     if (!Array.isArray(state.deposits)) state.deposits = [];
     if (!state.participantInactivityMinutes) state.participantInactivityMinutes = 20;
-    if (typeof state.autoRemoveInactiveParticipants !== 'boolean') state.autoRemoveInactiveParticipants = false;
     if (!state.inactiveMarks || typeof state.inactiveMarks !== 'object') state.inactiveMarks = {};
     if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
 
@@ -2227,16 +2142,6 @@ function startAzrobotApp(){
     }
     // Помечаем, что данные изменились — раз в 20 сек отправим актуальную версию на GitHub
     if (typeof pendingGithubSync !== 'undefined') pendingGithubSync = true;
-  }
-
-  // Настройка автовыброса хранится в общем state и поэтому переживает перезагрузку.
-  const autoRemoveInactiveToggle = document.getElementById('autoRemoveInactiveToggle');
-  if (autoRemoveInactiveToggle) {
-    autoRemoveInactiveToggle.checked = !!state.autoRemoveInactiveParticipants;
-    autoRemoveInactiveToggle.addEventListener('change', () => {
-      state.autoRemoveInactiveParticipants = !!autoRemoveInactiveToggle.checked;
-      saveState();
-    });
   }
 
   /* ---------- Экспорт / импорт данных в отдельный файл ---------- */
@@ -2766,25 +2671,13 @@ function startAzrobotApp(){
   }
 
   function addParticipant(name){
-    name = String(name || '').trim();
+    name = name.trim();
     if(!name || isBlacklisted(name)) return false;
-
-    // Неактивность не является кулдауном: после нового "+" человек
-    // сразу может вернуться в общий пул. Кулдаун победителя прокачки
-    // остаётся отдельным ограничением.
-    if(isProkachkaBlocked(name)) return false;
-    if(isParticipant(name)) {
-      touchParticipantActivity(name);
-      if (state.inactiveMarks && state.inactiveMarks[name.toLowerCase()]) {
-        delete state.inactiveMarks[name.toLowerCase()];
-        saveState();
-      }
-      return false;
-    }
-
+    if(isProkachkaBlocked(name)) return false; // на кулдауне после прокачки — по "+" не добавляем, пока не спадёт
+    if(isParticipant(name)) return false;
     state.participants.push({name, lastActive: Date.now()});
     if (state.inactiveMarks && state.inactiveMarks[name.toLowerCase()]) {
-      delete state.inactiveMarks[name.toLowerCase()]; // повторный "+" снимает метку неактивности
+      delete state.inactiveMarks[name.toLowerCase()]; // вернулся — снимаем метку неактивности
     }
     saveState();
     renderParticipants();
@@ -2933,10 +2826,6 @@ function startAzrobotApp(){
   setInterval(cleanExpiredInactiveMarks, 60000);
 
   function removeInactiveParticipants(){
-    // По умолчанию автовыброс выключен. Если включить его в настройках,
-    // применяется прежняя логика таймера для общего пула и пула батла.
-    if (!state.autoRemoveInactiveParticipants) return;
-
     const limitMin = state.participantInactivityMinutes || 20;
     const limitMs = limitMin * 60 * 1000;
     const now = Date.now();
@@ -2969,14 +2858,59 @@ function startAzrobotApp(){
 
   setInterval(removeInactiveParticipants, 30000);
 
-  document.getElementById('clearBtn').onclick = ()=>{
-    const count = state.participants.length;
-    if (count === 0) return;
+  /* ---------- Сброс участников из главного меню ---------- */
+  (function initResetParticipantsMenu(){
+    const clearBtn = document.getElementById('clearBtn');
+    const bg = document.getElementById('resetParticipantsModalBg');
+    const closeX = document.getElementById('resetParticipantsModalCloseX');
+    const resetBattleBtn = document.getElementById('resetBattleFromMainBtn');
+    const resetProkachkaBtn = document.getElementById('resetProkachkaFromMainBtn');
 
-    state.participants = [];
-    saveState();
-    renderParticipants();
-  };
+    if (!clearBtn || !bg || !closeX || !resetBattleBtn || !resetProkachkaBtn) return;
+
+    clearBtn.onclick = ()=> bg.classList.add('show');
+    closeX.onclick = ()=> bg.classList.remove('show');
+    bg.addEventListener('click', (e)=>{
+      if (e.target === bg) bg.classList.remove('show');
+    });
+
+    function refreshVisibleParticipantBadges(){
+      document.querySelectorAll('#chatLog .msg').forEach(div=>{
+        const user = div.dataset.chatUser;
+        if (!user) return;
+        const isP = isParticipant(user);
+        const isB = isBattleParticipant(user);
+
+        div.classList.toggle('participant', isP);
+        div.classList.toggle('battle', isB);
+        const name = div.querySelector('.chat-user-name');
+        if (name) name.classList.toggle('participant-name', isP && !isB);
+        if (name) name.classList.toggle('battle-name', isB);
+
+        const battleBadge = div.querySelector('.chat-badge-battle');
+        if (battleBadge && !isB) battleBadge.remove();
+        const participantBadge = div.querySelector('.chat-badge-participant');
+        if (participantBadge && !isP) participantBadge.remove();
+      });
+    }
+
+    resetBattleBtn.onclick = ()=>{
+      // Сбрасываем сразу, без confirm/alert.
+      state.battleParticipants = [];
+      saveState();
+      refreshVisibleParticipantBadges();
+      bg.classList.remove('show');
+    };
+
+    resetProkachkaBtn.onclick = ()=>{
+      // Сбрасываем сразу, без confirm/alert.
+      state.participants = [];
+      saveState();
+      renderParticipants();
+      refreshVisibleParticipantBadges();
+      bg.classList.remove('show');
+    };
+  })();
 
   /* ---------- Участники БАТЛ: только те, кто написал "батл" ---------- */
   function getBattleParticipants(count, excludeList = []) {
@@ -3143,7 +3077,7 @@ function startAzrobotApp(){
     const statusEl = document.getElementById(`boxTimerStatus${index}`);
     const chatBoxEl = document.getElementById(`boxChatLog${index}`);
 
-    announceWinner(newWinner, {skipProkachkaCooldown: true});
+    announceWinner(newWinner);
     recordDrawnWinner(newWinner);
     startMultiTimer(`box_${index}`, newWinner, numEl, statusEl, chatBoxEl);
   }
@@ -3183,7 +3117,7 @@ function startAzrobotApp(){
       const statusEl = document.getElementById(`boxTimerStatus${i}`);
       const chatBoxEl = document.getElementById(`boxChatLog${i}`);
 
-      announceWinner(winner, {skipProkachkaCooldown: true});
+      announceWinner(winner);
       recordDrawnWinner(winner);
       startMultiTimer(`box_${i}`, winner, numEl, statusEl, chatBoxEl);
     };
@@ -3300,7 +3234,7 @@ function startAzrobotApp(){
         const statusEl = document.getElementById(`slotTimerStatus${suffix}`);
         const chatBoxEl = document.getElementById(`slotChatLog${suffix}`);
 
-        announceWinner(targetWinner, {skipProkachkaCooldown: true});
+        announceWinner(targetWinner);
         recordDrawnWinner(targetWinner);
         startMultiTimer(`slot_${suffix}`, targetWinner, numEl, statusEl, chatBoxEl);
 
@@ -4044,7 +3978,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "SKINITY"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -4811,13 +4745,12 @@ function startAzrobotApp(){
   function extractWinnerChatLine(line){
     const senderMatch = line.match(/^:([^! ]+)!/);
     const privmsgMatch = line.match(/PRIVMSG #[^ ]+ :(.*)$/);
-    const noticeMatch = line.match(/NOTICE(?: #[^ ]+)? :(.*)$/);
-    const whisperMatch = line.match(/WHISPER [^ ]+ :(.*)$/);
-    const text = privmsgMatch ? privmsgMatch[1] : (noticeMatch ? noticeMatch[1] : (whisperMatch ? whisperMatch[1] : ''));
+    const noticeMatch = line.match(/NOTICE #[^ ]+ :(.*)$/);
+    const text = privmsgMatch ? privmsgMatch[1] : (noticeMatch ? noticeMatch[1] : '');
     return {
       sender: senderMatch ? senderMatch[1] : '',
       text,
-      type: privmsgMatch ? 'PRIVMSG' : (noticeMatch ? 'NOTICE' : (whisperMatch ? 'WHISPER' : ''))
+      type: privmsgMatch ? 'PRIVMSG' : (noticeMatch ? 'NOTICE' : '')
     };
   }
 
@@ -4842,7 +4775,7 @@ function startAzrobotApp(){
     const looksLikeBot = /bot|showbot|nightbot|streamelements|streamlabs|miniazro|azrobot/i.test(sender);
     const looksLikeResult = /(?:сообщени|messages?|чат|chat|msg|history|истори|нет сообщ|не найден)/i.test(text);
 
-    if (parsed.type === 'NOTICE' || parsed.type === 'WHISPER' || looksLikeListItem || lower.includes(target) || looksLikeBot || looksLikeResult) {
+    if (parsed.type === 'NOTICE' || looksLikeListItem || lower.includes(target) || looksLikeBot || looksLikeResult) {
       addWinnerMessageItem(parsed.sender || 'Twitch', text);
       req.count += 1;
       winnerMessagesStatus.textContent = `Получено строк: ${req.count}`;
@@ -4867,7 +4800,7 @@ function startAzrobotApp(){
       winnerMessagesStatus.textContent = winnerMessagesRequest.count
         ? `Готово. Получено сообщений: ${winnerMessagesRequest.count}`
         : 'Ответ со списком сообщений не получен.';
-    }, 30000);
+    }, 10000);
   }
 
   document.getElementById('openFollowage').onclick = () => {
@@ -4878,46 +4811,10 @@ function startAzrobotApp(){
     if (state.lastWinner) window.open(getFollowageUrl(state.lastWinner), '_blank');
   };
 
-  const winnerViewerCardModalBg = document.getElementById('winnerViewerCardModalBg');
-  const winnerViewerCardUser = document.getElementById('winnerViewerCardUser');
-  const winnerViewerDisplayName = document.getElementById('winnerViewerDisplayName');
-  const winnerViewerLogin = document.getElementById('winnerViewerLogin');
-  const winnerViewerChannel = document.getElementById('winnerViewerChannel');
-  const winnerViewerAvatar = document.getElementById('winnerViewerAvatar');
-  const winnerViewerCardOpenBtn = document.getElementById('winnerViewerCardOpenBtn');
-  let winnerViewerCardUrl = '';
-
-  function openWinnerViewerCard(username){
-    const user = String(username || '').trim();
-    if (!user) return;
-    const login = user.toLowerCase();
-    winnerViewerCardUrl = `https://www.twitch.tv/popout/${encodeURIComponent(TARGET_CHANNEL)}/viewercard/${encodeURIComponent(login)}?popout=`;
-    winnerViewerCardUser.textContent = '@' + login;
-    winnerViewerDisplayName.textContent = user;
-    winnerViewerLogin.textContent = '@' + login;
-    winnerViewerChannel.textContent = '@' + String(TARGET_CHANNEL || '').replace(/^@/, '');
-    winnerViewerAvatar.textContent = '💬';
-    winnerViewerCardModalBg.classList.add('show');
-  }
-
   document.getElementById('analysisMessageBtn').onclick = () => {
-    const user = state.lastWinner ? String(state.lastWinner).trim().toLowerCase() : '';
+    const user = state.lastWinner ? String(state.lastWinner).trim() : '';
     if (!user) return;
-    const url = `https://www.twitch.tv/popout/${encodeURIComponent(TARGET_CHANNEL)}/viewercard/${encodeURIComponent(user)}?popout=`;
-    // Открываем настоящую отдельную вкладку/окно браузера, без внутреннего модального окна.
-    window.open(
-      url,
-      'twitchViewerCard',
-      'popup=yes,width=520,height=760,resizable=yes,scrollbars=yes'
-    );
-  };
-
-  winnerViewerCardOpenBtn.onclick = () => {
-    if (winnerViewerCardUrl) window.open(winnerViewerCardUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  document.getElementById('winnerViewerCardCloseX').onclick = () => {
-    winnerViewerCardModalBg.classList.remove('show');
+    requestWinnerMessages(user);
   };
 
   document.getElementById('analysisSubscriptionBtn').onclick = () => {
@@ -5888,7 +5785,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","DOG","SKINITY"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
