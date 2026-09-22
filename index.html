@@ -2066,6 +2066,16 @@ function startAzrobotApp(){
     }
   }
 
+  // Победитель БАТЛА не получает кулдаун прокачки.
+  function announceBattleWinner(winnerName) {
+    triggerConfetti();
+    recordWinner(winnerName);
+    checkWinnerForModAlert(winnerName);
+    if (winnerName && winnerName !== '—') {
+      sendChatMessage(`Поздравляем, победитель батла —> ${winnerName} | На отписку в чат 15 секунд!`);
+    }
+  }
+
   connectBot();
 
   /* ---------- LocalStorage State ---------- */
@@ -3077,7 +3087,7 @@ function startAzrobotApp(){
     const statusEl = document.getElementById(`boxTimerStatus${index}`);
     const chatBoxEl = document.getElementById(`boxChatLog${index}`);
 
-    announceWinner(newWinner);
+    announceBattleWinner(newWinner);
     recordDrawnWinner(newWinner);
     startMultiTimer(`box_${index}`, newWinner, numEl, statusEl, chatBoxEl);
   }
@@ -3117,7 +3127,7 @@ function startAzrobotApp(){
       const statusEl = document.getElementById(`boxTimerStatus${i}`);
       const chatBoxEl = document.getElementById(`boxChatLog${i}`);
 
-      announceWinner(winner);
+      announceBattleWinner(winner);
       recordDrawnWinner(winner);
       startMultiTimer(`box_${i}`, winner, numEl, statusEl, chatBoxEl);
     };
@@ -3234,7 +3244,7 @@ function startAzrobotApp(){
         const statusEl = document.getElementById(`slotTimerStatus${suffix}`);
         const chatBoxEl = document.getElementById(`slotChatLog${suffix}`);
 
-        announceWinner(targetWinner);
+        announceBattleWinner(targetWinner);
         recordDrawnWinner(targetWinner);
         startMultiTimer(`slot_${suffix}`, targetWinner, numEl, statusEl, chatBoxEl);
 
