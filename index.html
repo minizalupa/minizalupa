@@ -1081,6 +1081,24 @@
     background:var(--accent-dim);
   }
   #azScreenSettingsPanel button .az-ss-check{ opacity:0; }
+  #azScreenSettingsPanel .az-ss-toggle-row{
+    position:relative; display:flex; align-items:center; gap:9px; padding:7px 2px;
+    font-size:12px; color:var(--text); cursor:pointer; user-select:none;
+  }
+  #azScreenSettingsPanel .az-ss-toggle-row input{ position:absolute; opacity:0; pointer-events:none; }
+  #azScreenSettingsPanel .az-ss-switch{
+    margin-left:auto; width:38px; height:21px; border-radius:999px;
+    border:1px solid var(--line); background:#182016; position:relative; flex:0 0 auto; transition:.15s ease;
+  }
+  #azScreenSettingsPanel .az-ss-switch::after{
+    content:''; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%;
+    background:#71805f; transition:.15s ease;
+  }
+  #azScreenSettingsPanel .az-ss-toggle-row input:checked + .az-ss-switch{
+    border-color:var(--accent); background:rgba(163,230,53,.16);
+  }
+  #azScreenSettingsPanel .az-ss-toggle-row input:checked + .az-ss-switch::after{ left:19px; background:var(--accent); }
+  #azScreenSettingsPanel .az-ss-hint{ padding:0 2px 5px; color:var(--text-dim); font-size:10px; line-height:1.35; }
   #azScreenSettingsPanel button.az-ss-active .az-ss-check{ opacity:1; }
 
   /* ---------- Гонка 5 участников: круговая трасса ---------- */
@@ -1386,7 +1404,7 @@
               <option value="JABKA">JABKA</option>
               <option value="ECOCASE">ECOCASE</option>
               <option value="DASTSKIN">DASTSKIN</option>
-              <option value="CSJOKER">CSJOKER</option>
+              <option value="DOG">DOG</option>
               <option value="SKINITY">SKINITY</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
@@ -1760,7 +1778,7 @@
         <option value="JABKA">JABKA</option>
         <option value="ECOCASE">ECOCASE</option>
         <option value="DASTSKIN">DASTSKIN</option>
-        <option value="CSJOKER">CSJOKER</option>
+        <option value="DOG">DOG</option>
         <option value="SKINITY">SKINITY</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
@@ -1920,21 +1938,6 @@
 <button id="azScreenSettingsBtn" title="Настройки экрана">⚙️</button>
 <div id="azScreenSettingsPanel">
   <div class="az-ss-title">Настройки бота</div>
-  <div class="az-inactive-setting" style="padding:6px 2px 10px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-      <div>
-        <div style="font-size:12px;font-weight:800;">👥 Автовыкидывание за неактивность</div>
-        <div style="font-size:10px;color:var(--text-dim);margin-top:2px;line-height:1.35;">Если выключено — участники не удаляются из списка со временем.</div>
-      </div>
-      <label style="position:relative;width:46px;height:24px;flex:0 0 auto;cursor:pointer;">
-        <input id="autoRemoveInactiveToggle" type="checkbox" style="opacity:0;width:0;height:0;position:absolute;">
-        <span id="autoRemoveInactiveTrack" style="position:absolute;inset:0;border-radius:999px;background:#26351b;border:1px solid var(--line);transition:.2s;"></span>
-        <span id="autoRemoveInactiveKnob" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#8a9878;transition:.2s;"></span>
-      </label>
-    </div>
-    <div id="autoRemoveInactiveStatus" style="font-size:10px;color:var(--text-dim);margin-top:5px;">Выключено</div>
-  </div>
-  <div class="az-ss-divider"></div>
   <button type="button" id="openLocalCloudBtn" class="az-cloud-setting-btn">☁️ ЛОКАЛ ОБЛАКО <span>›</span></button>
   <div class="az-ss-divider"></div>
   <div class="az-ss-title">Звук таймера</div>
@@ -1943,6 +1946,14 @@
     <input id="timerVolume" type="range" min="0" max="100" value="70" step="1" aria-label="Громкость звука таймера" style="flex:1;min-width:110px;accent-color:var(--accent);cursor:pointer;">
     <span id="timerVolumeValue" style="width:38px;text-align:right;">70%</span>
   </div>
+  <div class="az-ss-divider"></div>
+  <div class="az-ss-title">Участники</div>
+  <label class="az-ss-toggle-row" for="autoRemoveInactiveToggle">
+    <span>⏱️ Автовыброс неактивных</span>
+    <input id="autoRemoveInactiveToggle" type="checkbox" />
+    <span class="az-ss-switch" aria-hidden="true"></span>
+  </label>
+  <div class="az-ss-hint">Если выключено — участники не удаляются из списка со временем.</div>
   <div class="az-ss-divider"></div>
   <div class="az-ss-title">Разрешение экрана</div>
   <button type="button" data-az-res="normal">Обычный <span class="az-ss-check">✓</span></button>
@@ -2156,8 +2167,7 @@ function startAzrobotApp(){
     isWithdrawsCollapsed: false,
     lastDrawnWinners: [],
     participantInactivityMinutes: 20,
-    // Автовыкидывание участников за отсутствие сообщений. По умолчанию выключено.
-    autoRemoveInactiveParticipants: false,
+    autoRemoveInactiveParticipants: false, // автоматически удалять участников за отсутствие сообщений
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
     prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
@@ -2217,6 +2227,16 @@ function startAzrobotApp(){
     }
     // Помечаем, что данные изменились — раз в 20 сек отправим актуальную версию на GitHub
     if (typeof pendingGithubSync !== 'undefined') pendingGithubSync = true;
+  }
+
+  // Настройка автовыброса хранится в общем state и поэтому переживает перезагрузку.
+  const autoRemoveInactiveToggle = document.getElementById('autoRemoveInactiveToggle');
+  if (autoRemoveInactiveToggle) {
+    autoRemoveInactiveToggle.checked = !!state.autoRemoveInactiveParticipants;
+    autoRemoveInactiveToggle.addEventListener('change', () => {
+      state.autoRemoveInactiveParticipants = !!autoRemoveInactiveToggle.checked;
+      saveState();
+    });
   }
 
   /* ---------- Экспорт / импорт данных в отдельный файл ---------- */
@@ -2746,35 +2766,29 @@ function startAzrobotApp(){
   }
 
   function addParticipant(name){
-    name = name.trim();
+    name = String(name || '').trim();
     if(!name || isBlacklisted(name)) return false;
 
-    const key = name.toLowerCase();
-    const wasInactive = !!(state.inactiveMarks && state.inactiveMarks[key]);
-
-    // Неактивность никогда не создаёт кулдаун. Если человек снова написал "+",
-    // он возвращается в список сразу, а старая метка неактивности снимается.
-    // Настоящий кулдаун — только после победы в прокачке.
+    // Неактивность не является кулдауном: после нового "+" человек
+    // сразу может вернуться в общий пул. Кулдаун победителя прокачки
+    // остаётся отдельным ограничением.
     if(isProkachkaBlocked(name)) return false;
-
     if(isParticipant(name)) {
-      const existing = state.participants.find(p => p.name.toLowerCase() === key);
-      if (existing) existing.lastActive = Date.now();
-      if (wasInactive) delete state.inactiveMarks[key];
-      saveState();
-      renderParticipants();
-      refreshInactiveChatBadges();
+      touchParticipantActivity(name);
+      if (state.inactiveMarks && state.inactiveMarks[name.toLowerCase()]) {
+        delete state.inactiveMarks[name.toLowerCase()];
+        saveState();
+      }
       return false;
     }
 
     state.participants.push({name, lastActive: Date.now()});
-    if (wasInactive) {
-      delete state.inactiveMarks[key];
+    if (state.inactiveMarks && state.inactiveMarks[name.toLowerCase()]) {
+      delete state.inactiveMarks[name.toLowerCase()]; // повторный "+" снимает метку неактивности
     }
     saveState();
     renderParticipants();
     spawnJoinBubble();
-    refreshInactiveChatBadges();
     return true;
   }
 
@@ -2919,8 +2933,9 @@ function startAzrobotApp(){
   setInterval(cleanExpiredInactiveMarks, 60000);
 
   function removeInactiveParticipants(){
-    // Автовыкидывание можно полностью отключить в настройках.
-    if (state.autoRemoveInactiveParticipants !== true) return;
+    // По умолчанию автовыброс выключен. Если включить его в настройках,
+    // применяется прежняя логика таймера для общего пула и пула батла.
+    if (!state.autoRemoveInactiveParticipants) return;
 
     const limitMin = state.participantInactivityMinutes || 20;
     const limitMs = limitMin * 60 * 1000;
@@ -4029,7 +4044,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "SKINITY"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -5139,39 +5154,6 @@ function startAzrobotApp(){
     timerEndSounds.forEach(snd => snd.volume = value / 100);
     try { localStorage.setItem('timerEndVolume', String(value)); } catch(e) {}
   };
-
-  // Автовыкидывание участников за неактивность. Настройка хранится в общем state.
-  const autoRemoveInactiveToggle = document.getElementById('autoRemoveInactiveToggle');
-  const autoRemoveInactiveTrack = document.getElementById('autoRemoveInactiveTrack');
-  const autoRemoveInactiveKnob = document.getElementById('autoRemoveInactiveKnob');
-  const autoRemoveInactiveStatus = document.getElementById('autoRemoveInactiveStatus');
-
-  function renderAutoRemoveInactiveSetting(){
-    if (!autoRemoveInactiveToggle) return;
-    const enabled = state.autoRemoveInactiveParticipants === true;
-    autoRemoveInactiveToggle.checked = enabled;
-    if (autoRemoveInactiveTrack) {
-      autoRemoveInactiveTrack.style.background = enabled ? 'var(--accent)' : '#26351b';
-      autoRemoveInactiveTrack.style.borderColor = enabled ? 'var(--accent)' : 'var(--line)';
-    }
-    if (autoRemoveInactiveKnob) {
-      autoRemoveInactiveKnob.style.left = enabled ? '25px' : '3px';
-      autoRemoveInactiveKnob.style.background = enabled ? '#10160b' : '#8a9878';
-    }
-    if (autoRemoveInactiveStatus) {
-      autoRemoveInactiveStatus.textContent = enabled ? 'Включено — после таймаута неактивные участники будут удаляться.' : 'Выключено — участники остаются в списке.';
-      autoRemoveInactiveStatus.style.color = enabled ? 'var(--accent-soft)' : 'var(--text-dim)';
-    }
-  }
-
-  if (autoRemoveInactiveToggle) {
-    autoRemoveInactiveToggle.addEventListener('change', () => {
-      state.autoRemoveInactiveParticipants = autoRemoveInactiveToggle.checked;
-      saveState();
-      renderAutoRemoveInactiveSetting();
-    });
-  }
-  renderAutoRemoveInactiveSetting();
   function renderTimer(){
     const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
     timerDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
@@ -5906,7 +5888,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","DOG","SKINITY"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
