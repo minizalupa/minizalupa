@@ -4888,7 +4888,19 @@ function startAzrobotApp(){
   document.getElementById('analysisMessageBtn').onclick = () => {
     const user = state.lastWinner ? String(state.lastWinner).trim() : '';
     if (!user) return;
-    requestWinnerMessages(user);
+
+    // Открываем нативную Twitch-карточку зрителя с его сообщениями,
+    // как при команде/открытии viewer card в Twitch.
+    const channel = String(TARGET_CHANNEL || '').trim() || 'azrael_the_legend';
+    const url = `https://www.twitch.tv/popout/${encodeURIComponent(channel)}/viewercard/${encodeURIComponent(user)}?popout=`;
+    const popup = window.open(
+      url,
+      'twitchViewerCard',
+      'width=525,height=824,resizable=yes,scrollbars=yes'
+    );
+    if (popup) {
+      try { popup.focus(); } catch (e) {}
+    }
   };
 
   document.getElementById('analysisSubscriptionBtn').onclick = () => {
