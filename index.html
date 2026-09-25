@@ -2116,6 +2116,11 @@ function startAzrobotApp(){
     triggerConfetti();
     registerProkachkaWinner(winnerName);
     recordWinner(winnerName);
+    // Любой обычный режим прокачки обязан попадать в «Последние 3 победителя».
+    // force=true игнорирует устаревший флаг isBattleDraw, который мог остаться
+    // после предыдущего режима батла. Батлы сюда не попадают, потому что используют
+    // отдельную функцию announceBattleWinner().
+    recordDrawnWinner(winnerName, false, true);
     checkWinnerForModAlert(winnerName);
     if (winnerName && winnerName !== '—') {
       sendChatMessage(`Поздравляем, победитель розыгрыша —> ${winnerName} | На отписку в чат 15 секунд!`);
@@ -2377,15 +2382,21 @@ function startAzrobotApp(){
   setInterval(cleanExpiredProkachkaCooldowns, 60000);
 
   /* ---------- Последние победители (независимо от вывода) ---------- */
-  function recordDrawnWinner(name, fromBattle = false) {
-    // В "Последние 3 победителя" попадают победители всех режимов прокачки,
-    // кроме участников/победителей батла.
-    if (fromBattle || isBattleDraw) return;
+  function recordDrawnWinner(name, fromBattle = false, force = false) {
+    // В "Последние 3 победителя" попадают победители всех обычных режимов
+    // прокачки, но никогда не попадают победители батла.
+    if (fromBattle) return;
+    if (!force && isBattleDraw) return;
 
     if (!name) return;
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
-    state.lastDrawnWinners.unshift(name);
-    if (state.lastDrawnWinners.length > 20) state.lastDrawnWinners.length = 20;
+    const key = String(name).trim().toLowerCase();
+    // Защита от двойной записи одного и того же выпадения, если старый режим
+    // ещё вызовет recordDrawnWinner() дополнительно после announceWinner().
+    if (String(state.lastDrawnWinners[0] || '').trim().toLowerCase() !== key) {
+      state.lastDrawnWinners.unshift(String(name));
+      if (state.lastDrawnWinners.length > 20) state.lastDrawnWinners.length = 20;
+    }
     saveState();
     if (typeof renderLastWinners === 'function') renderLastWinners();
   }
@@ -3158,7 +3169,6 @@ function startAzrobotApp(){
     const chatBoxEl = document.getElementById(`boxChatLog${index}`);
 
     announceBattleWinner(newWinner);
-    recordDrawnWinner(newWinner);
     startMultiTimer(`box_${index}`, newWinner, numEl, statusEl, chatBoxEl);
   }
 
@@ -3198,7 +3208,6 @@ function startAzrobotApp(){
       const chatBoxEl = document.getElementById(`boxChatLog${i}`);
 
       announceBattleWinner(winner);
-      recordDrawnWinner(winner);
       startMultiTimer(`box_${i}`, winner, numEl, statusEl, chatBoxEl);
     };
 
@@ -3313,7 +3322,6 @@ function startAzrobotApp(){
         const chatBoxEl = document.getElementById(`slotChatLog${suffix}`);
 
         announceBattleWinner(targetWinner);
-        recordDrawnWinner(targetWinner);
         startMultiTimer(`slot_${suffix}`, targetWinner, numEl, statusEl, chatBoxEl);
 
         if (onComplete) onComplete();
@@ -3541,7 +3549,6 @@ function startAzrobotApp(){
           row.style.background = 'rgba(190,242,100,.12)';
           slotMachineResult.textContent = `🏆 ${name} — последний, идёт на прокачку!`;
           announceWinner(name);
-          recordDrawnWinner(name);
 
           const smTimerBox = document.getElementById('slotMachineTimerBox');
           const smNumEl = document.getElementById('slotMachineTimerNum');
@@ -3728,7 +3735,6 @@ function startAzrobotApp(){
         state.lastWinner = winner;
         lastWinnerSource = 'wheel';
         saveState();
-        recordDrawnWinner(winner);
         modalWinner.textContent = winner;
         wUser.value = winner;
         modalBg.classList.add('show');
@@ -4615,7 +4621,6 @@ function startAzrobotApp(){
     lastWinnerSource = 'manual';
     
     saveState();
-    recordDrawnWinner(winner);
     renderParticipants();
     
     modalWinner.textContent = winner;
@@ -5342,7 +5347,6 @@ function startAzrobotApp(){
       state.lastWinner = winner;
       lastWinnerSource = 'race';
       saveState();
-      recordDrawnWinner(winner);
       renderParticipants();
       modalWinner.textContent = winner;
       wUser.value = winner;
