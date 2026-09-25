@@ -1927,6 +1927,17 @@
     <span id="timerVolumeValue" style="width:38px;text-align:right;">70%</span>
   </div>
   <div class="az-ss-divider"></div>
+  <div class="az-ss-title">Автовыброс за неактивность</div>
+  <div class="az-ss-volume" style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
+    <span>⏱️</span>
+    <input id="participantInactivitySlider" type="range" min="0" max="120" value="0" step="5"
+      aria-label="Автовыброс за неактивность" style="flex:1;min-width:110px;accent-color:var(--accent);cursor:pointer;">
+    <span id="participantInactivityValue" style="width:78px;text-align:right;">ВЫКЛ</span>
+  </div>
+  <div style="font-size:9px;color:var(--text-dim);line-height:1.3;padding:0 2px 5px;">
+    0 = не выкидывать. Иначе участник удаляется после указанного числа минут без сообщений.
+  </div>
+  <div class="az-ss-divider"></div>
   <div class="az-ss-title">Разрешение экрана</div>
   <button type="button" data-az-res="normal">Обычный <span class="az-ss-check">✓</span></button>
   <button type="button" data-az-res="2k">2K <span class="az-ss-check">✓</span></button>
@@ -2139,6 +2150,7 @@ function startAzrobotApp(){
     isWithdrawsCollapsed: false,
     lastDrawnWinners: [],
     participantInactivityMinutes: 20,
+    participantInactivityEnabled: false,
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
     prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
@@ -2158,6 +2170,7 @@ function startAzrobotApp(){
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
     if (!Array.isArray(state.deposits)) state.deposits = [];
     if (!state.participantInactivityMinutes) state.participantInactivityMinutes = 20;
+    state.participantInactivityEnabled = state.participantInactivityEnabled === true;
     if (!state.inactiveMarks || typeof state.inactiveMarks !== 'object') state.inactiveMarks = {};
     if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
 
@@ -2363,8 +2376,10 @@ function startAzrobotApp(){
   setInterval(cleanExpiredProkachkaCooldowns, 60000);
 
   /* ---------- Последние победители (независимо от вывода) ---------- */
-  function recordDrawnWinner(name) {
-  if (isBattleDraw) return;
+  function recordDrawnWinner(name, fromBattle = false) {
+    // В "Последние 3 победителя" попадают победители всех режимов прокачки,
+    // кроме участников/победителей батла.
+    if (fromBattle || isBattleDraw) return;
 
     if (!name) return;
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
@@ -2881,7 +2896,9 @@ function startAzrobotApp(){
   setInterval(cleanExpiredInactiveMarks, 60000);
 
   function removeInactiveParticipants(){
-    const limitMin = state.participantInactivityMinutes || 20;
+    // Автовыброс полностью отключён по умолчанию и пока ползунок стоит на "ВЫКЛ".
+    if (state.participantInactivityEnabled !== true || !(Number(state.participantInactivityMinutes) > 0)) return;
+    const limitMin = Number(state.participantInactivityMinutes);
     const limitMs = limitMin * 60 * 1000;
     const now = Date.now();
 
@@ -4033,7 +4050,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "SKINITY"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -4138,6 +4155,8 @@ function startAzrobotApp(){
       lastWinnersList.appendChild(row);
     });
   }
+
+  window.renderLastWinners = renderLastWinners;
 
   document.getElementById('addWithdrawBtn').onclick = () => {
     const site = document.getElementById('wSite').value;
@@ -5106,6 +5125,28 @@ function startAzrobotApp(){
     timerEndSounds.forEach(snd => snd.volume = value / 100);
     try { localStorage.setItem('timerEndVolume', String(value)); } catch(e) {}
   };
+
+  // Настройка автовыброса неактивных участников.
+  // 0 = ВЫКЛ. Значение сохраняется вместе с состоянием бота.
+  const inactivitySlider = document.getElementById('participantInactivitySlider');
+  const inactivityValue = document.getElementById('participantInactivityValue');
+  function renderInactivitySetting(){
+    if(!inactivitySlider || !inactivityValue) return;
+    const enabled = state.participantInactivityEnabled === true && Number(state.participantInactivityMinutes) > 0;
+    const minutes = Number(state.participantInactivityMinutes) || 0;
+    inactivitySlider.value = enabled ? String(minutes) : '0';
+    inactivityValue.textContent = enabled ? `${minutes} мин` : 'ВЫКЛ';
+  }
+  if(inactivitySlider){
+    renderInactivitySetting();
+    inactivitySlider.addEventListener('input', function(){
+      const minutes = Number(this.value) || 0;
+      state.participantInactivityEnabled = minutes > 0;
+      state.participantInactivityMinutes = minutes || 20;
+      renderInactivitySetting();
+      saveState();
+    });
+  }
   function renderTimer(){
     const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
     timerDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
@@ -6183,6 +6224,9 @@ function startAzrobotApp(){
     st.lastDrawnWinners=st.lastDrawnWinners.slice(0,20);
     st.lastWinner=String(name);
     saveState(st); updateCount();
+    try{
+      if(typeof window.renderLastWinners === 'function') window.renderLastWinners();
+    }catch(e){}
     return st;
   }
   function releaseWinner(name){
