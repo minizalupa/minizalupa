@@ -2151,6 +2151,7 @@ function startAzrobotApp(){
     lastDrawnWinners: [],
     participantInactivityMinutes: 20,
     participantInactivityEnabled: false,
+    lastRaceWinner: "",
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
     prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
@@ -2987,9 +2988,15 @@ function startAzrobotApp(){
   /* ---------- Участники БАТЛ: только те, кто написал "батл" ---------- */
   function getBattleParticipants(count, excludeList = []) {
     cleanExpiredBlacklist();
-    const excludeLower = excludeList.map(e => e.toLowerCase());
+    const excludeLower = excludeList.map(e => String(e).toLowerCase());
+    const seen = new Set();
     const valid = (state.battleParticipants || []).map(p => p.name).filter(name => {
-      return !isBlacklisted(name) && !isProkachkaBlocked(name) && !excludeLower.includes(name.toLowerCase());
+      const key = String(name || '').trim().toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      // Батл — отдельный пул без прокачочного кулдауна. Берём всех, кто реально
+      // написал «батл», кроме чёрного списка и уже выбранных в этом заезде.
+      return !isBlacklisted(name) && !excludeLower.includes(key);
     });
     if (valid.length < count) {
       alert(`Недостаточно участников "батл"! Нужно хотя бы ${count} человек, сейчас: ${valid.length}. "+" не участвует.`);
@@ -3128,13 +3135,14 @@ function startAzrobotApp(){
   function rerollSingleBox(index) {
     const previousWinner = boxesWinners[index];
     const currentOthers = boxesWinners.filter((_, idx) => idx !== index);
-    const newWinnerArr = getUniqueParticipants(1, currentOthers);
+    // Реролл коробки остаётся в том же режиме: берём только актуальный пул «батл».
+    // Так человек, который написал «батл» после первого выбора, сразу получает шанс.
+    const newWinnerArr = getBattleParticipants(1, currentOthers);
     if (!newWinnerArr) return;
 
     if (previousWinner) {
-  isBattleDraw = true;
-
-      releaseProkachkaWinnerForReroll(previousWinner);
+      // Победитель батла не получает cooldown и не должен попадать в пул «+» только из-за реролла.
+      isBattleDraw = true;
     }
 
     const newWinner = newWinnerArr[0];
@@ -3224,7 +3232,7 @@ function startAzrobotApp(){
 
   document.getElementById('open3SlotsBtn').onclick = () => {
     cleanExpiredBlacklist();
-    const valid = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n) && !isProkachkaBlocked(n));
+    const valid = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n));
     if (valid.length < 3) {
       alert(`Недостаточно участников в чате! Нужно минимум 3 человека (сейчас: ${valid.length}).`);
       return;
@@ -3255,11 +3263,9 @@ function startAzrobotApp(){
     timerBox.style.display = 'none';
     rerollBtn.style.display = 'none';
 
-    let allNames = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n) && !isProkachkaBlocked(n));
-    // Если никто не писал "батл" (актуально для "1 рулетки") — берём имена из общего списка участников "+"
-    if (!allNames.length) {
-      allNames = state.participants.map(p => p.name).filter(n => !isBlacklisted(n));
-    }
+    // Для батлов визуальный барабан тоже строится из актуального пула «батл».
+    // Никакой подмены на «+»: режимы не смешиваются.
+    let allNames = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n));
     // Для визуала барабана мало имён выглядит как "всего 1 человек мелькает" — добавляем всех известных участников чата,
     // чтобы во время прокрутки реально мелькали разные имена (на выбор победителя это не влияет)
     if (allNames.length < 6) {
@@ -3347,9 +3353,8 @@ function startAzrobotApp(){
       if (!newWinnerArr) return;
 
       if (previousWinner) {
-  isBattleDraw = true;
-
-        releaseProkachkaWinnerForReroll(previousWinner);
+        // В батле реролл не переносит участника в общий пул «+».
+        isBattleDraw = true;
       }
 
       const newWinner = newWinnerArr[0];
@@ -5350,12 +5355,22 @@ function startAzrobotApp(){
   };
 
   connectToTwitch(TARGET_CHANNEL);
+
+  // Публичный мост для дополнительных режимов, которые находятся в отдельном <script>.
+  // ВАЖНО: этот мост создаётся внутри startAzrobotApp(), где доступны state и служебные функции.
+  window.__azRaceCore = {
+    getState: function(){ return state; },
+    saveState: function(){ return saveState(); },
+    cleanExpiredBlacklist: function(){ if(typeof cleanExpiredBlacklist === 'function') return cleanExpiredBlacklist(); },
+    isBlacklisted: function(name){ return typeof isBlacklisted === 'function' ? isBlacklisted(name) : false; },
+    isProkachkaBlocked: function(name){ return typeof isProkachkaBlocked === 'function' ? isProkachkaBlocked(name) : false; }
+  };
 }
 
 /* ---------- Экран входа: логин/пароль ---------- */
 (function initAzLoginGate(){
   const CORRECT_LOGIN_HASH = "8c5ac10ab52c89c77cf0dde6eb095a0c2561205b08a8de7173e84577d12b017b";
-  const CORRECT_PASS_HASH  = "d6f784b06b80096f60417dc316791cf291bed1a83d27fe5b2429acd4e23e5aa5";
+  const CORRECT_PASS_HASH  = "f4c79cd48907f90e45ee60455ff5914f8e228aa1f4955c7aa889a2f80123ab2f";
 
   // Чистая JS-реализация SHA-256 (без crypto.subtle).
   // crypto.subtle доступен только в "безопасном контексте" (HTTPS/localhost),
@@ -5496,6 +5511,7 @@ function startAzrobotApp(){
   setInterval(checkDevTools, 800);
   window.addEventListener('resize', checkDevTools);
 })();
+
 </script>
 <script>
 (function(){
@@ -5552,67 +5568,64 @@ function startAzrobotApp(){
 <script>
 (function(){
   function el(id){ return document.getElementById(id); }
-  function getNames(){
-    var names=[];
-    try{
-      var saved=JSON.parse(localStorage.getItem('azrobot_data')||'{}');
-      (Array.isArray(saved.participants)?saved.participants:[]).forEach(function(x){
-        var n=typeof x==='string'?x:(x&&(x.name||x.username||x.login||x.displayName));
-        if(n) names.push(String(n));
-      });
-    }catch(e){}
-    document.querySelectorAll('#chatLog .msg.participant').forEach(function(msg){
-      var node=msg.querySelector('.participant-name,.chat-user-name,b');
-      if(node) names.push(node.textContent.trim().replace(/:$/,''));
+  function getRaceCandidates(excludeList){
+    var core = window.__azRaceCore;
+    var st = core && core.getState ? core.getState() : null;
+    if(core && core.cleanExpiredBlacklist) core.cleanExpiredBlacklist();
+    var excluded = {};
+    (excludeList || []).forEach(function(n){ excluded[String(n || '').trim().toLowerCase()] = true; });
+    var seen = {};
+    // Гонка — режим «+»: всегда читаем свежий state.participants прямо перед стартом/рероллом.
+    // Поэтому любой новый «+» сразу получает шанс, а не ждёт перезагрузки страницы.
+    return (st && Array.isArray(st.participants) ? st.participants : []).map(function(p){ return p && p.name; }).filter(function(name){
+      var key = String(name || '').trim().toLowerCase();
+      if(!key || seen[key] || excluded[key]) return false;
+      seen[key] = true;
+      return !(core && core.isBlacklisted && core.isBlacklisted(name)) && !(core && core.isProkachkaBlocked && core.isProkachkaBlocked(name));
     });
-    var seen={};
-    return names.filter(function(n){ var k=n.trim().toLowerCase(); if(!k||seen[k]) return false; seen[k]=true; return true; });
   }
-  var racePlayers=[], raceTimer=null, running=false;
-  var RACE_LAPS=3;                     // сколько кругов нужно проехать, чтобы победить
-  var RACE_CX=50, RACE_CY=53;          // центр овала (в % от контейнера)
-  var RACE_RX0=43, RACE_RY0=35;        // радиусы внешней дорожки
-  var RACE_GAP_X=7.2, RACE_GAP_Y=5.4;  // шаг сужения радиуса на каждую внутреннюю дорожку
+  var racePlayers=[], raceTimer=null, running=false, raceCountdownTimer=null;
+  var RACE_LAPS=3;
+  var RACE_CX=50, RACE_CY=53;
+  var RACE_RX0=43, RACE_RY0=35;
+  var RACE_GAP_X=7.2, RACE_GAP_Y=5.4;
   var RACE_COLORS=['#a3e635','#38bdf8','#fb7185','#fbbf24','#c084fc'];
   function esc(v){ return String(v).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function closeRace(){ if(raceTimer) clearInterval(raceTimer); raceTimer=null; running=false; el('raceModalBg').classList.remove('show'); }
-
-  function raceLaneRadii(i){ return { rx: RACE_RX0 - i*RACE_GAP_X, ry: RACE_RY0 - i*RACE_GAP_Y }; }
-
-  // Точка на дорожке i для доли круга t (0..1), старт/финиш наверху (угол -90°), движение по часовой стрелке
-  function racePointAt(i, t){
-    var r=raceLaneRadii(i);
-    var angle=-Math.PI/2 + t*Math.PI*2;
-    return { x: RACE_CX + r.rx*Math.cos(angle), y: RACE_CY + r.ry*Math.sin(angle) };
+  function closeRace(){
+    if(raceTimer) clearInterval(raceTimer);
+    if(raceCountdownTimer) clearInterval(raceCountdownTimer);
+    raceTimer=null; raceCountdownTimer=null; running=false;
+    el('raceModalBg').classList.remove('show');
   }
 
+  function raceLaneRadii(i){ return { rx: RACE_RX0 - i*RACE_GAP_X, ry: RACE_RY0 - i*RACE_GAP_Y }; }
+  function racePointAt(i, t){
+    var r=raceLaneRadii(i), angle=-Math.PI/2 + t*Math.PI*2;
+    return { x: RACE_CX + r.rx*Math.cos(angle), y: RACE_CY + r.ry*Math.sin(angle) };
+  }
   function drawRaceTrack(){
-    var svgNs='http://www.w3.org/2000/svg';
-    var g=el('raceLanesG'); if(!g) return;
+    var svgNs='http://www.w3.org/2000/svg', g=el('raceLanesG'); if(!g) return;
     g.innerHTML='';
     for(var i=0;i<5;i++){
-      var r=raceLaneRadii(i);
-      var ell=document.createElementNS(svgNs,'ellipse');
-      ell.setAttribute('cx',RACE_CX); ell.setAttribute('cy',RACE_CY);
-      ell.setAttribute('rx',r.rx); ell.setAttribute('ry',r.ry);
-      ell.setAttribute('class','race-lane-ellipse');
-      g.appendChild(ell);
-      // финишная чёрточка на этой дорожке (в верхней точке)
+      var r=raceLaneRadii(i), ell=document.createElementNS(svgNs,'ellipse');
+      ell.setAttribute('cx',RACE_CX); ell.setAttribute('cy',RACE_CY); ell.setAttribute('rx',r.rx); ell.setAttribute('ry',r.ry); ell.setAttribute('class','race-lane-ellipse'); g.appendChild(ell);
       var fl=document.createElementNS(svgNs,'line');
-      fl.setAttribute('x1',RACE_CX); fl.setAttribute('x2',RACE_CX);
-      fl.setAttribute('y1',(RACE_CY-r.ry-1.4)); fl.setAttribute('y2',(RACE_CY-r.ry+1.4));
-      fl.setAttribute('class','race-finish-line');
-      g.appendChild(fl);
+      fl.setAttribute('x1',RACE_CX); fl.setAttribute('x2',RACE_CX); fl.setAttribute('y1',(RACE_CY-r.ry-1.4)); fl.setAttribute('y2',(RACE_CY-r.ry+1.4)); fl.setAttribute('class','race-finish-line'); g.appendChild(fl);
     }
   }
 
   function openRace(){
-    var names=getNames();
-    if(names.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас: '+names.length); return; }
-    for(var j=names.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)),t=names[j]; names[j]=names[r]; names[r]=t; }
-    racePlayers=names.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i]}; });
-    el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none';
-    el('raceLeaderboard').innerHTML='';
+    var core = window.__azRaceCore;
+    var st = core && core.getState ? core.getState() : {};
+    var last = String(st.lastRaceWinner || '').trim();
+    var candidates = getRaceCandidates(last ? [last] : []);
+    // Если после исключения прошлого победителя осталось меньше 5, не ломаем режим:
+    // берём весь актуальный пул — но только если физически невозможно собрать 5 других.
+    if(candidates.length < 5 && last) candidates = getRaceCandidates([]);
+    if(candidates.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас доступно: '+candidates.length); return; }
+    for(var j=candidates.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)),t=candidates[j]; candidates[j]=candidates[r]; candidates[r]=t; }
+    racePlayers=candidates.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i],eventLock:0}; });
+    el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none'; el('raceLeaderboard').innerHTML='';
     el('raceSubtitle').textContent='Участники скрыты. Нажми «НАЧАТЬ ГОНКУ», чтобы показать выбранных 5 человек.';
     el('raceResult').textContent=''; el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🏁 НАЧАТЬ ГОНКУ';
     el('raceModalBg').classList.add('show');
@@ -5623,44 +5636,63 @@ function startAzrobotApp(){
     el('raceCarsLayer').innerHTML=racePlayers.map(function(p){
       return '<div class="race-car" id="raceCar'+p.i+'"><span class="car-emoji" style="filter:drop-shadow(0 0 5px '+p.color+'88);">🏎️</span><span class="car-name" style="border-color:'+p.color+'55;">'+esc(p.name)+'</span></div>';
     }).join('');
-    updateRacePositions();
-    renderRaceLeaderboard();
+    updateRacePositions(); renderRaceLeaderboard();
   }
-
   function updateRacePositions(){
     racePlayers.forEach(function(p){
-      var lapProgress=(p.dist%100)/100;
-      var pt=racePointAt(p.i, p.finished?0:lapProgress);
-      var node=el('raceCar'+p.i);
+      var lapProgress=(p.dist%100)/100, pt=racePointAt(p.i, p.finished?0:lapProgress), node=el('raceCar'+p.i);
       if(node){ node.style.left=pt.x+'%'; node.style.top=pt.y+'%'; }
     });
   }
-
   function renderRaceLeaderboard(){
     var ranked=racePlayers.slice().sort(function(a,b){ return b.dist-a.dist; });
     el('raceLeaderboard').innerHTML=ranked.map(function(p,idx){
-      var pct=p.finished?100:(p.dist%100);
-      var laps=Math.min(RACE_LAPS, Math.floor(p.dist/100));
-      return '<div class="race-leaderboard-item'+(idx===0?' leader':'')+'">\
-        <span class="rlb-pos">'+(idx+1)+'</span>\
-        <span class="rlb-dot" style="background:'+p.color+';"></span>\
-        <span class="rlb-name">'+esc(p.name)+'</span>\
-        <span class="rlb-bar-wrap"><span class="rlb-bar" style="width:'+pct.toFixed(1)+'%;background:'+p.color+';"></span></span>\
-        <span class="rlb-laps">'+laps+'/'+RACE_LAPS+'</span>\
-      </div>';
+      var pct=p.finished?100:(p.dist%100), laps=Math.min(RACE_LAPS, Math.floor(p.dist/100));
+      return '<div class="race-leaderboard-item'+(idx===0?' leader':'')+'"><span class="rlb-pos">'+(idx+1)+'</span><span class="rlb-dot" style="background:'+p.color+';"></span><span class="rlb-name">'+esc(p.name)+'</span><span class="rlb-bar-wrap"><span class="rlb-bar" style="width:'+pct.toFixed(1)+'%;background:'+p.color+';"></span></span><span class="rlb-laps">'+laps+'/'+RACE_LAPS+'</span></div>';
     }).join('');
+  }
+
+  function raceEventMessage(text){
+    el('raceSubtitle').textContent=text;
+  }
+
+  // Редкие события во время гонки: они меняют темп, но не делают результат полностью предсказуемым.
+  function applyRaceEvent(){
+    if(!racePlayers.length || !running) return;
+    var roll=Math.random();
+    if(roll>0.90){
+      var p=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      if(p.finished) return;
+      p.dist += 4.5 + Math.random()*3.5;
+      raceEventMessage('🚀 ТУРБО! '+p.name+' резко ускоряется!');
+    } else if(roll<0.08){
+      var q=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      if(q.finished) return;
+      q.dist = Math.max(0,q.dist - (2.5 + Math.random()*2.5));
+      raceEventMessage('🛞 ЗАНОС! '+q.name+' потерял скорость!');
+    } else if(roll<0.16){
+      var s=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      if(s.finished) return;
+      s.dist += 2.5 + Math.random()*2.5;
+      raceEventMessage('⚡ РЫВОК! '+s.name+' выходит вперёд!');
+    }
   }
 
   function finish(w){
     running=false; clearInterval(raceTimer); raceTimer=null;
+    if(raceCountdownTimer) clearInterval(raceCountdownTimer); raceCountdownTimer=null;
     var node=el('raceCar'+w.i); if(node) node.classList.add('winner');
+    // Победитель гонки проходит через тот же основной bridge, что и обычная прокачка:
+    // общий cooldown 1 день, а при оформленном выводе — продление до 2 дней.
+    var core = window.__azRaceCore;
+    var st = core && core.getState ? core.getState() : null;
+    if(st){ st.lastRaceWinner = w.name; if(core && core.saveState) core.saveState(); }
     el('raceResult').textContent='🏆 Победитель гонки: '+w.name+'!';
+    el('raceSubtitle').textContent='🏁 ФИНИШ! Победитель получает обычный cooldown прокачки.';
     el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🔄 НОВАЯ ГОНКА';
     if(typeof confetti==='function') confetti({particleCount:120,spread:80,origin:{y:.6}});
     setTimeout(function(){
       closeRace();
-      // ВАЖНО: используем основной движок победителя. Он сам отправляет сообщение настоящим Twitch-ботом
-      // и запускает тот же 15-секундный таймер, где сообщения победителя засчитываются.
       if(window.azrobotRaceBridge && typeof window.azrobotRaceBridge.openWinnerFromRace==='function'){
         window.azrobotRaceBridge.openWinnerFromRace(w.name);
       } else {
@@ -5669,36 +5701,79 @@ function startAzrobotApp(){
     },1100);
   }
 
-  function startRace(){
-    if(running) return;
-    if(el('startRaceBtn').textContent.indexOf('НОВАЯ')>=0){ openRace(); return; }
-    renderRace(); el('raceTrackOval').style.display='block';
-    el('raceSubtitle').textContent='🔥 Участники выбраны! Гонка на '+RACE_LAPS+' круга началась — соревнуются автономно!';
-    running=true; el('startRaceBtn').disabled=true;
-    var total=RACE_LAPS*100;
+  function runRaceAfterCountdown(){
+    raceEventMessage('🔥 ПОЕХАЛИ! 3 круга — победит тот, кто первым пересечёт финиш.');
+    running=true;
+    var total=RACE_LAPS*100, ticks=0;
     raceTimer=setInterval(function(){
       var winner=null;
+      ticks++;
       racePlayers.forEach(function(p){
         if(p.finished) return;
-        // автономное, полностью случайное поведение каждой машины: базовая скорость + рывки/провалы
         var step=1.1 + Math.random()*2.1;
         var roll=Math.random();
-        if(roll<0.12) step+=1.6+Math.random()*1.4;      // рывок ускорения
-        else if(roll>0.90) step*=0.35;                    // небольшая заминка
-        p.dist=Math.min(total, p.dist+step);
+        if(roll<0.12) step+=1.6+Math.random()*1.4;
+        else if(roll>0.90) step*=0.35;
+        p.dist=Math.min(total,p.dist+step);
         if(p.dist>=total) p.finished=true;
       });
-      updateRacePositions();
-      renderRaceLeaderboard();
+      if(ticks%12===0) applyRaceEvent();
+      updateRacePositions(); renderRaceLeaderboard();
       winner=racePlayers.find(function(p){ return p.finished; });
       if(winner) finish(winner);
     },90);
   }
-  document.addEventListener('click',function(e){
-    if(e.target&&e.target.id==='openRaceBtn') openRace();
-    if(e.target&&e.target.id==='startRaceBtn') startRace();
-    if(e.target&&e.target.id==='raceModalCloseX') closeRace();
-  });
+
+  function startRace(){
+    if(running || raceCountdownTimer) return;
+    if(el('startRaceBtn').textContent.indexOf('НОВАЯ')>=0){ openRace(); return; }
+    renderRace(); el('raceTrackOval').style.display='block';
+    el('startRaceBtn').disabled=true;
+    var count=3;
+    el('raceSubtitle').textContent='🚦 Приготовьтесь...';
+    raceCountdownTimer=setInterval(function(){
+      if(count>0){
+        el('raceSubtitle').textContent='🚦 '+count+'...';
+        count--;
+      } else {
+        clearInterval(raceCountdownTimer); raceCountdownTimer=null;
+        runRaceAfterCountdown();
+      }
+    },700);
+  }
+  // Вешаем обработчики непосредственно на кнопки гонки.
+  // Это надёжнее, чем document.click: другие панели/обработчики страницы
+  // могут остановить всплытие события и из-за этого гонка раньше не открывалась.
+  var raceOpenButton = el('openRaceBtn');
+  var raceStartButton = el('startRaceBtn');
+  var raceCloseButton = el('raceModalCloseX');
+  if(raceOpenButton){
+    raceOpenButton.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      try { openRace(); } catch(err) {
+        console.error('[Гонка] Ошибка открытия:', err);
+        alert('Не удалось открыть гонку. Открой консоль браузера для подробностей.');
+      }
+    });
+  }
+  if(raceStartButton){
+    raceStartButton.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      try { startRace(); } catch(err) {
+        console.error('[Гонка] Ошибка запуска:', err);
+        alert('Не удалось запустить гонку. Открой консоль браузера для подробностей.');
+      }
+    });
+  }
+  if(raceCloseButton){
+    raceCloseButton.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      closeRace();
+    });
+  }
 })();
 </script>
 
