@@ -2996,12 +2996,56 @@ function startAzrobotApp(){
     };
   })();
 
+  /* ---------- Честный случайный выбор для всех режимов ---------- */
+  // Fisher-Yates: каждый допустимый участник имеет одинаковую вероятность
+  // оказаться на любой позиции. Не используем sort(() => Math.random()-0.5),
+  // потому что такой способ не даёт равномерного распределения.
+  function fairRandomIndex(length) {
+    if (length <= 1) return 0;
+    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+      const max = 0x100000000;
+      const limit = max - (max % length);
+      const buf = new Uint32Array(1);
+      let value;
+      do {
+        window.crypto.getRandomValues(buf);
+        value = buf[0];
+      } while (value >= limit);
+      return value % length;
+    }
+    return Math.floor(Math.random() * length);
+  }
+
+  function fairShuffle(list) {
+    const arr = Array.isArray(list) ? list.slice() : [];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = fairRandomIndex(i + 1);
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function uniqueNames(names) {
+    const out = [];
+    const seen = new Set();
+    (Array.isArray(names) ? names : []).forEach(name => {
+      const clean = String(name || '').trim();
+      const key = clean.toLowerCase();
+      if (!clean || seen.has(key)) return;
+      seen.add(key);
+      out.push(clean);
+    });
+    return out;
+  }
+
   /* ---------- Участники БАТЛ: только те, кто написал "батл" ---------- */
   function getBattleParticipants(count, excludeList = []) {
     cleanExpiredBlacklist();
     const excludeLower = excludeList.map(e => String(e).toLowerCase());
     const seen = new Set();
-    const valid = (state.battleParticipants || []).map(p => p.name).filter(name => {
+    const valid = uniqueNames((state.battleParticipants || []).map(p => p.name)).filter(name => {
       const key = String(name || '').trim().toLowerCase();
       if (!key || seen.has(key)) return false;
       seen.add(key);
@@ -3013,23 +3057,22 @@ function startAzrobotApp(){
       alert(`Недостаточно участников "батл"! Нужно хотя бы ${count} человек, сейчас: ${valid.length}. "+" не участвует.`);
       return null;
     }
-    return [...valid].sort(() => Math.random() - 0.5).slice(0, count);
+    return fairShuffle(valid).slice(0, count);
   }
 
   /* ---------- Вспомогательный выбор N Уникальных Участников ---------- */
   function getUniqueParticipants(count, excludeList = []) {
     cleanExpiredBlacklist();
     const excludeLower = excludeList.map(e => e.toLowerCase());
-    const valid = state.participants
+    const valid = uniqueNames(state.participants
       .filter(p => !isBlacklisted(p.name) && !isProkachkaBlocked(p.name) && !excludeLower.includes(p.name.toLowerCase()))
-      .map(p => p.name);
+      .map(p => p.name));
 
     if (valid.length < count) {
       alert(`Недостаточно участников в чате! Нужно хотя бы ${count} человек, а сейчас доступно: ${valid.length}`);
       return null;
     }
-    const shuffled = [...valid].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    return fairShuffle(valid).slice(0, count);
   }
 
   /* ---------- МЕНЕДЖЕР ТАЙМЕРОВ И ЧАТА МНОГОПОЛЬЗОВАТЕЛЬСКИХ РЕЖИМОВ ---------- */
@@ -3387,7 +3430,6 @@ function startAzrobotApp(){
   let slot1Winner = "";
 
   function resetSlot1UI() {
-  isBattleDraw = true;
 
     clearMultiTimer('slot_Single');
     const box = document.getElementById('slotBoxSingle');
@@ -3423,7 +3465,7 @@ function startAzrobotApp(){
   };
 
   spin1SlotBtn.onclick = () => {
-  isBattleDraw = true;
+  isBattleDraw = false;
 
     if (isSlot1Spinning) return;
     const winners = getUniqueParticipants(1);
@@ -3440,7 +3482,7 @@ function startAzrobotApp(){
   };
 
   document.getElementById('rerollSlotSingle').onclick = () => {
-  isBattleDraw = true;
+  isBattleDraw = false;
 
     if (isSlot1Spinning) return;
     const previousWinner = slot1Winner;
@@ -3471,14 +3513,14 @@ function startAzrobotApp(){
 
   function getPlusParticipants(count) {
     cleanExpiredBlacklist();
-    const valid = state.participants
+    const valid = uniqueNames(state.participants
       .filter(p => !isBlacklisted(p.name) && !isProkachkaBlocked(p.name))
-      .map(p => p.name);
+      .map(p => p.name));
     if (valid.length < count) {
       alert(`Для слот-машины нужно минимум ${count} человек, написавших "+". Сейчас: ${valid.length}.`);
       return null;
     }
-    return [...valid].sort(() => Math.random() - 0.5).slice(0, count);
+    return fairShuffle(valid).slice(0, count);
   }
 
   function resetSlotMachineUI() {
@@ -3624,7 +3666,7 @@ function startAzrobotApp(){
         list.push(user);
       }
     }
-    return list;
+    return uniqueNames(list);
   }
 
   const sliceColors = ['#65a30d', '#a3e635', '#4d7c0f', '#bef264', '#3f6212', '#84cc16', '#365314', '#8bc926'];
@@ -3702,7 +3744,7 @@ function startAzrobotApp(){
     isSpinning = true;
     spinWheelBtn.disabled = true;
 
-    const winnerIndex = Math.floor(Math.random() * activeEligible.length);
+    const winnerIndex = fairRandomIndex(activeEligible.length);
     const numSlices = activeEligible.length;
     const sliceAngle = (Math.PI * 2) / numSlices;
 
@@ -4605,14 +4647,14 @@ function startAzrobotApp(){
     cleanExpiredBlacklist();
     // При РЕРОЛЛЕ предыдущий победитель исключается только из следующего выбора.
     // Поэтому он не может выпасть два раза подряд.
-    const validParticipants = state.participants.filter(p => {
+    const validParticipants = uniqueNames(state.participants.filter(p => {
       const isAllowed = !isBlacklisted(p.name) && !isProkachkaBlocked(p.name);
       const isPreviousWinner = rerollExcludedName && String(p.name || '').trim().toLowerCase() === String(rerollExcludedName).trim().toLowerCase();
       return isAllowed && !isPreviousWinner;
-    });
+    }).map(p => p.name)).map(name => ({ name }));
     if(!validParticipants.length) return alert('Нет доступных участников: все либо в чёрном списке, либо ещё на кулдауне после недавнего выигрыша!');
     
-    const winnerIndex = Math.floor(Math.random() * validParticipants.length);
+    const winnerIndex = fairRandomIndex(validParticipants.length);
     const winner = validParticipants[winnerIndex].name;
     // Исключение нужно только для одного реролла. После нового победителя сбрасываем.
     rerollExcludedName = null;
@@ -5588,6 +5630,20 @@ function startAzrobotApp(){
       return !(core && core.isBlacklisted && core.isBlacklisted(name)) && !(core && core.isProkachkaBlocked && core.isProkachkaBlocked(name));
     });
   }
+  function fairRandomIndexRace(length){
+    if(length<=1) return 0;
+    if(window.crypto && typeof window.crypto.getRandomValues === 'function'){
+      var max=0x100000000, limit=max-(max%length), buf=new Uint32Array(1), value;
+      do{ window.crypto.getRandomValues(buf); value=buf[0]; }while(value>=limit);
+      return value%length;
+    }
+    return Math.floor(Math.random()*length);
+  }
+  function fairShuffleRace(list){
+    var arr=list.slice();
+    for(var i=arr.length-1;i>0;i--){ var j=fairRandomIndexRace(i+1), tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; }
+    return arr;
+  }
   var racePlayers=[], raceTimer=null, running=false, raceCountdownTimer=null;
   var RACE_LAPS=3;
   var RACE_CX=50, RACE_CY=53;
@@ -5619,15 +5675,9 @@ function startAzrobotApp(){
   }
 
   function openRace(){
-    var core = window.__azRaceCore;
-    var st = core && core.getState ? core.getState() : {};
-    var last = String(st.lastRaceWinner || '').trim();
-    var candidates = getRaceCandidates(last ? [last] : []);
-    // Если после исключения прошлого победителя осталось меньше 5, не ломаем режим:
-    // берём весь актуальный пул — но только если физически невозможно собрать 5 других.
-    if(candidates.length < 5 && last) candidates = getRaceCandidates([]);
+    var candidates = getRaceCandidates([]);
     if(candidates.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас доступно: '+candidates.length); return; }
-    for(var j=candidates.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)),t=candidates[j]; candidates[j]=candidates[r]; candidates[r]=t; }
+    candidates = fairShuffleRace(candidates);
     racePlayers=candidates.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i],eventLock:0}; });
     el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none'; el('raceLeaderboard').innerHTML='';
     el('raceSubtitle').textContent='Участники скрыты. Нажми «НАЧАТЬ ГОНКУ», чтобы показать выбранных 5 человек.';
@@ -5665,17 +5715,17 @@ function startAzrobotApp(){
     if(!racePlayers.length || !running) return;
     var roll=Math.random();
     if(roll>0.90){
-      var p=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      var p=racePlayers[fairRandomIndexRace(racePlayers.length)];
       if(p.finished) return;
       p.dist += 4.5 + Math.random()*3.5;
       raceEventMessage('🚀 ТУРБО! '+p.name+' резко ускоряется!');
     } else if(roll<0.08){
-      var q=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      var q=racePlayers[fairRandomIndexRace(racePlayers.length)];
       if(q.finished) return;
       q.dist = Math.max(0,q.dist - (2.5 + Math.random()*2.5));
       raceEventMessage('🛞 ЗАНОС! '+q.name+' потерял скорость!');
     } else if(roll<0.16){
-      var s=racePlayers[Math.floor(Math.random()*racePlayers.length)];
+      var s=racePlayers[fairRandomIndexRace(racePlayers.length)];
       if(s.finished) return;
       s.dist += 2.5 + Math.random()*2.5;
       raceEventMessage('⚡ РЫВОК! '+s.name+' выходит вперёд!');
