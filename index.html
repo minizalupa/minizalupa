@@ -1644,6 +1644,7 @@
     <div class="prokachka-subtitle">Выбери, кого и как разыграть</div>
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn" id="spinBtn">🏆 Выбрать победителя (+)</button>
+      <button class="primary prokachka-btn prokachka-gold" id="openLosersBtn">🎯 Прокачка для лузеров</button>
       <button class="primary prokachka-btn prokachka-gold" id="openWhiteShirtBtn">🍀 Родился в белой рубашке</button>
       <button class="primary prokachka-btn" id="openBattleChoiceBtn">⚔️ Батл</button>
             <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
@@ -4679,6 +4680,44 @@ function startAzrobotApp(){
 
   document.getElementById('spinBtn').onclick = pickWinner;
 
+  // 🎯 Прокачка для лузеров: участвуют только текущие участники "+",
+  // которые НИ РАЗУ не становились победителями в боте.
+  function pickLoserWinner() {
+    isBattleDraw = false;
+    rerollExcludedName = null;
+    cleanExpiredBlacklist();
+
+    const loserPool = uniqueNames((state.participants || []).filter(p => {
+      const name = String(p && p.name || '').trim();
+      if (!name || isBlacklisted(name) || isProkachkaBlocked(name)) return false;
+      const key = name.toLowerCase();
+      const wins = Number(state.winnerStats && state.winnerStats[key] && state.winnerStats[key].count || 0);
+      return wins === 0;
+    }).map(p => p.name)).map(name => ({ name }));
+
+    if (!loserPool.length) {
+      alert('Нет доступных лузеров: все текущие участники уже хотя бы раз выпадали в боте, либо находятся на кулдауне/в чёрном списке.');
+      return;
+    }
+
+    const winner = loserPool[fairRandomIndex(loserPool.length)].name;
+    state.lastWinner = winner;
+    lastWinnerSource = 'losers';
+    saveState();
+    renderParticipants();
+
+    modalWinner.textContent = winner;
+    wUser.value = winner;
+    renderWinnerInfo(winner);
+    modalBg.classList.add('show');
+
+    announceWinner(winner);
+    startWinnerTimer();
+  }
+
+  const openLosersBtn = document.getElementById('openLosersBtn');
+  if (openLosersBtn) openLosersBtn.onclick = pickLoserWinner;
+
   function handleReroll() {
     // Предыдущий победитель был заменён через РЕРОЛЛ, поэтому кулдаун ему не нужен.
     const rerolledWinner = state.lastWinner;
@@ -4688,7 +4727,12 @@ function startAzrobotApp(){
       releaseProkachkaWinnerForReroll(rerolledWinner);
     }
 
-    if (lastWinnerSource === 'wheel') {
+    if (lastWinnerSource === 'losers') {
+      modalBg.classList.remove('show');
+      clearInterval(winnerTimerInterval);
+      winnerTimerInterval = null;
+      pickLoserWinner();
+    } else if (lastWinnerSource === 'wheel') {
       modalBg.classList.remove('show');
       clearInterval(winnerTimerInterval);
       winnerTimerInterval = null;
