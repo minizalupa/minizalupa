@@ -2118,6 +2118,18 @@ function startAzrobotApp(){
   }
 
   function announceWinner(winnerName) {
+    // Финальная проверка непосредственно перед объявлением: защищает все обычные
+    // режимы прокачки, даже если список участников устарел во время анимации.
+    if (winnerName && winnerName !== '—' && isProkachkaBlocked(winnerName)) {
+      if (typeof modalBg !== 'undefined' && modalBg) modalBg.classList.remove('show');
+      if (typeof wheelModalBg !== 'undefined' && wheelModalBg) wheelModalBg.classList.remove('show');
+      if (typeof winnerTimerInterval !== 'undefined' && winnerTimerInterval) {
+        clearInterval(winnerTimerInterval);
+        winnerTimerInterval = null;
+      }
+      alert(`${winnerName} находится на кулдауне и не может выиграть прокачку. Запустите розыгрыш ещё раз.`);
+      return false;
+    }
     triggerConfetti();
     registerProkachkaWinner(winnerName);
     recordWinner(winnerName);
@@ -2130,6 +2142,7 @@ function startAzrobotApp(){
     if (winnerName && winnerName !== '—') {
       sendChatMessage(`Поздравляем, победитель розыгрыша —> ${winnerName} | На отписку в чат 15 секунд!`);
     }
+    return true;
   }
 
   // Победитель БАТЛА не получает кулдаун прокачки.
@@ -2783,6 +2796,7 @@ function startAzrobotApp(){
     add: function(name){
       name = String(name || '').trim().replace(/^@+/, '');
       if(!name) return {ok:false, reason:'Введите ник участника.'};
+      if(isProkachkaBlocked(name)) return {ok:false, reason:'Участник находится на кулдауне прокачки и пока не может участвовать.'};
       if(isBlacklisted(name)) return {ok:false, reason:'Этот пользователь находится в чёрном списке.'};
 
       var key = name.toLowerCase();
