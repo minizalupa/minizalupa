@@ -673,6 +673,8 @@
 .winner-message-item{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:12px;line-height:1.35;word-break:break-word;}
 .winner-message-item b{color:var(--good);}
 .winner-messages-empty{color:var(--text-dim);font-size:11px;text-align:center;padding:18px 8px;}
+  #watchtimeModalBg .modal-card{max-height:90vh;overflow:auto;}
+  @media(max-width:700px){#watchtimeModalBg .modal-card>div[style*="grid-template-columns"]{grid-template-columns:1fr !important;}}
 /* ---------- Модалка "Выбрать прокачку" ---------- */
   .prokachka-modal-card{
     max-width:360px; padding:26px 22px 22px;
@@ -1329,6 +1331,7 @@
         </div>
 
         <button id="openCooldownBtn" style="width:100%; margin-top:5px;">⏳ Кулдаун прокачки</button>
+        <button id="openWatchtimeBtn" style="width:100%; margin-top:5px;">👁 WATCHTIME</button>
 
       </div>
 
@@ -1380,6 +1383,7 @@
               <option value="JOKER">JOKER</option>
               <option value="BULLDROP">BULLDROP</option>
               <option value="SKINITY">SKINITY</option>
+              <option value="BOOMDROP">BOOMDROP</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
             <input type="number" id="wAmount" placeholder="Сумма вывода">
@@ -1798,6 +1802,7 @@
         <option value="JOKER">JOKER</option>
         <option value="BULLDROP">BULLDROP</option>
         <option value="SKINITY">SKINITY</option>
+              <option value="BOOMDROP">BOOMDROP</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
       <button class="primary" id="saveDepositEntryBtn" style="width:100%;">Сохранить депозит</button>
@@ -1882,6 +1887,30 @@
     <div class="site-stats-list" id="siteStatsList"></div>
 
     <button class="primary" id="openDepositsListBtn" style="width:100%; margin-top:10px;">💰 Депозиты людей</button>
+  </div>
+</div>
+
+<!-- Modal: Watchtime -->
+<div class="modal-bg" id="watchtimeModalBg" style="z-index:75;">
+  <div class="modal-card" style="max-width:720px;">
+    <span class="close-modal-x" id="watchtimeCloseX">✕</span>
+    <h3 style="margin:0 0 4px 0; font-size:16px;">👁 WATCHTIME</h3>
+    <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">Приблизительный watchtime по активности в чате. Если человек пишет в чат, он считается активным ещё 5 минут.</div>
+    <div id="watchtimeUpdated" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Обновлено: —</div>
+    <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;">
+      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
+        <div style="font-weight:800; margin-bottom:6px;">📅 Сегодня</div>
+        <div id="watchtimeTodayList"></div>
+      </div>
+      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
+        <div style="font-weight:800; margin-bottom:6px;">📆 Топ за месяц</div>
+        <div id="watchtimeMonthList"></div>
+      </div>
+      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
+        <div style="font-weight:800; margin-bottom:6px;">🏆 За всё время</div>
+        <div id="watchtimeAllList"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2177,7 +2206,8 @@ function startAzrobotApp(){
     lastRaceWinner: "",
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
-    prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
+    prokachkaCooldowns: {}, // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
+    watchtime: { all: {}, days: {}, months: {} }
   };
 
   function loadState() {
@@ -2225,6 +2255,111 @@ function startAzrobotApp(){
       state.blacklist = [];
     }
   }
+
+
+  /* ---------- Watchtime: приблизительная оценка по активности чата ---------- */
+  const WATCHTIME_ACTIVE_WINDOW_MS = 5 * 60 * 1000;
+  const WATCHTIME_TICK_MS = 60 * 1000;
+  const watchtimeActiveUsers = new Map();
+  let watchtimeLastTick = Date.now();
+
+  function ensureWatchtimeState(){
+    if (!state.watchtime || typeof state.watchtime !== 'object') state.watchtime = {};
+    if (!state.watchtime.all || typeof state.watchtime.all !== 'object') state.watchtime.all = {};
+    if (!state.watchtime.days || typeof state.watchtime.days !== 'object') state.watchtime.days = {};
+    if (!state.watchtime.months || typeof state.watchtime.months !== 'object') state.watchtime.months = {};
+  }
+  function watchtimeDayKey(date){
+    const d = date || new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function watchtimeMonthKey(date){
+    const d = date || new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+  function watchtimeAdd(bucket, name, ms){
+    if (!bucket || !name || ms <= 0) return;
+    const key = String(name).trim().toLowerCase();
+    if (!key) return;
+    if (!bucket[key]) bucket[key] = { name:String(name).trim(), ms:0 };
+    bucket[key].name = String(name).trim();
+    bucket[key].ms = Number(bucket[key].ms || 0) + ms;
+  }
+  function watchtimeMarkActive(name){
+    const clean = String(name || '').trim();
+    if (!clean || isBlacklisted(clean)) return;
+    ensureWatchtimeState();
+    watchtimeActiveUsers.set(clean.toLowerCase(), { name:clean, lastSeen:Date.now() });
+    watchtimeAdd(state.watchtime.all, clean, 0);
+  }
+  function watchtimeCredit(ms){
+    if (ms <= 0) return;
+    ensureWatchtimeState();
+    const now = Date.now();
+    const day = watchtimeDayKey(new Date(now));
+    const month = watchtimeMonthKey(new Date(now));
+    if (!state.watchtime.days[day]) state.watchtime.days[day] = {};
+    if (!state.watchtime.months[month]) state.watchtime.months[month] = {};
+    watchtimeActiveUsers.forEach((info, key) => {
+      if (!info || now - info.lastSeen > WATCHTIME_ACTIVE_WINDOW_MS) {
+        watchtimeActiveUsers.delete(key);
+        return;
+      }
+      watchtimeAdd(state.watchtime.all, info.name, ms);
+      watchtimeAdd(state.watchtime.days[day], info.name, ms);
+      watchtimeAdd(state.watchtime.months[month], info.name, ms);
+    });
+    const dayKeys = Object.keys(state.watchtime.days).sort();
+    while (dayKeys.length > 62) delete state.watchtime.days[dayKeys.shift()];
+    const monthKeys = Object.keys(state.watchtime.months).sort();
+    while (monthKeys.length > 24) delete state.watchtime.months[monthKeys.shift()];
+  }
+  function formatWatchtime(ms){
+    const totalMin = Math.floor((Number(ms)||0) / 60000);
+    if (totalMin < 60) return `${totalMin} мин`;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return m ? `${h} ч ${m} мин` : `${h} ч`;
+  }
+  function renderWatchtimeList(el, bucket){
+    if (!el) return;
+    const rows = Object.values(bucket || {})
+      .filter(x => x && Number(x.ms) > 0)
+      .sort((a,b) => Number(b.ms)-Number(a.ms))
+      .slice(0,10);
+    if (!rows.length){
+      el.innerHTML = '<div style="color:var(--text-dim);font-size:11px;text-align:center;padding:10px 4px;">Пока нет данных</div>';
+      return;
+    }
+    el.innerHTML = rows.map((x,i) => `
+      <div style="display:flex;justify-content:space-between;gap:6px;padding:5px 2px;border-bottom:1px solid var(--line);font-size:11px;">
+        <span><b>${i+1}.</b> ${escapeHtml(x.name)}</span>
+        <span style="color:var(--good);font-weight:800;white-space:nowrap;">${formatWatchtime(x.ms)}</span>
+      </div>`).join('');
+  }
+  function renderWatchtime(){
+    ensureWatchtimeState();
+    const day = watchtimeDayKey();
+    const month = watchtimeMonthKey();
+    if (!state.watchtime.days[day]) state.watchtime.days[day] = {};
+    if (!state.watchtime.months[month]) state.watchtime.months[month] = {};
+    renderWatchtimeList(document.getElementById('watchtimeTodayList'), state.watchtime.days[day]);
+    renderWatchtimeList(document.getElementById('watchtimeMonthList'), state.watchtime.months[month]);
+    renderWatchtimeList(document.getElementById('watchtimeAllList'), state.watchtime.all);
+    const u = document.getElementById('watchtimeUpdated');
+    if (u) u.textContent = `Обновлено: ${new Date().toLocaleTimeString('ru-RU')}`;
+  }
+  ensureWatchtimeState();
+  setInterval(() => {
+    const now = Date.now();
+    const elapsed = Math.min(Math.max(now - watchtimeLastTick, 0), WATCHTIME_TICK_MS);
+    watchtimeLastTick = now;
+    watchtimeCredit(elapsed || WATCHTIME_TICK_MS);
+    saveState();
+    const modal = document.getElementById('watchtimeModalBg');
+    if (modal && modal.classList.contains('show')) renderWatchtime();
+  }, WATCHTIME_TICK_MS);
+
 
   function saveState() {
     try {
@@ -4122,7 +4257,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "JOKER", "BULLDROP", "SKINITY"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "JOKER", "BULLDROP", "SKINITY", "BOOMDROP"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -4331,6 +4466,18 @@ function startAzrobotApp(){
   document.getElementById('siteStatsCloseX').onclick = () => {
     siteStatsModalBg.classList.remove('show');
   };
+
+  const watchtimeModalBg = document.getElementById('watchtimeModalBg');
+  document.getElementById('openWatchtimeBtn').onclick = () => {
+    renderWatchtime();
+    watchtimeModalBg.classList.add('show');
+  };
+  document.getElementById('watchtimeCloseX').onclick = () => {
+    watchtimeModalBg.classList.remove('show');
+  };
+  watchtimeModalBg.addEventListener('click', (e) => {
+    if (e.target === watchtimeModalBg) watchtimeModalBg.classList.remove('show');
+  });
 
   /* ---------- Winner Check ---------- */
   let winnerTimerInterval = null;
@@ -4623,6 +4770,7 @@ function startAzrobotApp(){
 
           if(user && message !== undefined && !isBlacklisted(user)){
             trackUserRole(user, { isMod, isVip, isSub });
+            watchtimeMarkActive(user);
             if(message.trim() === '+'){
               addParticipant(user);
             }
@@ -4943,9 +5091,14 @@ function startAzrobotApp(){
   }
 
   function handleWinnerMessagesBotLine(line){
+    const parsed = extractWinnerChatLine(line);
+    // Передаём каждое реальное сообщение Twitch в режим «Белая рубашка»,
+    // независимо от того, открыто ли окно «Анализ → Сообщения».
+    if (parsed.type === 'PRIVMSG' && parsed.text && typeof window.handleWhiteShirtChatMessage === 'function') {
+      window.handleWhiteShirtChatMessage(parsed.sender || '', parsed.text);
+    }
     const req = winnerMessagesRequest;
     if (!req || Date.now() > req.until) return;
-    const parsed = extractWinnerChatLine(line);
     if (!parsed.text) return;
     const sender = (parsed.sender || 'Twitch').toLowerCase();
     const text = parsed.text.trim();
@@ -6084,7 +6237,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["JABKA","DASTSKIN","DOG","SKINITY"]
+  var SITES = ["JABKA","DASTSKIN","DOG","SKINITY","BOOMDROP"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
@@ -6423,7 +6576,9 @@ function startAzrobotApp(){
     if(!st.winnerStats)st.winnerStats={};
     st.winnerStats[k]={name:String(name),count:Number(st.winnerStats[k]?.count||0)+1,lastAt:now};
     if(!Array.isArray(st.lastDrawnWinners))st.lastDrawnWinners=[];
-    st.lastDrawnWinners.unshift(String(name));
+    // Белая рубашка — обычная прокачка: добавляем в историю победителей,
+    // не дублируя запись, если основной код уже успел её сделать.
+    if(key(st.lastDrawnWinners[0])!==k) st.lastDrawnWinners.unshift(String(name));
     st.lastDrawnWinners=st.lastDrawnWinners.slice(0,20);
     st.lastWinner=String(name);
     saveState(st); updateCount();
@@ -6520,13 +6675,19 @@ function startAzrobotApp(){
   }
   function handleChatNode(node){
     if(!active||!currentWinner||!node||node.nodeType!==1)return;
-    const user=node.dataset&&node.dataset.chatUser;
+    const user=(node.dataset&&(node.dataset.chatUser||node.dataset.user))||node.getAttribute('data-chat-user')||node.querySelector('[data-chat-user]')?.getAttribute('data-chat-user');
     if(!user||key(user)!==key(currentWinner))return;
-    addChatLine(user,(node.querySelector('.chat-message-text')?.textContent)||'');
-    if(seconds<=0)return;
-    clearTimer(); active=false; timerNum.textContent='УСПЕЛ!'; timerNum.style.color='var(--good)';
-    timerStatus.textContent='✅ Игрок успел ответить в чат!'; timerStatus.style.color='var(--good)';
+    const message=(node.querySelector('.chat-message-text')||node.querySelector('.message-text')||node).textContent||'';
+    window.handleWhiteShirtChatMessage(user,message);
   }
+  window.handleWhiteShirtChatMessage=function(user,text){
+    if(!active||!currentWinner||key(user)!==key(currentWinner))return;
+    addChatLine(user,text);
+    if(seconds<=0)return;
+    clearTimer(); active=false;
+    timerNum.textContent='УСПЕЛ!'; timerNum.style.color='var(--good)';
+    timerStatus.textContent='✅ Игрок успел ответить в чат!'; timerStatus.style.color='var(--good)';
+  };
   observer=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{
     if(n.nodeType===1){if(n.matches&&n.matches('#chatLog .msg'))handleChatNode(n); if(n.querySelectorAll)n.querySelectorAll('#chatLog .msg').forEach(handleChatNode);}
   })));
