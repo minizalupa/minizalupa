@@ -1384,6 +1384,7 @@
               <option value="BULLDROP">BULLDROP</option>
               <option value="SKINITY">SKINITY</option>
               <option value="BOOMDROP">BOOMDROP</option>
+              <option value="PUZODROP">PUZODROP</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
             <input type="number" id="wAmount" placeholder="Сумма вывода">
@@ -1803,6 +1804,7 @@
         <option value="BULLDROP">BULLDROP</option>
         <option value="SKINITY">SKINITY</option>
               <option value="BOOMDROP">BOOMDROP</option>
+              <option value="PUZODROP">PUZODROP</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
       <button class="primary" id="saveDepositEntryBtn" style="width:100%;">Сохранить депозит</button>
@@ -4257,7 +4259,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "JOKER", "BULLDROP", "SKINITY", "BOOMDROP"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "JOKER", "BULLDROP", "SKINITY", "BOOMDROP", "PUZODROP"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -6237,7 +6239,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["JABKA","DASTSKIN","DOG","SKINITY","BOOMDROP"]
+  var SITES = ["JABKA","DASTSKIN","DOG","SKINITY","BOOMDROP","PUZODROP"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
