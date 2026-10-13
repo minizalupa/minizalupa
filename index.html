@@ -4308,15 +4308,17 @@ function startAzrobotApp(){
     renderLastWinners();
   }
 
+  // Каждое оформление вывода хранится отдельной записью.
+  // Нельзя объединять старые суммы пользователя в одну запись и обновлять ей дату:
+  // тогда вся накопленная сумма ошибочно попадала бы в топ текущего стрима/дня.
   function findOrCreateWithdrawalEntry(user, site) {
-    let idx = state.withdrawals.findIndex(
-      w => w.user.toLowerCase() === user.toLowerCase() && w.site === site
-    );
-    if (idx === -1) {
-      state.withdrawals.unshift({ site, user, amount: 0, date: new Date().toLocaleString('ru-RU') });
-      idx = 0;
-    }
-    return idx;
+    state.withdrawals.unshift({
+      site,
+      user: String(user || '').trim(),
+      amount: 0,
+      date: new Date().toLocaleString('ru-RU')
+    });
+    return 0;
   }
 
   function getUserTotal(user) {
@@ -4360,7 +4362,7 @@ function startAzrobotApp(){
         if (isNaN(val) || val === 0) return;
         const selectedSite = row.querySelector('.w-site-select').value;
         const idx = findOrCreateWithdrawalEntry(user, selectedSite);
-        state.withdrawals[idx].amount = (Number(state.withdrawals[idx].amount) || 0) + val;
+        state.withdrawals[idx].amount = val;
         state.withdrawals[idx].date = new Date().toLocaleString('ru-RU');
         markProkachkaWithdrawal(user);
         refreshAllWithdrawViews();
@@ -4379,21 +4381,9 @@ function startAzrobotApp(){
 
     if(!user || isNaN(amountVal)) return;
 
-    const existingIndex = state.withdrawals.findIndex(
-      item => item.user.toLowerCase() === user.toLowerCase() && item.site === site
-    );
-
-    const now = new Date();
-    if (existingIndex !== -1) {
-      state.withdrawals[existingIndex].amount = Number(state.withdrawals[existingIndex].amount) + amountVal;
-      state.withdrawals[existingIndex].date = now.toLocaleString('ru-RU');
-      markProkachkaWithdrawal(user);
-      const updated = state.withdrawals.splice(existingIndex, 1)[0];
-      state.withdrawals.unshift(updated);
-    } else {
-      state.withdrawals.unshift({ site, user, amount: amountVal, date: now.toLocaleString('ru-RU') });
-      markProkachkaWithdrawal(user);
-    }
+    // Добавляем отдельное событие вывода, не переносим накопленную сумму в текущую дату.
+    state.withdrawals.unshift({ site, user, amount: amountVal, date: new Date().toLocaleString('ru-RU') });
+    markProkachkaWithdrawal(user);
 
     saveState();
     renderWithdrawals();
