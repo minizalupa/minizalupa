@@ -1899,18 +1899,10 @@
     <h3 style="margin:0 0 4px 0; font-size:16px;">👁 WATCHTIME</h3>
     <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">Приблизительный watchtime по активности в чате. Если человек пишет в чат, он считается активным ещё 5 минут.</div>
     <div id="watchtimeUpdated" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Обновлено: —</div>
-    <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;">
-      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
-        <div style="font-weight:800; margin-bottom:6px;">📅 Сегодня</div>
-        <div id="watchtimeTodayList"></div>
-      </div>
-      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
-        <div style="font-weight:800; margin-bottom:6px;">📆 Топ за месяц</div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr); gap:8px;">
+      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:10px;">
+        <div style="font-weight:800; margin-bottom:8px;">📆 Топ 15 за месяц</div>
         <div id="watchtimeMonthList"></div>
-      </div>
-      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:8px;">
-        <div style="font-weight:800; margin-bottom:6px;">🏆 За всё время</div>
-        <div id="watchtimeAllList"></div>
       </div>
     </div>
   </div>
@@ -2287,9 +2279,24 @@ function startAzrobotApp(){
     bucket[key].name = String(name).trim();
     bucket[key].ms = Number(bucket[key].ms || 0) + ms;
   }
+  function watchtimeExcludeUser(name){
+    const key = String(name || '').trim().toLowerCase();
+    if (!key) return;
+    watchtimeActiveUsers.delete(key);
+    ensureWatchtimeState();
+    const removeFromBucket = bucket => { if (bucket) delete bucket[key]; };
+    removeFromBucket(state.watchtime.all);
+    Object.values(state.watchtime.days).forEach(removeFromBucket);
+    Object.values(state.watchtime.months).forEach(removeFromBucket);
+  }
   function watchtimeMarkActive(name){
     const clean = String(name || '').trim();
     if (!clean || isBlacklisted(clean)) return;
+    // Модераторы и стример не участвуют в рейтинге watchtime.
+    if (typeof isUserMod === 'function' && isUserMod(clean)) {
+      watchtimeExcludeUser(clean);
+      return;
+    }
     ensureWatchtimeState();
     watchtimeActiveUsers.set(clean.toLowerCase(), { name:clean, lastSeen:Date.now() });
     watchtimeAdd(state.watchtime.all, clean, 0);
@@ -2323,12 +2330,12 @@ function startAzrobotApp(){
     const m = totalMin % 60;
     return m ? `${h} ч ${m} мин` : `${h} ч`;
   }
-  function renderWatchtimeList(el, bucket){
+  function renderWatchtimeList(el, bucket, limit = 10){
     if (!el) return;
     const rows = Object.values(bucket || {})
-      .filter(x => x && Number(x.ms) > 0)
+      .filter(x => x && Number(x.ms) > 0 && !(typeof isUserMod === 'function' && isUserMod(x.name)))
       .sort((a,b) => Number(b.ms)-Number(a.ms))
-      .slice(0,10);
+      .slice(0,limit);
     if (!rows.length){
       el.innerHTML = '<div style="color:var(--text-dim);font-size:11px;text-align:center;padding:10px 4px;">Пока нет данных</div>';
       return;
@@ -2345,9 +2352,7 @@ function startAzrobotApp(){
     const month = watchtimeMonthKey();
     if (!state.watchtime.days[day]) state.watchtime.days[day] = {};
     if (!state.watchtime.months[month]) state.watchtime.months[month] = {};
-    renderWatchtimeList(document.getElementById('watchtimeTodayList'), state.watchtime.days[day]);
-    renderWatchtimeList(document.getElementById('watchtimeMonthList'), state.watchtime.months[month]);
-    renderWatchtimeList(document.getElementById('watchtimeAllList'), state.watchtime.all);
+    renderWatchtimeList(document.getElementById('watchtimeMonthList'), state.watchtime.months[month], 15);
     const u = document.getElementById('watchtimeUpdated');
     if (u) u.textContent = `Обновлено: ${new Date().toLocaleTimeString('ru-RU')}`;
   }
@@ -4772,7 +4777,8 @@ function startAzrobotApp(){
 
           if(user && message !== undefined && !isBlacklisted(user)){
             trackUserRole(user, { isMod, isVip, isSub });
-            watchtimeMarkActive(user);
+            if (isMod) watchtimeExcludeUser(user);
+            else watchtimeMarkActive(user);
             if(message.trim() === '+'){
               addParticipant(user);
             }
