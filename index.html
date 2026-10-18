@@ -673,8 +673,6 @@
 .winner-message-item{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:12px;line-height:1.35;word-break:break-word;}
 .winner-message-item b{color:var(--good);}
 .winner-messages-empty{color:var(--text-dim);font-size:11px;text-align:center;padding:18px 8px;}
-  #watchtimeModalBg .modal-card{max-height:90vh;overflow:auto;}
-  @media(max-width:700px){#watchtimeModalBg .modal-card>div[style*="grid-template-columns"]{grid-template-columns:1fr !important;}}
 /* ---------- Модалка "Выбрать прокачку" ---------- */
   .prokachka-modal-card{
     max-width:360px; padding:26px 22px 22px;
@@ -1107,6 +1105,39 @@
   .race-leaderboard-item .rlb-laps{width:34px;text-align:right;font-size:10px;color:var(--text-dim);}
   .race-leaderboard-item.leader .rlb-name{color:var(--good);}
 
+
+  /* Конный батл — премиальный гоночный интерфейс */
+  .horse-battle-choice{background:linear-gradient(120deg,#713f12,#b45309 48%,#f59e0b)!important;border:1px solid #fbbf24!important;box-shadow:0 0 22px #f59e0b25!important;display:flex;flex-direction:column;gap:3px;}
+  .horse-battle-choice span{font-size:10px;font-weight:700;opacity:.82;}
+  .horse-battle-card{width:min(720px,96vw)!important;max-width:720px!important;background:radial-gradient(ellipse at 0% 0%,#713f122c,transparent 48%),linear-gradient(145deg,#17130f,#111827 72%)!important;border:1px solid #d977064d!important;box-shadow:0 24px 80px #0009,0 0 42px #f59e0b13!important;}
+  .horse-battle-hero{display:flex;align-items:center;gap:14px;padding:6px 30px 16px 0;border-bottom:1px solid #f59e0b30;}
+  .horse-battle-horse{width:66px;height:66px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#78350f,#f59e0b);font-size:38px;box-shadow:inset 0 1px #ffffff45,0 8px 25px #f59e0b25;}
+  .horse-battle-kicker{font-size:9px;letter-spacing:3px;color:#fbbf24;font-weight:900;}
+  .horse-battle-title{font-size:clamp(20px,4vw,29px);letter-spacing:1.4px;font-weight:1000;color:#fff7ed;text-shadow:0 2px 18px #f59e0b40;}
+  .horse-battle-subtitle{font-size:11px;color:#d6c7b4;margin-top:3px;}
+  .horse-battle-progress{height:5px;border-radius:99px;background:#ffffff12;overflow:hidden;margin:14px 0;}
+  .horse-battle-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#b45309,#fbbf24);transition:width .35s ease;}
+  .horse-battle-layout{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;}
+  .horse-battle-section-title{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24;font-weight:900;margin:0 0 10px;}
+  .horse-battle-roster{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .horse-battle-racer{min-width:0;padding:8px 9px;border-radius:9px;background:#ffffff08;border:1px solid #ffffff0d;color:#e5e7eb;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .horse-battle-racer.active{border-color:#fbbf24;background:#f59e0b20;color:#fef3c7;box-shadow:0 0 15px #f59e0b12;}
+  .horse-battle-racer.won{border-color:#22c55e55;background:#16a34a18;color:#bbf7d0;}
+  .horse-battle-current{border:1px solid #f59e0b30;border-radius:15px;padding:15px;background:linear-gradient(145deg,#f59e0b0d,#ffffff03);text-align:center;}
+  .horse-battle-winner-name{font-size:clamp(17px,3vw,23px);font-weight:900;overflow-wrap:anywhere;min-height:30px;color:#fff7ed;}
+  .horse-battle-countdown{font-size:48px;line-height:1.1;font-weight:1000;color:#fbbf24;text-shadow:0 0 25px #f59e0b38;margin:8px 0;}
+  .horse-battle-status{font-size:11px;color:#cbd5e1;min-height:30px;}
+  .horse-quality-card{margin:10px 0 2px;padding:11px 12px;border-radius:12px;text-align:left;border:1px solid #ffffff18;background:linear-gradient(135deg,#ffffff0a,#00000012);box-shadow:inset 0 1px #ffffff08;}
+  .horse-quality-card.good{border-color:#22c55e66;background:linear-gradient(135deg,#14532d55,#052e1633);}
+  .horse-quality-card.warn{border-color:#f59e0b88;background:linear-gradient(135deg,#78350f66,#451a0344);}
+  .horse-quality-head{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:900;margin-bottom:5px;}
+  .horse-quality-detail{font-size:10px;line-height:1.45;color:#d1d5db;}
+  .horse-quality-metrics{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;}
+  .horse-quality-pill{padding:3px 6px;border-radius:99px;background:#0003;border:1px solid #ffffff12;font-size:9px;color:#e5e7eb;}
+  .horse-battle-main-btn,.horse-battle-reroll-btn{width:100%;margin-top:10px;padding:11px!important;font-weight:900!important;letter-spacing:.4px;}
+  .horse-battle-main-btn{background:linear-gradient(120deg,#b45309,#f59e0b)!important;color:#211204!important;}
+  .horse-battle-footer{margin-top:14px;padding:10px 12px;border-radius:10px;background:#ffffff06;color:#a8a29e;font-size:10px;line-height:1.5;}
+  @media(max-width:560px){.horse-battle-layout{grid-template-columns:1fr}.horse-battle-hero{gap:10px}.horse-battle-horse{width:52px;height:52px;font-size:30px}.horse-battle-roster{grid-template-columns:1fr 1fr}.horse-battle-card{padding:18px!important}}
 </style>
 
 <style id="localCloudStyles">
@@ -1199,24 +1230,6 @@
     pointer-events: none;
     user-select: none;
   }
-
-  /* ---------- 🍀 Родился в белой рубашке ---------- */
-  .white-shirt-modal-card{max-width:560px;width:92%;overflow:hidden;}
-  .white-shirt-icon{font-size:46px;line-height:1;margin-bottom:5px;}
-  .white-shirt-list{margin:12px 0;max-height:300px;overflow:auto;text-align:left;display:flex;flex-direction:column;gap:6px;padding-right:3px;}
-  .white-shirt-line{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.025);font-size:12px;animation:whiteShirtIn .35s ease both;}
-  .white-shirt-line.loser{color:var(--text-dim);}
-  .white-shirt-line.winner{color:var(--good);border-color:var(--good);background:rgba(163,230,53,.09);font-weight:800;box-shadow:0 0 18px rgba(163,230,53,.12);}
-  .white-shirt-winner{margin:10px 0;padding:14px;border:1px solid var(--good);border-radius:12px;background:rgba(163,230,53,.08);}
-  .white-shirt-winner-title{font-size:14px;font-weight:900;color:var(--good);}
-  .white-shirt-winner-name{font-size:25px;font-weight:900;color:var(--accent);margin-top:4px;}
-  .white-shirt-timer-box{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.12);}
-  .white-shirt-timer-num{font-size:32px;font-weight:900;color:var(--bad);line-height:1;}
-  .white-shirt-timer-status{margin-top:5px;font-size:12px;color:var(--text-dim);font-weight:700;}
-  .white-shirt-chat{margin-top:8px;max-height:110px;overflow:auto;text-align:left;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:11px;}
-  .white-shirt-chat-placeholder{color:var(--text-dim);text-align:center;padding:5px;}
-  .white-shirt-actions{display:flex;gap:7px;margin-top:10px;}
-  @keyframes whiteShirtIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 
 </head>
@@ -1324,6 +1337,7 @@
       <div class="panel center-actions-bottom">
         <button class="danger" id="clearBtn" style="width:100%; margin-top:0;">Сбросить участников</button>
         <button class="primary" id="openProkachkaBtn" style="width:100%; margin-top:5px;">🎯 Выбрать прокачку</button>
+        <div id="streamStatus" style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:3px;">Стрим засчитывается при выборе прокачки</div>
 
         <div style="display:flex; gap:5px; margin-top:5px;">
           <button id="modAlertToggleBtn" style="flex:1;">🚨 322: ВКЛ</button>
@@ -1331,7 +1345,6 @@
         </div>
 
         <button id="openCooldownBtn" style="width:100%; margin-top:5px;">⏳ Кулдаун прокачки</button>
-        <button id="openWatchtimeBtn" style="width:100%; margin-top:5px;">👁 WATCHTIME</button>
 
       </div>
 
@@ -1379,12 +1392,9 @@
               <option value="JABKA">JABKA</option>
               <option value="ECOCASE">ECOCASE</option>
               <option value="DASTSKIN">DASTSKIN</option>
-              <option value="DOG">DOG</option>
-              <option value="JOKER">JOKER</option>
-              <option value="BULLDROP">BULLDROP</option>
+              <option value="CSJOKER">CSJOKER</option>
               <option value="SKINITY">SKINITY</option>
-              <option value="BOOMDROP">BOOMDROP</option>
-              <option value="PUZODROP">PUZODROP</option>
+              <option value="SKINBRO">SKINBRO</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
             <input type="number" id="wAmount" placeholder="Сумма вывода">
@@ -1650,54 +1660,12 @@
     <div class="prokachka-subtitle">Выбери, кого и как разыграть</div>
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn" id="spinBtn">🏆 Выбрать победителя (+)</button>
-      <button class="primary prokachka-btn prokachka-gold" id="openLosersBtn">🎯 Прокачка для лузеров</button>
-      <button class="primary prokachka-btn prokachka-gold" id="openWhiteShirtBtn">🍀 Родился в белой рубашке</button>
       <button class="primary prokachka-btn" id="openBattleChoiceBtn">⚔️ Батл</button>
-            <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
+      <button class="primary prokachka-btn prokachka-light" id="open1SlotBtn">🎡 Одиночная рулетка</button>
       <button class="primary prokachka-btn prokachka-gold" id="openSlotMachineBtn">🎰 Слот-машина (5 +)</button>
       <button class="primary prokachka-btn prokachka-light" id="openRaceBtn">🏎️ Гонка (5 +)</button>
       <button class="primary prokachka-btn" id="openWheelBtn">🎡 Колесо фортуны активных</button>
       <button class="primary prokachka-btn prokachka-outline" id="openManualAddBtn">➕ Добавить участника вручную</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Родился в белой рубашке -->
-<div class="modal-bg" id="whiteShirtModalBg">
-  <div class="modal-card white-shirt-modal-card">
-    <span class="close-modal-x" id="whiteShirtCloseX">✕</span>
-    <div class="white-shirt-icon">🍀</div>
-    <div class="prokachka-title">РОДИЛСЯ В БЕЛОЙ РУБАШКЕ</div>
-    <div class="prokachka-subtitle" id="whiteShirtSubtitle">Судьба выбирает счастливчика...</div>
-    <div class="white-shirt-list" id="whiteShirtList"></div>
-    <div class="white-shirt-winner" id="whiteShirtWinner" style="display:none;">
-      <div class="white-shirt-winner-title">✨ РОДИЛСЯ В БЕЛОЙ РУБАШКЕ!</div>
-      <div class="white-shirt-winner-name" id="whiteShirtWinnerName">—</div>
-    </div>
-    <div class="white-shirt-timer-box" id="whiteShirtTimerBox" style="display:none;">
-      <div class="white-shirt-timer-num" id="whiteShirtTimerNum">15</div>
-      <div class="white-shirt-timer-status" id="whiteShirtTimerStatus">Ожидание ответа в чате...</div>
-      <div class="white-shirt-chat" id="whiteShirtChat">
-        <div class="white-shirt-chat-placeholder" id="whiteShirtChatPlaceholder">Сообщений от игрока пока нет...</div>
-      </div>
-    </div>
-    <div class="white-shirt-actions">
-      <button class="danger" id="whiteShirtRerollBtn" style="display:none; width:100%; padding:10px; font-size:13px;">🔄 ЗАНОВО</button>
-      <button class="primary" id="whiteShirtCloseBtn" style="width:100%; padding:10px; font-size:13px;">Закрыть</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Сбросить участников -->
-<div class="modal-bg" id="resetParticipantsModalBg">
-  <div class="modal-card prokachka-modal-card">
-    <span class="close-modal-x" id="resetParticipantsModalCloseX">✕</span>
-    <div class="prokachka-icon">🧹</div>
-    <div class="prokachka-title">Сбросить участников</div>
-    <div class="prokachka-subtitle">Выбери, кого удалить из текущего списка</div>
-    <div class="prokachka-buttons">
-      <button class="danger prokachka-btn" id="resetBattleFromMainBtn">⚔️ Сбросить участников батла</button>
-      <button class="danger prokachka-btn" id="resetProkachkaFromMainBtn">🎯 Сбросить участников прокачки (+)</button>
     </div>
   </div>
 </div>
@@ -1728,7 +1696,22 @@
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn battle-choice-btn" id="openBoxesBtn">📦 3 коробки (батл)</button>
       <button class="primary prokachka-btn battle-choice-btn" id="open3SlotsBtn">🎰 3 рулетки (батл)</button>
+      <button class="primary prokachka-btn battle-choice-btn horse-battle-choice" id="openHorseBattleBtn">🐎 Конный батл <span>10 участников · 3 победителя</span></button>
     </div>
+  </div>
+</div>
+
+<!-- Modal: Конный батл -->
+<div class="modal-bg" id="horseBattleModalBg" style="z-index:62;">
+  <div class="modal-card horse-battle-card">
+    <span class="close-modal-x" id="horseBattleCloseX">✕</span>
+    <div class="horse-battle-hero"><div class="horse-battle-horse">🐎</div><div><div class="horse-battle-kicker">SPECIAL BATTLE</div><div class="horse-battle-title">КОННЫЙ БАТЛ</div><div class="horse-battle-subtitle">10 всадников · 3 победителя · 15 секунд на ответ</div></div></div>
+    <div class="horse-battle-progress"><div class="horse-battle-progress-fill" id="horseBattleProgressFill"></div></div>
+    <div class="horse-battle-layout">
+      <div class="horse-battle-roster-wrap"><div class="horse-battle-section-title">🏁 Состав заезда</div><div class="horse-battle-roster" id="horseBattleRoster"></div></div>
+      <div class="horse-battle-current"><div class="horse-battle-section-title">🏆 Текущий победитель</div><div class="horse-battle-winner-name" id="horseBattleWinnerName">Готовы к старту?</div><div class="horse-battle-countdown" id="horseBattleCountdown">15</div><div class="horse-battle-status" id="horseBattleStatus">Запусти заезд, чтобы определить победителей</div><div id="horseBattleQualityCard" class="horse-quality-card" style="display:none;"></div><button class="primary horse-battle-main-btn" id="horseBattleStartBtn">🚦 НАЧАТЬ ЗАЕЗД</button><button class="danger horse-battle-reroll-btn" id="horseBattleRerollBtn" style="display:none;">🔄 РЕРОЛЛ — следующий всадник</button></div>
+    </div>
+    <div class="horse-battle-footer">Если победитель не ответил за 15 секунд — нажми <b>РЕРОЛЛ</b>. Новый участник выбирается из всего доступного списка батла. Победа засчитывается после ответа в чат.</div>
   </div>
 </div>
 
@@ -1799,12 +1782,9 @@
         <option value="JABKA">JABKA</option>
         <option value="ECOCASE">ECOCASE</option>
         <option value="DASTSKIN">DASTSKIN</option>
-        <option value="DOG">DOG</option>
-        <option value="JOKER">JOKER</option>
-        <option value="BULLDROP">BULLDROP</option>
+        <option value="CSJOKER">CSJOKER</option>
         <option value="SKINITY">SKINITY</option>
-              <option value="BOOMDROP">BOOMDROP</option>
-              <option value="PUZODROP">PUZODROP</option>
+              <option value="SKINBRO">SKINBRO</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
       <button class="primary" id="saveDepositEntryBtn" style="width:100%;">Сохранить депозит</button>
@@ -1892,22 +1872,6 @@
   </div>
 </div>
 
-<!-- Modal: Watchtime -->
-<div class="modal-bg" id="watchtimeModalBg" style="z-index:75;">
-  <div class="modal-card" style="max-width:720px;">
-    <span class="close-modal-x" id="watchtimeCloseX">✕</span>
-    <h3 style="margin:0 0 4px 0; font-size:16px;">👁 WATCHTIME</h3>
-    <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">Приблизительный watchtime по активности в чате. Если человек пишет в чат, он считается активным ещё 5 минут.</div>
-    <div id="watchtimeUpdated" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Обновлено: —</div>
-    <div style="display:grid; grid-template-columns:minmax(0,1fr); gap:8px;">
-      <div style="background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:10px;">
-        <div style="font-weight:800; margin-bottom:8px;">📆 Топ 15 за месяц</div>
-        <div id="watchtimeMonthList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Blacklist -->
 <div class="modal-bg" id="blacklistModalBg">
   <div class="modal-card">
@@ -1948,22 +1912,18 @@
   <div class="az-ss-title">Настройки бота</div>
   <button type="button" id="openLocalCloudBtn" class="az-cloud-setting-btn">☁️ ЛОКАЛ ОБЛАКО <span>›</span></button>
   <div class="az-ss-divider"></div>
+  <div class="az-ss-title">Кулдаун по стримам</div>
+  <div style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
+    <span style="flex:1;line-height:1.35;">Автосчёт стрима при выборе прокачки</span>
+    <input id="streamAutoCountToggle" type="range" min="0" max="1" step="1" value="1" aria-label="Автоматически считать стрим при выборе прокачки" style="width:54px;accent-color:var(--accent);cursor:pointer;">
+  </div>
+  <div id="streamAutoCountValue" style="font-size:11px;color:var(--text-dim);padding:0 2px 4px;">Включено</div>
+  <div class="az-ss-divider"></div>
   <div class="az-ss-title">Звук таймера</div>
   <div class="az-ss-volume" style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
     <span>🔊</span>
     <input id="timerVolume" type="range" min="0" max="100" value="70" step="1" aria-label="Громкость звука таймера" style="flex:1;min-width:110px;accent-color:var(--accent);cursor:pointer;">
     <span id="timerVolumeValue" style="width:38px;text-align:right;">70%</span>
-  </div>
-  <div class="az-ss-divider"></div>
-  <div class="az-ss-title">Автовыброс за неактивность</div>
-  <div class="az-ss-volume" style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
-    <span>⏱️</span>
-    <input id="participantInactivitySlider" type="range" min="0" max="120" value="0" step="5"
-      aria-label="Автовыброс за неактивность" style="flex:1;min-width:110px;accent-color:var(--accent);cursor:pointer;">
-    <span id="participantInactivityValue" style="width:78px;text-align:right;">ВЫКЛ</span>
-  </div>
-  <div style="font-size:9px;color:var(--text-dim);line-height:1.3;padding:0 2px 5px;">
-    0 = не выкидывать. Иначе участник удаляется после указанного числа минут без сообщений.
   </div>
   <div class="az-ss-divider"></div>
   <div class="az-ss-title">Разрешение экрана</div>
@@ -2141,40 +2101,12 @@ function startAzrobotApp(){
   }
 
   function announceWinner(winnerName) {
-    // Финальная проверка непосредственно перед объявлением: защищает все обычные
-    // режимы прокачки, даже если список участников устарел во время анимации.
-    if (winnerName && winnerName !== '—' && isProkachkaBlocked(winnerName)) {
-      if (typeof modalBg !== 'undefined' && modalBg) modalBg.classList.remove('show');
-      if (typeof wheelModalBg !== 'undefined' && wheelModalBg) wheelModalBg.classList.remove('show');
-      if (typeof winnerTimerInterval !== 'undefined' && winnerTimerInterval) {
-        clearInterval(winnerTimerInterval);
-        winnerTimerInterval = null;
-      }
-      alert(`${winnerName} находится на кулдауне и не может выиграть прокачку. Запустите розыгрыш ещё раз.`);
-      return false;
-    }
     triggerConfetti();
     registerProkachkaWinner(winnerName);
     recordWinner(winnerName);
-    // Любой обычный режим прокачки обязан попадать в «Последние 3 победителя».
-    // force=true игнорирует устаревший флаг isBattleDraw, который мог остаться
-    // после предыдущего режима батла. Батлы сюда не попадают, потому что используют
-    // отдельную функцию announceBattleWinner().
-    recordDrawnWinner(winnerName, false, true);
     checkWinnerForModAlert(winnerName);
     if (winnerName && winnerName !== '—') {
       sendChatMessage(`Поздравляем, победитель розыгрыша —> ${winnerName} | На отписку в чат 15 секунд!`);
-    }
-    return true;
-  }
-
-  // Победитель БАТЛА не получает кулдаун прокачки.
-  function announceBattleWinner(winnerName) {
-    triggerConfetti();
-    recordWinner(winnerName);
-    checkWinnerForModAlert(winnerName);
-    if (winnerName && winnerName !== '—') {
-      sendChatMessage(`Поздравляем, победитель батла —> ${winnerName} | На отписку в чат 15 секунд!`);
     }
   }
 
@@ -2196,12 +2128,11 @@ function startAzrobotApp(){
     isWithdrawsCollapsed: false,
     lastDrawnWinners: [],
     participantInactivityMinutes: 20,
-    participantInactivityEnabled: false,
-    lastRaceWinner: "",
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
-    prokachkaCooldowns: {}, // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
-    watchtime: { all: {}, days: {}, months: {} }
+    prokachkaCooldowns: {}, // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn, drawnStreamNumber, eligibleFromStream } }
+    streamTracker: { number: 0, history: [], currentStartedAt: null },
+    streamAutoCountEnabled: true
   };
 
   function loadState() {
@@ -2213,14 +2144,18 @@ function startAzrobotApp(){
       } catch(e){}
     }
     
+    if (!Array.isArray(state.withdrawals)) state.withdrawals = [];
     if (!state.winnerStats || typeof state.winnerStats !== 'object') state.winnerStats = {};
     if (!state.followedSince || typeof state.followedSince !== 'object') state.followedSince = {};
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
     if (!Array.isArray(state.deposits)) state.deposits = [];
     if (!state.participantInactivityMinutes) state.participantInactivityMinutes = 20;
-    state.participantInactivityEnabled = state.participantInactivityEnabled === true;
     if (!state.inactiveMarks || typeof state.inactiveMarks !== 'object') state.inactiveMarks = {};
     if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
+    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
+    if (typeof state.streamAutoCountEnabled !== 'boolean') state.streamAutoCountEnabled = true;
+    if (!Number.isFinite(Number(state.streamTracker.number))) state.streamTracker.number = 0;
+    if (!Array.isArray(state.streamTracker.history)) state.streamTracker.history = [];
 
     if (Array.isArray(state.participants)) {
       state.participants.forEach(p => {
@@ -2249,124 +2184,6 @@ function startAzrobotApp(){
       state.blacklist = [];
     }
   }
-
-
-  /* ---------- Watchtime: приблизительная оценка по активности чата ---------- */
-  const WATCHTIME_ACTIVE_WINDOW_MS = 5 * 60 * 1000;
-  const WATCHTIME_TICK_MS = 60 * 1000;
-  const watchtimeActiveUsers = new Map();
-  let watchtimeLastTick = Date.now();
-
-  function ensureWatchtimeState(){
-    if (!state.watchtime || typeof state.watchtime !== 'object') state.watchtime = {};
-    if (!state.watchtime.all || typeof state.watchtime.all !== 'object') state.watchtime.all = {};
-    if (!state.watchtime.days || typeof state.watchtime.days !== 'object') state.watchtime.days = {};
-    if (!state.watchtime.months || typeof state.watchtime.months !== 'object') state.watchtime.months = {};
-  }
-  function watchtimeDayKey(date){
-    const d = date || new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function watchtimeMonthKey(date){
-    const d = date || new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-  }
-  function watchtimeAdd(bucket, name, ms){
-    if (!bucket || !name || ms <= 0) return;
-    const key = String(name).trim().toLowerCase();
-    if (!key) return;
-    if (!bucket[key]) bucket[key] = { name:String(name).trim(), ms:0 };
-    bucket[key].name = String(name).trim();
-    bucket[key].ms = Number(bucket[key].ms || 0) + ms;
-  }
-  function watchtimeExcludeUser(name){
-    const key = String(name || '').trim().toLowerCase();
-    if (!key) return;
-    watchtimeActiveUsers.delete(key);
-    ensureWatchtimeState();
-    const removeFromBucket = bucket => { if (bucket) delete bucket[key]; };
-    removeFromBucket(state.watchtime.all);
-    Object.values(state.watchtime.days).forEach(removeFromBucket);
-    Object.values(state.watchtime.months).forEach(removeFromBucket);
-  }
-  function watchtimeMarkActive(name){
-    const clean = String(name || '').trim();
-    if (!clean || isBlacklisted(clean)) return;
-    // Модераторы и стример не участвуют в рейтинге watchtime.
-    if (typeof isUserMod === 'function' && isUserMod(clean)) {
-      watchtimeExcludeUser(clean);
-      return;
-    }
-    ensureWatchtimeState();
-    watchtimeActiveUsers.set(clean.toLowerCase(), { name:clean, lastSeen:Date.now() });
-    watchtimeAdd(state.watchtime.all, clean, 0);
-  }
-  function watchtimeCredit(ms){
-    if (ms <= 0) return;
-    ensureWatchtimeState();
-    const now = Date.now();
-    const day = watchtimeDayKey(new Date(now));
-    const month = watchtimeMonthKey(new Date(now));
-    if (!state.watchtime.days[day]) state.watchtime.days[day] = {};
-    if (!state.watchtime.months[month]) state.watchtime.months[month] = {};
-    watchtimeActiveUsers.forEach((info, key) => {
-      if (!info || now - info.lastSeen > WATCHTIME_ACTIVE_WINDOW_MS) {
-        watchtimeActiveUsers.delete(key);
-        return;
-      }
-      watchtimeAdd(state.watchtime.all, info.name, ms);
-      watchtimeAdd(state.watchtime.days[day], info.name, ms);
-      watchtimeAdd(state.watchtime.months[month], info.name, ms);
-    });
-    const dayKeys = Object.keys(state.watchtime.days).sort();
-    while (dayKeys.length > 62) delete state.watchtime.days[dayKeys.shift()];
-    const monthKeys = Object.keys(state.watchtime.months).sort();
-    while (monthKeys.length > 24) delete state.watchtime.months[monthKeys.shift()];
-  }
-  function formatWatchtime(ms){
-    const totalMin = Math.floor((Number(ms)||0) / 60000);
-    if (totalMin < 60) return `${totalMin} мин`;
-    const h = Math.floor(totalMin / 60);
-    const m = totalMin % 60;
-    return m ? `${h} ч ${m} мин` : `${h} ч`;
-  }
-  function renderWatchtimeList(el, bucket, limit = 10){
-    if (!el) return;
-    const rows = Object.values(bucket || {})
-      .filter(x => x && Number(x.ms) > 0 && !(typeof isUserMod === 'function' && isUserMod(x.name)))
-      .sort((a,b) => Number(b.ms)-Number(a.ms))
-      .slice(0,limit);
-    if (!rows.length){
-      el.innerHTML = '<div style="color:var(--text-dim);font-size:11px;text-align:center;padding:10px 4px;">Пока нет данных</div>';
-      return;
-    }
-    el.innerHTML = rows.map((x,i) => `
-      <div style="display:flex;justify-content:space-between;gap:6px;padding:5px 2px;border-bottom:1px solid var(--line);font-size:11px;">
-        <span><b>${i+1}.</b> ${escapeHtml(x.name)}</span>
-        <span style="color:var(--good);font-weight:800;white-space:nowrap;">${formatWatchtime(x.ms)}</span>
-      </div>`).join('');
-  }
-  function renderWatchtime(){
-    ensureWatchtimeState();
-    const day = watchtimeDayKey();
-    const month = watchtimeMonthKey();
-    if (!state.watchtime.days[day]) state.watchtime.days[day] = {};
-    if (!state.watchtime.months[month]) state.watchtime.months[month] = {};
-    renderWatchtimeList(document.getElementById('watchtimeMonthList'), state.watchtime.months[month], 15);
-    const u = document.getElementById('watchtimeUpdated');
-    if (u) u.textContent = `Обновлено: ${new Date().toLocaleTimeString('ru-RU')}`;
-  }
-  ensureWatchtimeState();
-  setInterval(() => {
-    const now = Date.now();
-    const elapsed = Math.min(Math.max(now - watchtimeLastTick, 0), WATCHTIME_TICK_MS);
-    watchtimeLastTick = now;
-    watchtimeCredit(elapsed || WATCHTIME_TICK_MS);
-    saveState();
-    const modal = document.getElementById('watchtimeModalBg');
-    if (modal && modal.classList.contains('show')) renderWatchtime();
-  }, WATCHTIME_TICK_MS);
-
 
   function saveState() {
     try {
@@ -2422,27 +2239,101 @@ function startAzrobotApp(){
     reader.readAsText(file);
   }
 
-  /* ---------- Прокачка: кулдаун победителей ---------- */
-  const PROKACHKA_NO_WITHDRAW_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 1 день
-  const PROKACHKA_WITHDRAW_COOLDOWN_MS = 48 * 60 * 60 * 1000;    // 2 дня
+  /* ---------- Прокачка: кулдаун по количеству стримов ---------- */
+  const PROKACHKA_NO_WITHDRAW_STREAMS = 1;
+  const PROKACHKA_WITHDRAW_STREAMS = 2;
+
+  function isStreamStarted() {
+    // При выключенной настройке работаем как в старом режиме: набор не блокируется.
+    if (state.streamAutoCountEnabled === false) return true;
+    return !!(state.streamTracker && Number(state.streamTracker.number) > 0 && state.streamTracker.currentStartedAt);
+  }
+
+  function currentStreamNumber() {
+    return Math.max(0, Number(state.streamTracker && state.streamTracker.number) || 0);
+  }
+
+  function renderStreamStatus() {
+    const el = document.getElementById('streamStatus');
+    if (!el) return;
+    const number = currentStreamNumber();
+    const startedAt = state.streamTracker && state.streamTracker.currentStartedAt;
+    if (state.streamAutoCountEnabled === false) {
+      el.textContent = '⚪ Кулдаун по стримам отключён';
+    } else {
+      el.textContent = isStreamStarted()
+        ? `🟢 Стрим #${number}${startedAt ? ' · ' + new Date(startedAt).toLocaleDateString('ru-RU') : ''}`
+        : '🔒 Первый стрим засчитается при выборе прокачки';
+    }
+  }
+
+  function countStreamOnProkachkaOpen() {
+    if (state.streamAutoCountEnabled === false) return;
+    // Каждое нажатие «Выбрать прокачку» при включённой настройке засчитывает новый стрим.
+    const nextNumber = currentStreamNumber() + 1;
+    const now = Date.now();
+    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
+    state.streamTracker.number = nextNumber;
+    state.streamTracker.currentStartedAt = now;
+    if (!Array.isArray(state.streamTracker.history)) state.streamTracker.history = [];
+    state.streamTracker.history.push({ number: nextNumber, startedAt: now, date: new Date(now).toLocaleDateString('ru-RU') });
+    if (state.streamTracker.history.length > 300) state.streamTracker.history = state.streamTracker.history.slice(-300);
+    cleanExpiredProkachkaCooldowns();
+    saveState();
+    renderStreamStatus();
+    renderCooldownList();
+  }
+
+  function initStreamAutoCountSetting() {
+    const slider = document.getElementById('streamAutoCountToggle');
+    const value = document.getElementById('streamAutoCountValue');
+    if (!slider) return;
+    slider.value = state.streamAutoCountEnabled === false ? '0' : '1';
+    const render = () => {
+      const enabled = slider.value === '1';
+      state.streamAutoCountEnabled = enabled;
+      if (value) value.textContent = enabled ? 'Включено — стрим засчитывается при первом открытии прокачки' : 'Выключено — прокачка работает без учёта стримов';
+      saveState();
+      renderStreamStatus();
+    };
+    slider.addEventListener('input', render);
+    render();
+  }
+  initStreamAutoCountSetting();
+  renderStreamStatus();
+
+  function startNewStream() {
+    const nextNumber = currentStreamNumber() + 1;
+    const now = Date.now();
+    if (!confirm(`Начать стрим #${nextNumber}? Это продвинет кулдауны участников на один стрим.`)) return;
+    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
+    state.streamTracker.number = nextNumber;
+    state.streamTracker.currentStartedAt = now;
+    state.streamTracker.history.push({ number: nextNumber, startedAt: now, date: new Date(now).toLocaleDateString('ru-RU') });
+    if (state.streamTracker.history.length > 300) state.streamTracker.history = state.streamTracker.history.slice(-300);
+    cleanExpiredProkachkaCooldowns();
+    saveState();
+    renderStreamStatus();
+    renderCooldownList();
+  }
+
 
   function cleanExpiredProkachkaCooldowns() {
-    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') {
-      state.prokachkaCooldowns = {};
-      return;
-    }
-
-    const now = Date.now();
+    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
+    const streamNo = currentStreamNumber();
     let changed = false;
-
     Object.keys(state.prokachkaCooldowns).forEach(key => {
       const item = state.prokachkaCooldowns[key];
-      if (!item || !item.expireAt || item.expireAt <= now) {
-        delete state.prokachkaCooldowns[key];
+      if (!item) { delete state.prokachkaCooldowns[key]; changed = true; return; }
+      // Совместимость со старой базой: переводим прежний таймер в кулдаун по стримам.
+      if (!Number.isFinite(Number(item.eligibleFromStream))) {
+        const streams = item.withdrawn ? PROKACHKA_WITHDRAW_STREAMS : PROKACHKA_NO_WITHDRAW_STREAMS;
+        item.drawnStreamNumber = streamNo;
+        item.eligibleFromStream = streamNo + streams;
         changed = true;
       }
+      if (streamNo >= Number(item.eligibleFromStream)) { delete state.prokachkaCooldowns[key]; changed = true; }
     });
-
     if (changed) saveState();
   }
 
@@ -2451,55 +2342,37 @@ function startAzrobotApp(){
     cleanExpiredProkachkaCooldowns();
     const key = String(name).trim().toLowerCase();
     const item = state.prokachkaCooldowns[key];
-    return !!(item && item.expireAt > Date.now());
+    return !!(item && currentStreamNumber() < Number(item.eligibleFromStream));
   }
 
   function registerProkachkaWinner(name) {
     if (!name) return;
-
-    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') {
-      state.prokachkaCooldowns = {};
-    }
-
+    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
     const now = Date.now();
     const key = String(name).trim().toLowerCase();
-
-    // Сразу после выпадения даём 1 день. Если за это время оформлен вывод,
-    // markProkachkaWithdrawal() увеличит срок до 2 дней.
+    const streamNo = currentStreamNumber();
     state.prokachkaCooldowns[key] = {
-      name: String(name),
-      drawnAt: now,
-      expireAt: now + PROKACHKA_NO_WITHDRAW_COOLDOWN_MS,
+      name: String(name), drawnAt: now, drawnStreamNumber: streamNo,
+      eligibleFromStream: streamNo + PROKACHKA_NO_WITHDRAW_STREAMS,
+      expireAt: now + PROKACHKA_NO_WITHDRAW_STREAMS * 24 * 60 * 60 * 1000,
       withdrawn: false
     };
-
-    // Сразу выкидываем игрока из списка прокачки — пока кулдаун не спадёт,
-    // "+" в чат его туда не вернёт (см. проверку isProkachkaBlocked в addParticipant)
     const before = state.participants.length;
     state.participants = state.participants.filter(p => p.name.toLowerCase() !== key);
-    if (state.participants.length !== before) {
-      renderParticipants();
-    }
-
+    if (state.participants.length !== before) renderParticipants();
     saveState();
   }
 
   function markProkachkaWithdrawal(user) {
     if (!user || !state.prokachkaCooldowns) return;
-
     const key = String(user).trim().toLowerCase();
     const item = state.prokachkaCooldowns[key];
-    if (!item || !item.drawnAt) return;
-
-    const twoDaysExpireAt = item.drawnAt + PROKACHKA_WITHDRAW_COOLDOWN_MS;
+    if (!item) return;
+    const drawnStream = Number.isFinite(Number(item.drawnStreamNumber)) ? Number(item.drawnStreamNumber) : currentStreamNumber();
+    item.drawnStreamNumber = drawnStream;
+    item.eligibleFromStream = drawnStream + PROKACHKA_WITHDRAW_STREAMS;
+    item.expireAt = (Number(item.drawnAt) || Date.now()) + PROKACHKA_WITHDRAW_STREAMS * 24 * 60 * 60 * 1000;
     item.withdrawn = true;
-
-    // Если вывод внесён в течение первого дня, продлеваем кулдаун до 2 дней
-    // с момента выпадения. Если 2 дня уже прошли, блокировку не возвращаем.
-    if (twoDaysExpireAt > Date.now()) {
-      item.expireAt = twoDaysExpireAt;
-    }
-
     saveState();
   }
 
@@ -2542,21 +2415,13 @@ function startAzrobotApp(){
   setInterval(cleanExpiredProkachkaCooldowns, 60000);
 
   /* ---------- Последние победители (независимо от вывода) ---------- */
-  function recordDrawnWinner(name, fromBattle = false, force = false) {
-    // В "Последние 3 победителя" попадают победители всех обычных режимов
-    // прокачки, но никогда не попадают победители батла.
-    if (fromBattle) return;
-    if (!force && isBattleDraw) return;
+  function recordDrawnWinner(name) {
+  if (isBattleDraw) return;
 
     if (!name) return;
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
-    const key = String(name).trim().toLowerCase();
-    // Защита от двойной записи одного и того же выпадения, если старый режим
-    // ещё вызовет recordDrawnWinner() дополнительно после announceWinner().
-    if (String(state.lastDrawnWinners[0] || '').trim().toLowerCase() !== key) {
-      state.lastDrawnWinners.unshift(String(name));
-      if (state.lastDrawnWinners.length > 20) state.lastDrawnWinners.length = 20;
-    }
+    state.lastDrawnWinners.unshift(name);
+    if (state.lastDrawnWinners.length > 20) state.lastDrawnWinners.length = 20;
     saveState();
     if (typeof renderLastWinners === 'function') renderLastWinners();
   }
@@ -2670,8 +2535,26 @@ function startAzrobotApp(){
       // Перезагружаем страницу один раз за вкладку, если данные с GitHub отличаются от локальных —
       // так все счётчики/списки на экране корректно пересоберутся из свежего состояния.
       if (!alreadySyncedThisTab && localRaw !== remoteRaw) {
+        // Не даём старому/неполно загруженному GitHub-состоянию затереть локальную историю выводов.
+        let local = {};
+        try { local = localRaw ? JSON.parse(localRaw) : {}; } catch (_) { local = {}; }
+        const localWithdrawals = Array.isArray(local.withdrawals) ? local.withdrawals : [];
+        const remoteWithdrawals = Array.isArray(remote.withdrawals) ? remote.withdrawals : [];
+        const withdrawalKey = w => JSON.stringify([
+          String(w && w.user || '').trim().toLowerCase(),
+          String(w && w.site || '').trim().toLowerCase(),
+          String(w && w.amount || ''),
+          String(w && w.date || ''),
+          String(w && (w.id || w.createdAt || w.timestamp) || '')
+        ]);
+        const seenWithdrawals = new Set(remoteWithdrawals.map(withdrawalKey));
+        remote.withdrawals = remoteWithdrawals.concat(
+          localWithdrawals.filter(w => !seenWithdrawals.has(withdrawalKey(w)))
+        );
+        // Для остальных данных сохраняем прежнее поведение синхронизации.
+        const mergedRaw = JSON.stringify(remote);
         sessionStorage.setItem('azrobot_github_synced', '1');
-        localStorage.setItem('azrobot_data', remoteRaw);
+        localStorage.setItem('azrobot_data', mergedRaw);
         location.reload();
       }
     } catch(e) {
@@ -2824,6 +2707,25 @@ function startAzrobotApp(){
 
     state.activity[user].count += 1;
     state.activity[user].lastMsg = trimmed;
+
+    // Сохраняем сводную статистику сообщений для оценки активности в конном батле.
+    if (!state.chatQualityStats || typeof state.chatQualityStats !== 'object') state.chatQualityStats = {};
+    const qualityKey = String(user).trim().toLowerCase();
+    const q = state.chatQualityStats[qualityKey] || { name:String(user).trim(), total:0, commandLike:0, oneWord:0, meaningful:0, chars:0, words:0 };
+    const normalized = trimmed.toLowerCase().replace(/\\s+/g, ' ').trim();
+    const words = normalized.split(/\\s+/).filter(Boolean);
+    const commandLike = /^(?:\+|батл|!\w+|[.!?\/]+)$/.test(normalized) || /^[+\-_.!?\s]+$/.test(normalized);
+    const oneWord = words.length <= 1;
+    const meaningful = !commandLike && words.length >= 3 && normalized.length >= 12;
+    q.name = String(user).trim();
+    q.total = Number(q.total || 0) + 1;
+    q.commandLike = Number(q.commandLike || 0) + (commandLike ? 1 : 0);
+    q.oneWord = Number(q.oneWord || 0) + (oneWord ? 1 : 0);
+    q.meaningful = Number(q.meaningful || 0) + (meaningful ? 1 : 0);
+    q.chars = Number(q.chars || 0) + normalized.length;
+    q.words = Number(q.words || 0) + words.length;
+    q.lastSeen = Date.now();
+    state.chatQualityStats[qualityKey] = q;
     saveState();
   }
 
@@ -2914,6 +2816,7 @@ function startAzrobotApp(){
 
   function addParticipant(name){
     name = name.trim();
+    if (!isStreamStarted()) return false;
     if(!name || isBlacklisted(name)) return false;
     if(isProkachkaBlocked(name)) return false; // на кулдауне после прокачки — по "+" не добавляем, пока не спадёт
     if(isParticipant(name)) return false;
@@ -2937,8 +2840,8 @@ function startAzrobotApp(){
     },
     add: function(name){
       name = String(name || '').trim().replace(/^@+/, '');
+      if (!isStreamStarted()) return {ok:false, reason:'Сначала нажмите «Начать стрим», чтобы открыть набор на прокачку.'};
       if(!name) return {ok:false, reason:'Введите ник участника.'};
-      if(isProkachkaBlocked(name)) return {ok:false, reason:'Участник находится на кулдауне прокачки и пока не может участвовать.'};
       if(isBlacklisted(name)) return {ok:false, reason:'Этот пользователь находится в чёрном списке.'};
 
       var key = name.toLowerCase();
@@ -3069,9 +2972,7 @@ function startAzrobotApp(){
   setInterval(cleanExpiredInactiveMarks, 60000);
 
   function removeInactiveParticipants(){
-    // Автовыброс полностью отключён по умолчанию и пока ползунок стоит на "ВЫКЛ".
-    if (state.participantInactivityEnabled !== true || !(Number(state.participantInactivityMinutes) > 0)) return;
-    const limitMin = Number(state.participantInactivityMinutes);
+    const limitMin = state.participantInactivityMinutes || 20;
     const limitMs = limitMin * 60 * 1000;
     const now = Date.now();
 
@@ -3103,137 +3004,43 @@ function startAzrobotApp(){
 
   setInterval(removeInactiveParticipants, 30000);
 
-  /* ---------- Сброс участников из главного меню ---------- */
-  (function initResetParticipantsMenu(){
-    const clearBtn = document.getElementById('clearBtn');
-    const bg = document.getElementById('resetParticipantsModalBg');
-    const closeX = document.getElementById('resetParticipantsModalCloseX');
-    const resetBattleBtn = document.getElementById('resetBattleFromMainBtn');
-    const resetProkachkaBtn = document.getElementById('resetProkachkaFromMainBtn');
+  document.getElementById('clearBtn').onclick = ()=>{
+    const count = state.participants.length;
+    if (count === 0) return;
 
-    if (!clearBtn || !bg || !closeX || !resetBattleBtn || !resetProkachkaBtn) return;
-
-    clearBtn.onclick = ()=> bg.classList.add('show');
-    closeX.onclick = ()=> bg.classList.remove('show');
-    bg.addEventListener('click', (e)=>{
-      if (e.target === bg) bg.classList.remove('show');
-    });
-
-    function refreshVisibleParticipantBadges(){
-      document.querySelectorAll('#chatLog .msg').forEach(div=>{
-        const user = div.dataset.chatUser;
-        if (!user) return;
-        const isP = isParticipant(user);
-        const isB = isBattleParticipant(user);
-
-        div.classList.toggle('participant', isP);
-        div.classList.toggle('battle', isB);
-        const name = div.querySelector('.chat-user-name');
-        if (name) name.classList.toggle('participant-name', isP && !isB);
-        if (name) name.classList.toggle('battle-name', isB);
-
-        const battleBadge = div.querySelector('.chat-badge-battle');
-        if (battleBadge && !isB) battleBadge.remove();
-        const participantBadge = div.querySelector('.chat-badge-participant');
-        if (participantBadge && !isP) participantBadge.remove();
-      });
-    }
-
-    resetBattleBtn.onclick = ()=>{
-      // Сбрасываем сразу, без confirm/alert.
-      state.battleParticipants = [];
-      saveState();
-      refreshVisibleParticipantBadges();
-      bg.classList.remove('show');
-    };
-
-    resetProkachkaBtn.onclick = ()=>{
-      // Сбрасываем сразу, без confirm/alert.
-      state.participants = [];
-      saveState();
-      renderParticipants();
-      refreshVisibleParticipantBadges();
-      bg.classList.remove('show');
-    };
-  })();
-
-  /* ---------- Честный случайный выбор для всех режимов ---------- */
-  // Fisher-Yates: каждый допустимый участник имеет одинаковую вероятность
-  // оказаться на любой позиции. Не используем sort(() => Math.random()-0.5),
-  // потому что такой способ не даёт равномерного распределения.
-  function fairRandomIndex(length) {
-    if (length <= 1) return 0;
-    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
-      const max = 0x100000000;
-      const limit = max - (max % length);
-      const buf = new Uint32Array(1);
-      let value;
-      do {
-        window.crypto.getRandomValues(buf);
-        value = buf[0];
-      } while (value >= limit);
-      return value % length;
-    }
-    return Math.floor(Math.random() * length);
-  }
-
-  function fairShuffle(list) {
-    const arr = Array.isArray(list) ? list.slice() : [];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = fairRandomIndex(i + 1);
-      const tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
-    }
-    return arr;
-  }
-
-  function uniqueNames(names) {
-    const out = [];
-    const seen = new Set();
-    (Array.isArray(names) ? names : []).forEach(name => {
-      const clean = String(name || '').trim();
-      const key = clean.toLowerCase();
-      if (!clean || seen.has(key)) return;
-      seen.add(key);
-      out.push(clean);
-    });
-    return out;
-  }
+    state.participants = [];
+    saveState();
+    renderParticipants();
+  };
 
   /* ---------- Участники БАТЛ: только те, кто написал "батл" ---------- */
   function getBattleParticipants(count, excludeList = []) {
     cleanExpiredBlacklist();
-    const excludeLower = excludeList.map(e => String(e).toLowerCase());
-    const seen = new Set();
-    const valid = uniqueNames((state.battleParticipants || []).map(p => p.name)).filter(name => {
-      const key = String(name || '').trim().toLowerCase();
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
-      // Батл — отдельный пул без прокачочного кулдауна. Берём всех, кто реально
-      // написал «батл», кроме чёрного списка и уже выбранных в этом заезде.
-      return !isBlacklisted(name) && !excludeLower.includes(key);
+    const excludeLower = excludeList.map(e => e.toLowerCase());
+    const valid = (state.battleParticipants || []).map(p => p.name).filter(name => {
+      return !isBlacklisted(name) && !isProkachkaBlocked(name) && !excludeLower.includes(name.toLowerCase());
     });
     if (valid.length < count) {
       alert(`Недостаточно участников "батл"! Нужно хотя бы ${count} человек, сейчас: ${valid.length}. "+" не участвует.`);
       return null;
     }
-    return fairShuffle(valid).slice(0, count);
+    return [...valid].sort(() => Math.random() - 0.5).slice(0, count);
   }
 
   /* ---------- Вспомогательный выбор N Уникальных Участников ---------- */
   function getUniqueParticipants(count, excludeList = []) {
     cleanExpiredBlacklist();
     const excludeLower = excludeList.map(e => e.toLowerCase());
-    const valid = uniqueNames(state.participants
+    const valid = state.participants
       .filter(p => !isBlacklisted(p.name) && !isProkachkaBlocked(p.name) && !excludeLower.includes(p.name.toLowerCase()))
-      .map(p => p.name));
+      .map(p => p.name);
 
     if (valid.length < count) {
       alert(`Недостаточно участников в чате! Нужно хотя бы ${count} человек, а сейчас доступно: ${valid.length}`);
       return null;
     }
-    return fairShuffle(valid).slice(0, count);
+    const shuffled = [...valid].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
   }
 
   /* ---------- МЕНЕДЖЕР ТАЙМЕРОВ И ЧАТА МНОГОПОЛЬЗОВАТЕЛЬСКИХ РЕЖИМОВ ---------- */
@@ -3350,14 +3157,13 @@ function startAzrobotApp(){
   function rerollSingleBox(index) {
     const previousWinner = boxesWinners[index];
     const currentOthers = boxesWinners.filter((_, idx) => idx !== index);
-    // Реролл коробки остаётся в том же режиме: берём только актуальный пул «батл».
-    // Так человек, который написал «батл» после первого выбора, сразу получает шанс.
-    const newWinnerArr = getBattleParticipants(1, currentOthers);
+    const newWinnerArr = getUniqueParticipants(1, currentOthers);
     if (!newWinnerArr) return;
 
     if (previousWinner) {
-      // Победитель батла не получает cooldown и не должен попадать в пул «+» только из-за реролла.
-      isBattleDraw = true;
+  isBattleDraw = true;
+
+      releaseProkachkaWinnerForReroll(previousWinner);
     }
 
     const newWinner = newWinnerArr[0];
@@ -3372,7 +3178,8 @@ function startAzrobotApp(){
     const statusEl = document.getElementById(`boxTimerStatus${index}`);
     const chatBoxEl = document.getElementById(`boxChatLog${index}`);
 
-    announceBattleWinner(newWinner);
+    announceWinner(newWinner);
+    recordDrawnWinner(newWinner);
     startMultiTimer(`box_${index}`, newWinner, numEl, statusEl, chatBoxEl);
   }
 
@@ -3411,7 +3218,8 @@ function startAzrobotApp(){
       const statusEl = document.getElementById(`boxTimerStatus${i}`);
       const chatBoxEl = document.getElementById(`boxChatLog${i}`);
 
-      announceBattleWinner(winner);
+      announceWinner(winner);
+      recordDrawnWinner(winner);
       startMultiTimer(`box_${i}`, winner, numEl, statusEl, chatBoxEl);
     };
 
@@ -3445,7 +3253,7 @@ function startAzrobotApp(){
 
   document.getElementById('open3SlotsBtn').onclick = () => {
     cleanExpiredBlacklist();
-    const valid = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n));
+    const valid = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n) && !isProkachkaBlocked(n));
     if (valid.length < 3) {
       alert(`Недостаточно участников в чате! Нужно минимум 3 человека (сейчас: ${valid.length}).`);
       return;
@@ -3476,9 +3284,11 @@ function startAzrobotApp(){
     timerBox.style.display = 'none';
     rerollBtn.style.display = 'none';
 
-    // Для батлов визуальный барабан тоже строится из актуального пула «батл».
-    // Никакой подмены на «+»: режимы не смешиваются.
-    let allNames = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n));
+    let allNames = (state.battleParticipants || []).map(n => n.name).filter(n => !isBlacklisted(n) && !isProkachkaBlocked(n));
+    // Если никто не писал "батл" (актуально для "1 рулетки") — берём имена из общего списка участников "+"
+    if (!allNames.length) {
+      allNames = state.participants.map(p => p.name).filter(n => !isBlacklisted(n));
+    }
     // Для визуала барабана мало имён выглядит как "всего 1 человек мелькает" — добавляем всех известных участников чата,
     // чтобы во время прокрутки реально мелькали разные имена (на выбор победителя это не влияет)
     if (allNames.length < 6) {
@@ -3525,7 +3335,8 @@ function startAzrobotApp(){
         const statusEl = document.getElementById(`slotTimerStatus${suffix}`);
         const chatBoxEl = document.getElementById(`slotChatLog${suffix}`);
 
-        announceBattleWinner(targetWinner);
+        announceWinner(targetWinner);
+        recordDrawnWinner(targetWinner);
         startMultiTimer(`slot_${suffix}`, targetWinner, numEl, statusEl, chatBoxEl);
 
         if (onComplete) onComplete();
@@ -3565,8 +3376,9 @@ function startAzrobotApp(){
       if (!newWinnerArr) return;
 
       if (previousWinner) {
-        // В батле реролл не переносит участника в общий пул «+».
-        isBattleDraw = true;
+  isBattleDraw = true;
+
+        releaseProkachkaWinnerForReroll(previousWinner);
       }
 
       const newWinner = newWinnerArr[0];
@@ -3591,6 +3403,7 @@ function startAzrobotApp(){
   let slot1Winner = "";
 
   function resetSlot1UI() {
+  isBattleDraw = true;
 
     clearMultiTimer('slot_Single');
     const box = document.getElementById('slotBoxSingle');
@@ -3626,7 +3439,7 @@ function startAzrobotApp(){
   };
 
   spin1SlotBtn.onclick = () => {
-  isBattleDraw = false;
+  isBattleDraw = true;
 
     if (isSlot1Spinning) return;
     const winners = getUniqueParticipants(1);
@@ -3643,7 +3456,7 @@ function startAzrobotApp(){
   };
 
   document.getElementById('rerollSlotSingle').onclick = () => {
-  isBattleDraw = false;
+  isBattleDraw = true;
 
     if (isSlot1Spinning) return;
     const previousWinner = slot1Winner;
@@ -3674,14 +3487,14 @@ function startAzrobotApp(){
 
   function getPlusParticipants(count) {
     cleanExpiredBlacklist();
-    const valid = uniqueNames(state.participants
+    const valid = state.participants
       .filter(p => !isBlacklisted(p.name) && !isProkachkaBlocked(p.name))
-      .map(p => p.name));
+      .map(p => p.name);
     if (valid.length < count) {
       alert(`Для слот-машины нужно минимум ${count} человек, написавших "+". Сейчас: ${valid.length}.`);
       return null;
     }
-    return fairShuffle(valid).slice(0, count);
+    return [...valid].sort(() => Math.random() - 0.5).slice(0, count);
   }
 
   function resetSlotMachineUI() {
@@ -3752,6 +3565,7 @@ function startAzrobotApp(){
           row.style.background = 'rgba(190,242,100,.12)';
           slotMachineResult.textContent = `🏆 ${name} — последний, идёт на прокачку!`;
           announceWinner(name);
+          recordDrawnWinner(name);
 
           const smTimerBox = document.getElementById('slotMachineTimerBox');
           const smNumEl = document.getElementById('slotMachineTimerNum');
@@ -3827,7 +3641,7 @@ function startAzrobotApp(){
         list.push(user);
       }
     }
-    return uniqueNames(list);
+    return list;
   }
 
   const sliceColors = ['#65a30d', '#a3e635', '#4d7c0f', '#bef264', '#3f6212', '#84cc16', '#365314', '#8bc926'];
@@ -3905,7 +3719,7 @@ function startAzrobotApp(){
     isSpinning = true;
     spinWheelBtn.disabled = true;
 
-    const winnerIndex = fairRandomIndex(activeEligible.length);
+    const winnerIndex = Math.floor(Math.random() * activeEligible.length);
     const numSlices = activeEligible.length;
     const sliceAngle = (Math.PI * 2) / numSlices;
 
@@ -3938,6 +3752,7 @@ function startAzrobotApp(){
         state.lastWinner = winner;
         lastWinnerSource = 'wheel';
         saveState();
+        recordDrawnWinner(winner);
         modalWinner.textContent = winner;
         wUser.value = winner;
         modalBg.classList.add('show');
@@ -4059,16 +3874,17 @@ function startAzrobotApp(){
     }
 
     // Сначала те, у кого меньше времени осталось
-    entries.sort((a, b) => (a[1].expireAt || 0) - (b[1].expireAt || 0));
+    entries.sort((a, b) => (a[1].eligibleFromStream || 0) - (b[1].eligibleFromStream || 0));
 
     entries.forEach(([key, item]) => {
       const div = document.createElement('div');
       div.className = 'blacklist-item';
 
-      const timeStr = formatRemainingTime(item.expireAt);
+      const remainingStreams = Math.max(0, Number(item.eligibleFromStream || 0) - currentStreamNumber());
+      const timeStr = remainingStreams === 1 ? 'Остался 1 следующий стрим' : `Осталось стримов: ${remainingStreams}`;
       const withdrawStr = item.withdrawn
-        ? '💰 Вывод внесён (кулдаун 2 дня)'
-        : '⏳ Вывод не внесён (кулдаун 1 день)';
+        ? '💰 Вывод записан · пропустить 2 стрима'
+        : '⏳ Без вывода · пропустить 1 стрим';
 
       div.innerHTML = `
         <div class="blacklist-item-info">
@@ -4088,6 +3904,8 @@ function startAzrobotApp(){
       cooldownContainer.appendChild(div);
     });
   }
+
+  renderStreamStatus();
 
   document.getElementById('openCooldownBtn').onclick = () => {
     renderCooldownList();
@@ -4264,7 +4082,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "DOG", "JOKER", "BULLDROP", "SKINITY", "BOOMDROP", "PUZODROP"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY", "SKINBRO"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -4308,17 +4126,15 @@ function startAzrobotApp(){
     renderLastWinners();
   }
 
-  // Каждое оформление вывода хранится отдельной записью.
-  // Нельзя объединять старые суммы пользователя в одну запись и обновлять ей дату:
-  // тогда вся накопленная сумма ошибочно попадала бы в топ текущего стрима/дня.
   function findOrCreateWithdrawalEntry(user, site) {
-    state.withdrawals.unshift({
-      site,
-      user: String(user || '').trim(),
-      amount: 0,
-      date: new Date().toLocaleString('ru-RU')
-    });
-    return 0;
+    let idx = state.withdrawals.findIndex(
+      w => w.user.toLowerCase() === user.toLowerCase() && w.site === site
+    );
+    if (idx === -1) {
+      state.withdrawals.unshift({ site, user, amount: 0, date: new Date().toLocaleString('ru-RU') });
+      idx = 0;
+    }
+    return idx;
   }
 
   function getUserTotal(user) {
@@ -4362,7 +4178,7 @@ function startAzrobotApp(){
         if (isNaN(val) || val === 0) return;
         const selectedSite = row.querySelector('.w-site-select').value;
         const idx = findOrCreateWithdrawalEntry(user, selectedSite);
-        state.withdrawals[idx].amount = val;
+        state.withdrawals[idx].amount = (Number(state.withdrawals[idx].amount) || 0) + val;
         state.withdrawals[idx].date = new Date().toLocaleString('ru-RU');
         markProkachkaWithdrawal(user);
         refreshAllWithdrawViews();
@@ -4372,8 +4188,6 @@ function startAzrobotApp(){
     });
   }
 
-  window.renderLastWinners = renderLastWinners;
-
   document.getElementById('addWithdrawBtn').onclick = () => {
     const site = document.getElementById('wSite').value;
     const user = wUser.value.trim();
@@ -4381,9 +4195,21 @@ function startAzrobotApp(){
 
     if(!user || isNaN(amountVal)) return;
 
-    // Добавляем отдельное событие вывода, не переносим накопленную сумму в текущую дату.
-    state.withdrawals.unshift({ site, user, amount: amountVal, date: new Date().toLocaleString('ru-RU') });
-    markProkachkaWithdrawal(user);
+    const existingIndex = state.withdrawals.findIndex(
+      item => item.user.toLowerCase() === user.toLowerCase() && item.site === site
+    );
+
+    const now = new Date();
+    if (existingIndex !== -1) {
+      state.withdrawals[existingIndex].amount = Number(state.withdrawals[existingIndex].amount) + amountVal;
+      state.withdrawals[existingIndex].date = now.toLocaleString('ru-RU');
+      markProkachkaWithdrawal(user);
+      const updated = state.withdrawals.splice(existingIndex, 1)[0];
+      state.withdrawals.unshift(updated);
+    } else {
+      state.withdrawals.unshift({ site, user, amount: amountVal, date: now.toLocaleString('ru-RU') });
+      markProkachkaWithdrawal(user);
+    }
 
     saveState();
     renderWithdrawals();
@@ -4464,18 +4290,6 @@ function startAzrobotApp(){
     siteStatsModalBg.classList.remove('show');
   };
 
-  const watchtimeModalBg = document.getElementById('watchtimeModalBg');
-  document.getElementById('openWatchtimeBtn').onclick = () => {
-    renderWatchtime();
-    watchtimeModalBg.classList.add('show');
-  };
-  document.getElementById('watchtimeCloseX').onclick = () => {
-    watchtimeModalBg.classList.remove('show');
-  };
-  watchtimeModalBg.addEventListener('click', (e) => {
-    if (e.target === watchtimeModalBg) watchtimeModalBg.classList.remove('show');
-  });
-
   /* ---------- Winner Check ---------- */
   let winnerTimerInterval = null;
   let winnerSecondsLeft = 15;
@@ -4517,7 +4331,125 @@ function startAzrobotApp(){
     }, 1000);
   }
 
+  /* ---------- 🐎 Конный батл: 10 выбранных участников, 3 ответа-победы ---------- */
+  const horseBattle = { active:false, roster:[], winners:[], current:null, seconds:15, timer:null, responded:false, expired:false, round:0 };
+  const horseBattleModalBg = document.getElementById('horseBattleModalBg');
+  const horseBattleRosterEl = document.getElementById('horseBattleRoster');
+  const horseBattleWinnerEl = document.getElementById('horseBattleWinnerName');
+  const horseBattleCountdownEl = document.getElementById('horseBattleCountdown');
+  const horseBattleStatusEl = document.getElementById('horseBattleStatus');
+  const horseBattleProgressEl = document.getElementById('horseBattleProgressFill');
+  const horseBattleStartBtn = document.getElementById('horseBattleStartBtn');
+  const horseBattleRerollBtn = document.getElementById('horseBattleRerollBtn');
+
+  function renderHorseBattleRoster(){
+    horseBattleRosterEl.innerHTML = horseBattle.roster.map(name => {
+      const won = horseBattle.winners.some(n => n.toLowerCase() === name.toLowerCase());
+      const active = horseBattle.current && horseBattle.current.toLowerCase() === name.toLowerCase() && !won;
+      return `<div class="horse-battle-racer ${won?'won':active?'active':''}">${won?'🏆':active?'🐎':'🏇'} ${escapeHtml(name)}</div>`;
+    }).join('');
+    horseBattleProgressEl.style.width = `${Math.min(100, horseBattle.winners.length/3*100)}%`;
+  }
+  function clearHorseBattleTimer(){ if(horseBattle.timer){clearInterval(horseBattle.timer);horseBattle.timer=null;} }
+  function startHorseBattleTimer(){
+    clearHorseBattleTimer(); horseBattle.seconds=15; horseBattle.responded=false; horseBattle.expired=false;
+    horseBattleCountdownEl.textContent='15'; horseBattleCountdownEl.style.color='#fbbf24';
+    horseBattleStatusEl.textContent='Ждём сообщение победителя в чат…';
+    horseBattleRerollBtn.style.display='none';
+    horseBattle.timer=setInterval(()=>{
+      horseBattle.seconds--; horseBattleCountdownEl.textContent=String(Math.max(0,horseBattle.seconds));
+      if(horseBattle.seconds<=5) horseBattleCountdownEl.style.color='#f87171';
+      if(horseBattle.seconds<=0){clearHorseBattleTimer();horseBattle.expired=true;horseBattleStatusEl.textContent='⏱ Время вышло — нажми реролл, чтобы заменить игрока';horseBattleStatusEl.style.color='#fca5a5';horseBattleRerollBtn.style.display='block';}
+    },1000);
+  }
+  function analyzeHorseBattleUser(name){
+    const key=String(name||'').trim().toLowerCase();
+    const stats=(state.chatQualityStats&&state.chatQualityStats[key])||null;
+    const activity=(state.activity&&state.activity[name])||null;
+    const total=Number(stats&&stats.total || (activity&&activity.count) || 0);
+    const commandLike=Number(stats&&stats.commandLike || 0);
+    const oneWord=Number(stats&&stats.oneWord || 0);
+    const meaningful=Number(stats&&stats.meaningful || 0);
+    const lowRatio=total ? (commandLike + Math.max(0,oneWord-commandLike)*0.75)/total : 1;
+    // Осторожная эвристика: не блокирует победу, только показывает подсказку организатору.
+    const recommendReroll = total < 5 || (total >= 5 && meaningful < 2 && lowRatio >= 0.7);
+    return { total, commandLike, oneWord, meaningful, recommendReroll, hasFullHistory:!!stats };
+  }
+  function renderHorseBattleQuality(name){
+    const card=document.getElementById('horseBattleQualityCard');
+    if(!card)return;
+    const a=analyzeHorseBattleUser(name);
+    card.style.display='block';
+    card.className='horse-quality-card '+(a.recommendReroll?'warn':'good');
+    const title=a.recommendReroll?'⚠️ Есть повод рассмотреть реролл':'✅ Рероллить не нужно';
+    const detail=a.recommendReroll
+      ? 'История выглядит малоподвижной: много коротких/служебных сообщений или мало содержательных реплик. Решение остаётся за тобой.'
+      : 'По накопленной истории есть признаки обычной активности. Можно оставить победителя.';
+    const historyNote=a.hasFullHistory?'Статистика собрана ботом':'Полная история сообщений недоступна; оценка предварительная';
+    card.innerHTML=`<div class="horse-quality-head">${title}</div><div class="horse-quality-detail">${detail}<br><span style="opacity:.72">${historyNote}</span></div><div class="horse-quality-metrics"><span class="horse-quality-pill">Сообщений: ${a.total}</span><span class="horse-quality-pill">Коротких/команд: ${a.commandLike+a.oneWord}</span><span class="horse-quality-pill">Содержательных: ${a.meaningful}</span></div>`;
+  }
+  function beginHorseBattleRound(name){
+    horseBattle.current=name; horseBattle.round=horseBattle.winners.length+1;
+    horseBattleWinnerEl.textContent=name; horseBattleCountdownEl.textContent='15';
+    renderHorseBattleQuality(name);
+    horseBattleStatusEl.textContent=`Финиш ${horseBattle.round} из 3 · ответь в чат за 15 секунд`;
+    horseBattleStatusEl.style.color='#cbd5e1';
+    state.lastWinner=name; lastWinnerSource='horse-battle'; isBattleDraw=true;
+    modalWinner.textContent=name;
+    renderHorseBattleRoster(); startHorseBattleTimer();
+    sendChatMessage(`🐎 КОННЫЙ БАТЛ · Победитель этапа ${horseBattle.round}/3 — ${name}! Отпишись в чат за 15 секунд!`);
+  }
+  function nextHorseBattleWinner(){
+    clearHorseBattleTimer();
+    if(horseBattle.winners.length>=3){
+      horseBattle.active=false; horseBattle.current=null; horseBattleWinnerEl.textContent='🏆 Заезд завершён!';
+      horseBattleCountdownEl.textContent='3/3'; horseBattleStatusEl.textContent='Все три победителя подтвердили участие!';
+      horseBattleRerollBtn.style.display='none'; horseBattleStartBtn.style.display='block'; horseBattleStartBtn.textContent='🔁 НОВЫЙ ЗАЕЗД';
+      renderHorseBattleRoster(); return;
+    }
+    const available=horseBattle.roster.filter(n=>!horseBattle.winners.some(w=>w.toLowerCase()===n.toLowerCase()));
+    if(!available.length){horseBattleStatusEl.textContent='Нет новых участников для выбора.';horseBattleRerollBtn.style.display='block';return;}
+    const name=available[Math.floor(Math.random()*available.length)]; beginHorseBattleRound(name);
+  }
+  function startHorseBattle(){
+    clearHorseBattleTimer();
+    const pool=[...new Map((state.battleParticipants||[]).map(p=>[String(p&&p.name||'').trim().toLowerCase(),String(p&&p.name||'').trim()])).values()].filter(n=>n&&!isBlacklisted(n)&&!isProkachkaBlocked(n));
+    if(pool.length<10){alert(`Для конного батла нужно минимум 10 доступных участников «батл». Сейчас: ${pool.length}.`);return;}
+    const shuffled=pool.slice();
+    for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+    horseBattle.active=true;horseBattle.roster=shuffled.slice(0,10);horseBattle.winners=[];horseBattle.current=null;horseBattle.round=0;
+    const qualityCard=document.getElementById('horseBattleQualityCard');if(qualityCard)qualityCard.style.display='none';
+    horseBattleStartBtn.style.display='none';horseBattleWinnerEl.textContent='На старт…';horseBattleCountdownEl.textContent='15';horseBattleStatusEl.textContent='10 всадников готовы. Определяем победителей по очереди.';
+    horseBattleModalBg.classList.add('show');renderHorseBattleRoster();nextHorseBattleWinner();
+  }
+  function rerollHorseBattle(){
+    if(!horseBattle.active||!horseBattle.current)return;
+    clearHorseBattleTimer();
+    const used=new Set([...horseBattle.winners,...horseBattle.roster].map(n=>n.toLowerCase()));
+    used.delete(horseBattle.current.toLowerCase());
+    const pool=[...new Map((state.battleParticipants||[]).map(p=>[String(p&&p.name||'').trim().toLowerCase(),String(p&&p.name||'').trim()])).values()].filter(n=>n&&!used.has(n.toLowerCase())&&!isBlacklisted(n)&&!isProkachkaBlocked(n));
+    if(!pool.length){horseBattleStatusEl.textContent='Нет доступных новых участников для реролла.';horseBattleRerollBtn.style.display='block';return;}
+    const old=horseBattle.current;horseBattle.roster=horseBattle.roster.filter(n=>n.toLowerCase()!==old.toLowerCase());
+    const replacement=pool[Math.floor(Math.random()*pool.length)];horseBattle.roster.push(replacement);
+    horseBattleRerollBtn.style.display='none';beginHorseBattleRound(replacement);
+  }
+  function handleHorseBattleChatMessage(user,text){
+    if(!horseBattle.active||!horseBattle.current||horseBattle.responded||horseBattle.expired)return false;
+    if(String(user||'').toLowerCase()!==horseBattle.current.toLowerCase())return false;
+    horseBattle.responded=true;clearHorseBattleTimer();horseBattle.winners.push(horseBattle.current);
+    horseBattleCountdownEl.textContent='УСПЕЛ!';horseBattleCountdownEl.style.color='#4ade80';horseBattleStatusEl.textContent='✅ Ответ засчитан — победа подтверждена!';horseBattleStatusEl.style.color='#86efac';
+    horseBattleRerollBtn.style.display='none';renderHorseBattleRoster();
+    sendChatMessage(`🏆 ${horseBattle.current} подтвердил победу в конном батле! (${horseBattle.winners.length}/3)`);
+    setTimeout(()=>{if(horseBattle.active)nextHorseBattleWinner();},1200);
+    return true;
+  }
+  document.getElementById('openHorseBattleBtn').onclick=()=>{horseBattleModalBg.classList.add('show');};
+  document.getElementById('horseBattleCloseX').onclick=()=>{clearHorseBattleTimer();horseBattle.active=false;horseBattleModalBg.classList.remove('show');};
+  horseBattleStartBtn.onclick=startHorseBattle;
+  horseBattleRerollBtn.onclick=rerollHorseBattle;
+
   function handleWinnerMessage(user, text) {
+    handleHorseBattleChatMessage(user,text);
     if (!state.lastWinner) return;
     if (user.toLowerCase() === state.lastWinner.toLowerCase()) {
       const placeholder = document.getElementById('winnerChatPlaceholder');
@@ -4767,8 +4699,6 @@ function startAzrobotApp(){
 
           if(user && message !== undefined && !isBlacklisted(user)){
             trackUserRole(user, { isMod, isVip, isSub });
-            if (isMod) watchtimeExcludeUser(user);
-            else watchtimeMarkActive(user);
             if(message.trim() === '+'){
               addParticipant(user);
             }
@@ -4812,14 +4742,14 @@ function startAzrobotApp(){
     cleanExpiredBlacklist();
     // При РЕРОЛЛЕ предыдущий победитель исключается только из следующего выбора.
     // Поэтому он не может выпасть два раза подряд.
-    const validParticipants = uniqueNames(state.participants.filter(p => {
+    const validParticipants = state.participants.filter(p => {
       const isAllowed = !isBlacklisted(p.name) && !isProkachkaBlocked(p.name);
       const isPreviousWinner = rerollExcludedName && String(p.name || '').trim().toLowerCase() === String(rerollExcludedName).trim().toLowerCase();
       return isAllowed && !isPreviousWinner;
-    }).map(p => p.name)).map(name => ({ name }));
+    });
     if(!validParticipants.length) return alert('Нет доступных участников: все либо в чёрном списке, либо ещё на кулдауне после недавнего выигрыша!');
     
-    const winnerIndex = fairRandomIndex(validParticipants.length);
+    const winnerIndex = Math.floor(Math.random() * validParticipants.length);
     const winner = validParticipants[winnerIndex].name;
     // Исключение нужно только для одного реролла. После нового победителя сбрасываем.
     rerollExcludedName = null;
@@ -4828,6 +4758,7 @@ function startAzrobotApp(){
     lastWinnerSource = 'manual';
     
     saveState();
+    recordDrawnWinner(winner);
     renderParticipants();
     
     modalWinner.textContent = winner;
@@ -4842,44 +4773,6 @@ function startAzrobotApp(){
 
   document.getElementById('spinBtn').onclick = pickWinner;
 
-  // 🎯 Прокачка для лузеров: участвуют только текущие участники "+",
-  // которые НИ РАЗУ не становились победителями в боте.
-  function pickLoserWinner() {
-    isBattleDraw = false;
-    rerollExcludedName = null;
-    cleanExpiredBlacklist();
-
-    const loserPool = uniqueNames((state.participants || []).filter(p => {
-      const name = String(p && p.name || '').trim();
-      if (!name || isBlacklisted(name) || isProkachkaBlocked(name)) return false;
-      const key = name.toLowerCase();
-      const wins = Number(state.winnerStats && state.winnerStats[key] && state.winnerStats[key].count || 0);
-      return wins === 0;
-    }).map(p => p.name)).map(name => ({ name }));
-
-    if (!loserPool.length) {
-      alert('Нет доступных лузеров: все текущие участники уже хотя бы раз выпадали в боте, либо находятся на кулдауне/в чёрном списке.');
-      return;
-    }
-
-    const winner = loserPool[fairRandomIndex(loserPool.length)].name;
-    state.lastWinner = winner;
-    lastWinnerSource = 'losers';
-    saveState();
-    renderParticipants();
-
-    modalWinner.textContent = winner;
-    wUser.value = winner;
-    renderWinnerInfo(winner);
-    modalBg.classList.add('show');
-
-    announceWinner(winner);
-    startWinnerTimer();
-  }
-
-  const openLosersBtn = document.getElementById('openLosersBtn');
-  if (openLosersBtn) openLosersBtn.onclick = pickLoserWinner;
-
   function handleReroll() {
     // Предыдущий победитель был заменён через РЕРОЛЛ, поэтому кулдаун ему не нужен.
     const rerolledWinner = state.lastWinner;
@@ -4889,12 +4782,7 @@ function startAzrobotApp(){
       releaseProkachkaWinnerForReroll(rerolledWinner);
     }
 
-    if (lastWinnerSource === 'losers') {
-      modalBg.classList.remove('show');
-      clearInterval(winnerTimerInterval);
-      winnerTimerInterval = null;
-      pickLoserWinner();
-    } else if (lastWinnerSource === 'wheel') {
+    if (lastWinnerSource === 'wheel') {
       modalBg.classList.remove('show');
       clearInterval(winnerTimerInterval);
       winnerTimerInterval = null;
@@ -5089,14 +4977,9 @@ function startAzrobotApp(){
   }
 
   function handleWinnerMessagesBotLine(line){
-    const parsed = extractWinnerChatLine(line);
-    // Передаём каждое реальное сообщение Twitch в режим «Белая рубашка»,
-    // независимо от того, открыто ли окно «Анализ → Сообщения».
-    if (parsed.type === 'PRIVMSG' && parsed.text && typeof window.handleWhiteShirtChatMessage === 'function') {
-      window.handleWhiteShirtChatMessage(parsed.sender || '', parsed.text);
-    }
     const req = winnerMessagesRequest;
     if (!req || Date.now() > req.until) return;
+    const parsed = extractWinnerChatLine(line);
     if (!parsed.text) return;
     const sender = (parsed.sender || 'Twitch').toLowerCase();
     const text = parsed.text.trim();
@@ -5153,19 +5036,7 @@ function startAzrobotApp(){
   document.getElementById('analysisMessageBtn').onclick = () => {
     const user = state.lastWinner ? String(state.lastWinner).trim() : '';
     if (!user) return;
-
-    // Открываем нативную Twitch-карточку зрителя с его сообщениями,
-    // как при команде/открытии viewer card в Twitch.
-    const channel = String(TARGET_CHANNEL || '').trim() || 'azrael_the_legend';
-    const url = `https://www.twitch.tv/popout/${encodeURIComponent(channel)}/viewercard/${encodeURIComponent(user)}?popout=`;
-    const popup = window.open(
-      url,
-      'twitchViewerCard',
-      'width=525,height=824,resizable=yes,scrollbars=yes'
-    );
-    if (popup) {
-      try { popup.focus(); } catch (e) {}
-    }
+    requestWinnerMessages(user);
   };
 
   document.getElementById('analysisSubscriptionBtn').onclick = () => {
@@ -5402,28 +5273,6 @@ function startAzrobotApp(){
     timerEndSounds.forEach(snd => snd.volume = value / 100);
     try { localStorage.setItem('timerEndVolume', String(value)); } catch(e) {}
   };
-
-  // Настройка автовыброса неактивных участников.
-  // 0 = ВЫКЛ. Значение сохраняется вместе с состоянием бота.
-  const inactivitySlider = document.getElementById('participantInactivitySlider');
-  const inactivityValue = document.getElementById('participantInactivityValue');
-  function renderInactivitySetting(){
-    if(!inactivitySlider || !inactivityValue) return;
-    const enabled = state.participantInactivityEnabled === true && Number(state.participantInactivityMinutes) > 0;
-    const minutes = Number(state.participantInactivityMinutes) || 0;
-    inactivitySlider.value = enabled ? String(minutes) : '0';
-    inactivityValue.textContent = enabled ? `${minutes} мин` : 'ВЫКЛ';
-  }
-  if(inactivitySlider){
-    renderInactivitySetting();
-    inactivitySlider.addEventListener('input', function(){
-      const minutes = Number(this.value) || 0;
-      state.participantInactivityEnabled = minutes > 0;
-      state.participantInactivityMinutes = minutes || 20;
-      renderInactivitySetting();
-      saveState();
-    });
-  }
   function renderTimer(){
     const m = Math.floor(timerSeconds/60), s = timerSeconds%60;
     timerDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
@@ -5519,7 +5368,14 @@ function startAzrobotApp(){
     const openBtn = document.getElementById('openProkachkaBtn');
     const closeX = document.getElementById('prokachkaModalCloseX');
     if (!bg || !openBtn || !closeX) return;
-    openBtn.onclick = () => bg.classList.add('show');
+    openBtn.onclick = () => {
+      if (typeof countStreamOnProkachkaOpen === 'function') countStreamOnProkachkaOpen();
+      if (typeof isStreamStarted === 'function' && !isStreamStarted()) {
+        alert('Сначала нажми «▶️ Начать стрим», чтобы открыть набор на прокачку.');
+        return;
+      }
+      bg.classList.add('show');
+    };
     closeX.onclick = () => bg.classList.remove('show');
     // Закрываем прокачку, как только выбрано конкретное действие
     bg.querySelectorAll('.prokachka-btn').forEach(btn=>{
@@ -5602,6 +5458,7 @@ function startAzrobotApp(){
       state.lastWinner = winner;
       lastWinnerSource = 'race';
       saveState();
+      recordDrawnWinner(winner);
       renderParticipants();
       modalWinner.textContent = winner;
       wUser.value = winner;
@@ -5614,16 +5471,6 @@ function startAzrobotApp(){
   };
 
   connectToTwitch(TARGET_CHANNEL);
-
-  // Публичный мост для дополнительных режимов, которые находятся в отдельном <script>.
-  // ВАЖНО: этот мост создаётся внутри startAzrobotApp(), где доступны state и служебные функции.
-  window.__azRaceCore = {
-    getState: function(){ return state; },
-    saveState: function(){ return saveState(); },
-    cleanExpiredBlacklist: function(){ if(typeof cleanExpiredBlacklist === 'function') return cleanExpiredBlacklist(); },
-    isBlacklisted: function(name){ return typeof isBlacklisted === 'function' ? isBlacklisted(name) : false; },
-    isProkachkaBlocked: function(name){ return typeof isProkachkaBlocked === 'function' ? isProkachkaBlocked(name) : false; }
-  };
 }
 
 /* ---------- Экран входа: логин/пароль ---------- */
@@ -5770,7 +5617,6 @@ function startAzrobotApp(){
   setInterval(checkDevTools, 800);
   window.addEventListener('resize', checkDevTools);
 })();
-
 </script>
 <script>
 (function(){
@@ -5827,72 +5673,67 @@ function startAzrobotApp(){
 <script>
 (function(){
   function el(id){ return document.getElementById(id); }
-  function getRaceCandidates(excludeList){
-    var core = window.__azRaceCore;
-    var st = core && core.getState ? core.getState() : null;
-    if(core && core.cleanExpiredBlacklist) core.cleanExpiredBlacklist();
-    var excluded = {};
-    (excludeList || []).forEach(function(n){ excluded[String(n || '').trim().toLowerCase()] = true; });
-    var seen = {};
-    // Гонка — режим «+»: всегда читаем свежий state.participants прямо перед стартом/рероллом.
-    // Поэтому любой новый «+» сразу получает шанс, а не ждёт перезагрузки страницы.
-    return (st && Array.isArray(st.participants) ? st.participants : []).map(function(p){ return p && p.name; }).filter(function(name){
-      var key = String(name || '').trim().toLowerCase();
-      if(!key || seen[key] || excluded[key]) return false;
-      seen[key] = true;
-      return !(core && core.isBlacklisted && core.isBlacklisted(name)) && !(core && core.isProkachkaBlocked && core.isProkachkaBlocked(name));
+  function getNames(){
+    var names=[];
+    try{
+      var saved=JSON.parse(localStorage.getItem('azrobot_data')||'{}');
+      (Array.isArray(saved.participants)?saved.participants:[]).forEach(function(x){
+        var n=typeof x==='string'?x:(x&&(x.name||x.username||x.login||x.displayName));
+        if(n) names.push(String(n));
+      });
+    }catch(e){}
+    document.querySelectorAll('#chatLog .msg.participant').forEach(function(msg){
+      var node=msg.querySelector('.participant-name,.chat-user-name,b');
+      if(node) names.push(node.textContent.trim().replace(/:$/,''));
     });
+    var seen={};
+    return names.filter(function(n){ var k=n.trim().toLowerCase(); if(!k||seen[k]) return false; seen[k]=true; return true; });
   }
-  function fairRandomIndexRace(length){
-    if(length<=1) return 0;
-    if(window.crypto && typeof window.crypto.getRandomValues === 'function'){
-      var max=0x100000000, limit=max-(max%length), buf=new Uint32Array(1), value;
-      do{ window.crypto.getRandomValues(buf); value=buf[0]; }while(value>=limit);
-      return value%length;
-    }
-    return Math.floor(Math.random()*length);
-  }
-  function fairShuffleRace(list){
-    var arr=list.slice();
-    for(var i=arr.length-1;i>0;i--){ var j=fairRandomIndexRace(i+1), tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; }
-    return arr;
-  }
-  var racePlayers=[], raceTimer=null, running=false, raceCountdownTimer=null;
-  var RACE_LAPS=3;
-  var RACE_CX=50, RACE_CY=53;
-  var RACE_RX0=43, RACE_RY0=35;
-  var RACE_GAP_X=7.2, RACE_GAP_Y=5.4;
+  var racePlayers=[], raceTimer=null, running=false;
+  var RACE_LAPS=3;                     // сколько кругов нужно проехать, чтобы победить
+  var RACE_CX=50, RACE_CY=53;          // центр овала (в % от контейнера)
+  var RACE_RX0=43, RACE_RY0=35;        // радиусы внешней дорожки
+  var RACE_GAP_X=7.2, RACE_GAP_Y=5.4;  // шаг сужения радиуса на каждую внутреннюю дорожку
   var RACE_COLORS=['#a3e635','#38bdf8','#fb7185','#fbbf24','#c084fc'];
   function esc(v){ return String(v).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function closeRace(){
-    if(raceTimer) clearInterval(raceTimer);
-    if(raceCountdownTimer) clearInterval(raceCountdownTimer);
-    raceTimer=null; raceCountdownTimer=null; running=false;
-    el('raceModalBg').classList.remove('show');
-  }
+  function closeRace(){ if(raceTimer) clearInterval(raceTimer); raceTimer=null; running=false; el('raceModalBg').classList.remove('show'); }
 
   function raceLaneRadii(i){ return { rx: RACE_RX0 - i*RACE_GAP_X, ry: RACE_RY0 - i*RACE_GAP_Y }; }
+
+  // Точка на дорожке i для доли круга t (0..1), старт/финиш наверху (угол -90°), движение по часовой стрелке
   function racePointAt(i, t){
-    var r=raceLaneRadii(i), angle=-Math.PI/2 + t*Math.PI*2;
+    var r=raceLaneRadii(i);
+    var angle=-Math.PI/2 + t*Math.PI*2;
     return { x: RACE_CX + r.rx*Math.cos(angle), y: RACE_CY + r.ry*Math.sin(angle) };
   }
+
   function drawRaceTrack(){
-    var svgNs='http://www.w3.org/2000/svg', g=el('raceLanesG'); if(!g) return;
+    var svgNs='http://www.w3.org/2000/svg';
+    var g=el('raceLanesG'); if(!g) return;
     g.innerHTML='';
     for(var i=0;i<5;i++){
-      var r=raceLaneRadii(i), ell=document.createElementNS(svgNs,'ellipse');
-      ell.setAttribute('cx',RACE_CX); ell.setAttribute('cy',RACE_CY); ell.setAttribute('rx',r.rx); ell.setAttribute('ry',r.ry); ell.setAttribute('class','race-lane-ellipse'); g.appendChild(ell);
+      var r=raceLaneRadii(i);
+      var ell=document.createElementNS(svgNs,'ellipse');
+      ell.setAttribute('cx',RACE_CX); ell.setAttribute('cy',RACE_CY);
+      ell.setAttribute('rx',r.rx); ell.setAttribute('ry',r.ry);
+      ell.setAttribute('class','race-lane-ellipse');
+      g.appendChild(ell);
+      // финишная чёрточка на этой дорожке (в верхней точке)
       var fl=document.createElementNS(svgNs,'line');
-      fl.setAttribute('x1',RACE_CX); fl.setAttribute('x2',RACE_CX); fl.setAttribute('y1',(RACE_CY-r.ry-1.4)); fl.setAttribute('y2',(RACE_CY-r.ry+1.4)); fl.setAttribute('class','race-finish-line'); g.appendChild(fl);
+      fl.setAttribute('x1',RACE_CX); fl.setAttribute('x2',RACE_CX);
+      fl.setAttribute('y1',(RACE_CY-r.ry-1.4)); fl.setAttribute('y2',(RACE_CY-r.ry+1.4));
+      fl.setAttribute('class','race-finish-line');
+      g.appendChild(fl);
     }
   }
 
   function openRace(){
-    var candidates = getRaceCandidates([]);
-    if(candidates.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас доступно: '+candidates.length); return; }
-    candidates = fairShuffleRace(candidates);
-    racePlayers=candidates.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i],eventLock:0}; });
-    el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none'; el('raceLeaderboard').innerHTML='';
+    var names=getNames();
+    if(names.length<5){ alert('Для гонки нужно минимум 5 участников, написавших «+». Сейчас: '+names.length); return; }
+    for(var j=names.length-1;j>0;j--){ var r=Math.floor(Math.random()*(j+1)),t=names[j]; names[j]=names[r]; names[r]=t; }
+    racePlayers=names.slice(0,5).map(function(name,i){ return {name:name,i:i,dist:0,finished:false,color:RACE_COLORS[i]}; });
+    el('raceCarsLayer').innerHTML=''; el('raceTrackOval').style.display='none';
+    el('raceLeaderboard').innerHTML='';
     el('raceSubtitle').textContent='Участники скрыты. Нажми «НАЧАТЬ ГОНКУ», чтобы показать выбранных 5 человек.';
     el('raceResult').textContent=''; el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🏁 НАЧАТЬ ГОНКУ';
     el('raceModalBg').classList.add('show');
@@ -5903,63 +5744,44 @@ function startAzrobotApp(){
     el('raceCarsLayer').innerHTML=racePlayers.map(function(p){
       return '<div class="race-car" id="raceCar'+p.i+'"><span class="car-emoji" style="filter:drop-shadow(0 0 5px '+p.color+'88);">🏎️</span><span class="car-name" style="border-color:'+p.color+'55;">'+esc(p.name)+'</span></div>';
     }).join('');
-    updateRacePositions(); renderRaceLeaderboard();
+    updateRacePositions();
+    renderRaceLeaderboard();
   }
+
   function updateRacePositions(){
     racePlayers.forEach(function(p){
-      var lapProgress=(p.dist%100)/100, pt=racePointAt(p.i, p.finished?0:lapProgress), node=el('raceCar'+p.i);
+      var lapProgress=(p.dist%100)/100;
+      var pt=racePointAt(p.i, p.finished?0:lapProgress);
+      var node=el('raceCar'+p.i);
       if(node){ node.style.left=pt.x+'%'; node.style.top=pt.y+'%'; }
     });
   }
+
   function renderRaceLeaderboard(){
     var ranked=racePlayers.slice().sort(function(a,b){ return b.dist-a.dist; });
     el('raceLeaderboard').innerHTML=ranked.map(function(p,idx){
-      var pct=p.finished?100:(p.dist%100), laps=Math.min(RACE_LAPS, Math.floor(p.dist/100));
-      return '<div class="race-leaderboard-item'+(idx===0?' leader':'')+'"><span class="rlb-pos">'+(idx+1)+'</span><span class="rlb-dot" style="background:'+p.color+';"></span><span class="rlb-name">'+esc(p.name)+'</span><span class="rlb-bar-wrap"><span class="rlb-bar" style="width:'+pct.toFixed(1)+'%;background:'+p.color+';"></span></span><span class="rlb-laps">'+laps+'/'+RACE_LAPS+'</span></div>';
+      var pct=p.finished?100:(p.dist%100);
+      var laps=Math.min(RACE_LAPS, Math.floor(p.dist/100));
+      return '<div class="race-leaderboard-item'+(idx===0?' leader':'')+'">\
+        <span class="rlb-pos">'+(idx+1)+'</span>\
+        <span class="rlb-dot" style="background:'+p.color+';"></span>\
+        <span class="rlb-name">'+esc(p.name)+'</span>\
+        <span class="rlb-bar-wrap"><span class="rlb-bar" style="width:'+pct.toFixed(1)+'%;background:'+p.color+';"></span></span>\
+        <span class="rlb-laps">'+laps+'/'+RACE_LAPS+'</span>\
+      </div>';
     }).join('');
-  }
-
-  function raceEventMessage(text){
-    el('raceSubtitle').textContent=text;
-  }
-
-  // Редкие события во время гонки: они меняют темп, но не делают результат полностью предсказуемым.
-  function applyRaceEvent(){
-    if(!racePlayers.length || !running) return;
-    var roll=Math.random();
-    if(roll>0.90){
-      var p=racePlayers[fairRandomIndexRace(racePlayers.length)];
-      if(p.finished) return;
-      p.dist += 4.5 + Math.random()*3.5;
-      raceEventMessage('🚀 ТУРБО! '+p.name+' резко ускоряется!');
-    } else if(roll<0.08){
-      var q=racePlayers[fairRandomIndexRace(racePlayers.length)];
-      if(q.finished) return;
-      q.dist = Math.max(0,q.dist - (2.5 + Math.random()*2.5));
-      raceEventMessage('🛞 ЗАНОС! '+q.name+' потерял скорость!');
-    } else if(roll<0.16){
-      var s=racePlayers[fairRandomIndexRace(racePlayers.length)];
-      if(s.finished) return;
-      s.dist += 2.5 + Math.random()*2.5;
-      raceEventMessage('⚡ РЫВОК! '+s.name+' выходит вперёд!');
-    }
   }
 
   function finish(w){
     running=false; clearInterval(raceTimer); raceTimer=null;
-    if(raceCountdownTimer) clearInterval(raceCountdownTimer); raceCountdownTimer=null;
     var node=el('raceCar'+w.i); if(node) node.classList.add('winner');
-    // Победитель гонки проходит через тот же основной bridge, что и обычная прокачка:
-    // общий cooldown 1 день, а при оформленном выводе — продление до 2 дней.
-    var core = window.__azRaceCore;
-    var st = core && core.getState ? core.getState() : null;
-    if(st){ st.lastRaceWinner = w.name; if(core && core.saveState) core.saveState(); }
     el('raceResult').textContent='🏆 Победитель гонки: '+w.name+'!';
-    el('raceSubtitle').textContent='🏁 ФИНИШ! Победитель получает обычный cooldown прокачки.';
     el('startRaceBtn').disabled=false; el('startRaceBtn').textContent='🔄 НОВАЯ ГОНКА';
     if(typeof confetti==='function') confetti({particleCount:120,spread:80,origin:{y:.6}});
     setTimeout(function(){
       closeRace();
+      // ВАЖНО: используем основной движок победителя. Он сам отправляет сообщение настоящим Twitch-ботом
+      // и запускает тот же 15-секундный таймер, где сообщения победителя засчитываются.
       if(window.azrobotRaceBridge && typeof window.azrobotRaceBridge.openWinnerFromRace==='function'){
         window.azrobotRaceBridge.openWinnerFromRace(w.name);
       } else {
@@ -5968,79 +5790,36 @@ function startAzrobotApp(){
     },1100);
   }
 
-  function runRaceAfterCountdown(){
-    raceEventMessage('🔥 ПОЕХАЛИ! 3 круга — победит тот, кто первым пересечёт финиш.');
-    running=true;
-    var total=RACE_LAPS*100, ticks=0;
+  function startRace(){
+    if(running) return;
+    if(el('startRaceBtn').textContent.indexOf('НОВАЯ')>=0){ openRace(); return; }
+    renderRace(); el('raceTrackOval').style.display='block';
+    el('raceSubtitle').textContent='🔥 Участники выбраны! Гонка на '+RACE_LAPS+' круга началась — соревнуются автономно!';
+    running=true; el('startRaceBtn').disabled=true;
+    var total=RACE_LAPS*100;
     raceTimer=setInterval(function(){
       var winner=null;
-      ticks++;
       racePlayers.forEach(function(p){
         if(p.finished) return;
+        // автономное, полностью случайное поведение каждой машины: базовая скорость + рывки/провалы
         var step=1.1 + Math.random()*2.1;
         var roll=Math.random();
-        if(roll<0.12) step+=1.6+Math.random()*1.4;
-        else if(roll>0.90) step*=0.35;
-        p.dist=Math.min(total,p.dist+step);
+        if(roll<0.12) step+=1.6+Math.random()*1.4;      // рывок ускорения
+        else if(roll>0.90) step*=0.35;                    // небольшая заминка
+        p.dist=Math.min(total, p.dist+step);
         if(p.dist>=total) p.finished=true;
       });
-      if(ticks%12===0) applyRaceEvent();
-      updateRacePositions(); renderRaceLeaderboard();
+      updateRacePositions();
+      renderRaceLeaderboard();
       winner=racePlayers.find(function(p){ return p.finished; });
       if(winner) finish(winner);
     },90);
   }
-
-  function startRace(){
-    if(running || raceCountdownTimer) return;
-    if(el('startRaceBtn').textContent.indexOf('НОВАЯ')>=0){ openRace(); return; }
-    renderRace(); el('raceTrackOval').style.display='block';
-    el('startRaceBtn').disabled=true;
-    var count=3;
-    el('raceSubtitle').textContent='🚦 Приготовьтесь...';
-    raceCountdownTimer=setInterval(function(){
-      if(count>0){
-        el('raceSubtitle').textContent='🚦 '+count+'...';
-        count--;
-      } else {
-        clearInterval(raceCountdownTimer); raceCountdownTimer=null;
-        runRaceAfterCountdown();
-      }
-    },700);
-  }
-  // Вешаем обработчики непосредственно на кнопки гонки.
-  // Это надёжнее, чем document.click: другие панели/обработчики страницы
-  // могут остановить всплытие события и из-за этого гонка раньше не открывалась.
-  var raceOpenButton = el('openRaceBtn');
-  var raceStartButton = el('startRaceBtn');
-  var raceCloseButton = el('raceModalCloseX');
-  if(raceOpenButton){
-    raceOpenButton.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      try { openRace(); } catch(err) {
-        console.error('[Гонка] Ошибка открытия:', err);
-        alert('Не удалось открыть гонку. Открой консоль браузера для подробностей.');
-      }
-    });
-  }
-  if(raceStartButton){
-    raceStartButton.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      try { startRace(); } catch(err) {
-        console.error('[Гонка] Ошибка запуска:', err);
-        alert('Не удалось запустить гонку. Открой консоль браузера для подробностей.');
-      }
-    });
-  }
-  if(raceCloseButton){
-    raceCloseButton.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      closeRace();
-    });
-  }
+  document.addEventListener('click',function(e){
+    if(e.target&&e.target.id==='openRaceBtn') openRace();
+    if(e.target&&e.target.id==='startRaceBtn') startRace();
+    if(e.target&&e.target.id==='raceModalCloseX') closeRace();
+  });
 })();
 </script>
 
@@ -6235,7 +6014,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["JABKA","DASTSKIN","DOG","SKINITY","BOOMDROP","PUZODROP"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY","SKINBRO"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
@@ -6495,212 +6274,6 @@ function startAzrobotApp(){
   } else {
     init();
   }
-})();
-</script>
-
-
-<script id="whiteShirtWinnerScript">
-(function(){
-  'use strict';
-  const openBtn=document.getElementById('openWhiteShirtBtn');
-  const bg=document.getElementById('whiteShirtModalBg');
-  const closeX=document.getElementById('whiteShirtCloseX');
-  const closeBtn=document.getElementById('whiteShirtCloseBtn');
-  const rerollBtn=document.getElementById('whiteShirtRerollBtn');
-  const listEl=document.getElementById('whiteShirtList');
-  const winnerBox=document.getElementById('whiteShirtWinner');
-  const winnerNameEl=document.getElementById('whiteShirtWinnerName');
-  const subtitleEl=document.getElementById('whiteShirtSubtitle');
-  const timerBox=document.getElementById('whiteShirtTimerBox');
-  const timerNum=document.getElementById('whiteShirtTimerNum');
-  const timerStatus=document.getElementById('whiteShirtTimerStatus');
-  const chatEl=document.getElementById('whiteShirtChat');
-  const chatPlaceholder=document.getElementById('whiteShirtChatPlaceholder');
-  if(!openBtn||!bg) return;
-
-  let currentWinner='';
-  let previousWinner='';
-  let timer=null;
-  let seconds=15;
-  let active=false;
-  let observer=null;
-
-  function readState(){
-    try{return JSON.parse(localStorage.getItem('azrobot_data')||'{}');}catch(e){return {};}
-  }
-  function saveState(st){
-    try{localStorage.setItem('azrobot_data',JSON.stringify(st));}catch(e){}
-  }
-  function key(n){return String(n||'').trim().toLowerCase();}
-  function esc(n){
-    return String(n??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-  }
-  function shuffle(a){
-    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-    return a;
-  }
-  function cleanCooldowns(st){
-    st.prokachkaCooldowns=st.prokachkaCooldowns&&typeof st.prokachkaCooldowns==='object'?st.prokachkaCooldowns:{};
-    const now=Date.now();
-    Object.keys(st.prokachkaCooldowns).forEach(k=>{const x=st.prokachkaCooldowns[k];if(!x||!x.expireAt||x.expireAt<=now)delete st.prokachkaCooldowns[k];});
-  }
-  function getCandidates(exclude){
-    const st=readState(); cleanCooldowns(st);
-    const blocked=st.blacklist||[];
-    const bset=new Set(blocked.map(key));
-    const ex=key(exclude);
-    const arr=(Array.isArray(st.participants)?st.participants:[]).map(p=>typeof p==='string'?p:p&&p.name).filter(Boolean);
-    const unique=[]; const seen=new Set();
-    arr.forEach(n=>{
-      const k=key(n);
-      if(!k||seen.has(k)||bset.has(k)||ex===k) return;
-      const cd=st.prokachkaCooldowns[k];
-      if(cd&&cd.expireAt>Date.now()) return;
-      seen.add(k); unique.push(String(n));
-    });
-    saveState(st);
-    return unique;
-  }
-  function updateCount(){
-    const st=readState();
-    const c=document.getElementById('pCount');
-    if(c)c.textContent=Array.isArray(st.participants)?st.participants.length:0;
-  }
-  function applyCooldown(name){
-    const st=readState(); cleanCooldowns(st);
-    const k=key(name), now=Date.now();
-    st.prokachkaCooldowns[k]={name:String(name),drawnAt:now,expireAt:now+24*60*60*1000,withdrawn:false};
-    if(Array.isArray(st.participants)) st.participants=st.participants.filter(p=>key(typeof p==='string'?p:p&&p.name)!==k);
-    if(!st.winnerStats)st.winnerStats={};
-    st.winnerStats[k]={name:String(name),count:Number(st.winnerStats[k]?.count||0)+1,lastAt:now};
-    if(!Array.isArray(st.lastDrawnWinners))st.lastDrawnWinners=[];
-    // Белая рубашка — обычная прокачка: добавляем в историю победителей,
-    // не дублируя запись, если основной код уже успел её сделать.
-    if(key(st.lastDrawnWinners[0])!==k) st.lastDrawnWinners.unshift(String(name));
-    st.lastDrawnWinners=st.lastDrawnWinners.slice(0,20);
-    st.lastWinner=String(name);
-    saveState(st); updateCount();
-    try{
-      if(typeof window.renderLastWinners === 'function') window.renderLastWinners();
-    }catch(e){}
-    return st;
-  }
-  function releaseWinner(name){
-    if(!name)return;
-    const st=readState(); const k=key(name);
-    if(st.prokachkaCooldowns)delete st.prokachkaCooldowns[k];
-    if(Array.isArray(st.lastDrawnWinners))st.lastDrawnWinners=st.lastDrawnWinners.filter(x=>key(x)!==k);
-    if(Array.isArray(st.participants)&&!st.participants.some(p=>key(typeof p==='string'?p:p&&p.name)===k)){
-      st.participants.push({name:String(name),lastActive:Date.now()});
-    }
-    saveState(st); updateCount();
-  }
-  function clearTimer(){if(timer){clearInterval(timer);timer=null;}}
-  function resetUI(){
-    clearTimer(); active=false; currentWinner='';
-    listEl.innerHTML=''; winnerBox.style.display='none'; timerBox.style.display='none';
-    rerollBtn.style.display='none';
-    closeBtn.style.display='block';
-    subtitleEl.textContent='Судьба выбирает счастливчика...';
-    chatEl.innerHTML='<div class="white-shirt-chat-placeholder" id="whiteShirtChatPlaceholder">Сообщений от игрока пока нет...</div>';
-  }
-  function addChatLine(user,text){
-    if(chatPlaceholder&&chatPlaceholder.parentNode)chatPlaceholder.remove();
-    const d=document.createElement('div'); d.style.marginBottom='4px';
-    d.innerHTML='<b>'+esc(user)+':</b> '+esc(text);
-    chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight;
-  }
-  function finishExpired(){
-    clearTimer(); active=false;
-    timerNum.textContent='0'; timerStatus.textContent='❌ Время вышло! Игрок не успел.'; timerStatus.style.color='var(--bad)';
-    rerollBtn.style.display='block'; closeBtn.style.display='block';
-  }
-  function startTimer(){
-    clearTimer(); seconds=15; active=true;
-    timerNum.textContent='15'; timerNum.style.color='var(--bad)';
-    timerStatus.textContent='Ожидание ответа в чате...'; timerStatus.style.color='var(--text-dim)';
-    timer=setInterval(()=>{
-      seconds--; timerNum.textContent=String(Math.max(0,seconds));
-      if(seconds<=0)finishExpired();
-    },1000);
-  }
-  function revealWinner(winner){
-    currentWinner=winner;
-    applyCooldown(winner);
-    winnerNameEl.textContent=winner;
-    winnerBox.style.display='block'; timerBox.style.display='block';
-    subtitleEl.textContent='🍀 Сегодня удача на его стороне!';
-    try{
-      if(window.azrobotRaceBridge&&typeof window.azrobotRaceBridge.sendChatMessage==='function'){
-        window.azrobotRaceBridge.sendChatMessage('🍀 '+winner+' — РОДИЛСЯ В БЕЛОЙ РУБАШКЕ! | У тебя 15 секунд, чтобы отписать в чат!');
-      }
-    }catch(e){}
-    startTimer();
-  }
-  function runDraw(){
-    resetUI();
-    const candidates=getCandidates(previousWinner);
-    if(!candidates.length){
-      subtitleEl.textContent='Нет доступных участников для выбора.';
-      listEl.innerHTML='<div class="white-shirt-line loser">Нужны участники «+», которые не находятся на кулдауне.</div>';
-      return;
-    }
-    const winner=candidates[Math.floor(Math.random()*candidates.length)];
-    const order=shuffle(candidates.slice());
-    const wi=order.findIndex(n=>key(n)===key(winner));
-    if(wi>=0)order.splice(wi,1);
-    order.push(winner);
-    const step=900;
-    order.forEach((name,i)=>{
-      setTimeout(()=>{
-        if(!bg.classList.contains('show'))return;
-        const isW=i===order.length-1;
-        const d=document.createElement('div');
-        d.className='white-shirt-line '+(isW?'winner':'loser');
-        if(isW)d.innerHTML='👤 '+esc(name)+' — ✨ <b>РОДИЛСЯ В БЕЛОЙ РУБАШКЕ!</b>';
-        else{
-          const variants=[
-            '❌ увы, вы не в белой рубашке',
-            '❌ увы, но вы тоже не в белой рубашке',
-            '❌ увы, вы не в белой рубашке, сегодня....'
-          ];
-          d.innerHTML='👤 '+esc(name)+' — '+variants[i%variants.length];
-        }
-        listEl.appendChild(d); listEl.scrollTop=listEl.scrollHeight;
-        if(isW)revealWinner(name);
-      },i*step);
-    });
-  }
-  function handleChatNode(node){
-    if(!active||!currentWinner||!node||node.nodeType!==1)return;
-    const user=(node.dataset&&(node.dataset.chatUser||node.dataset.user))||node.getAttribute('data-chat-user')||node.querySelector('[data-chat-user]')?.getAttribute('data-chat-user');
-    if(!user||key(user)!==key(currentWinner))return;
-    const message=(node.querySelector('.chat-message-text')||node.querySelector('.message-text')||node).textContent||'';
-    window.handleWhiteShirtChatMessage(user,message);
-  }
-  window.handleWhiteShirtChatMessage=function(user,text){
-    if(!active||!currentWinner||key(user)!==key(currentWinner))return;
-    addChatLine(user,text);
-    if(seconds<=0)return;
-    clearTimer(); active=false;
-    timerNum.textContent='УСПЕЛ!'; timerNum.style.color='var(--good)';
-    timerStatus.textContent='✅ Игрок успел ответить в чат!'; timerStatus.style.color='var(--good)';
-  };
-  observer=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{
-    if(n.nodeType===1){if(n.matches&&n.matches('#chatLog .msg'))handleChatNode(n); if(n.querySelectorAll)n.querySelectorAll('#chatLog .msg').forEach(handleChatNode);}
-  })));
-  observer.observe(document.body,{childList:true,subtree:true});
-
-  function open(){bg.classList.add('show'); previousWinner=''; runDraw();}
-  function close(){clearTimer();bg.classList.remove('show');}
-  openBtn.onclick=open; closeX.onclick=close; closeBtn.onclick=close;
-  bg.addEventListener('click',e=>{if(e.target===bg)close();});
-  rerollBtn.onclick=()=>{
-    const old=currentWinner;
-    if(old)releaseWinner(old);
-    previousWinner=old;
-    runDraw();
-  };
 })();
 </script>
 
