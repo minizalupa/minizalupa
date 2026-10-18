@@ -1337,7 +1337,6 @@
       <div class="panel center-actions-bottom">
         <button class="danger" id="clearBtn" style="width:100%; margin-top:0;">Сбросить участников</button>
         <button class="primary" id="openProkachkaBtn" style="width:100%; margin-top:5px;">🎯 Выбрать прокачку</button>
-        <div id="streamStatus" style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:3px;">Стрим засчитывается при выборе прокачки</div>
 
         <div style="display:flex; gap:5px; margin-top:5px;">
           <button id="modAlertToggleBtn" style="flex:1;">🚨 322: ВКЛ</button>
@@ -1394,7 +1393,6 @@
               <option value="DASTSKIN">DASTSKIN</option>
               <option value="CSJOKER">CSJOKER</option>
               <option value="SKINITY">SKINITY</option>
-              <option value="SKINBRO">SKINBRO</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
             <input type="number" id="wAmount" placeholder="Сумма вывода">
@@ -1784,7 +1782,6 @@
         <option value="DASTSKIN">DASTSKIN</option>
         <option value="CSJOKER">CSJOKER</option>
         <option value="SKINITY">SKINITY</option>
-              <option value="SKINBRO">SKINBRO</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
       <button class="primary" id="saveDepositEntryBtn" style="width:100%;">Сохранить депозит</button>
@@ -1911,13 +1908,6 @@
 <div id="azScreenSettingsPanel">
   <div class="az-ss-title">Настройки бота</div>
   <button type="button" id="openLocalCloudBtn" class="az-cloud-setting-btn">☁️ ЛОКАЛ ОБЛАКО <span>›</span></button>
-  <div class="az-ss-divider"></div>
-  <div class="az-ss-title">Кулдаун по стримам</div>
-  <div style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
-    <span style="flex:1;line-height:1.35;">Автосчёт стрима при выборе прокачки</span>
-    <input id="streamAutoCountToggle" type="range" min="0" max="1" step="1" value="1" aria-label="Автоматически считать стрим при выборе прокачки" style="width:54px;accent-color:var(--accent);cursor:pointer;">
-  </div>
-  <div id="streamAutoCountValue" style="font-size:11px;color:var(--text-dim);padding:0 2px 4px;">Включено</div>
   <div class="az-ss-divider"></div>
   <div class="az-ss-title">Звук таймера</div>
   <div class="az-ss-volume" style="display:flex;align-items:center;gap:8px;padding:6px 2px 8px;font-size:12px;color:var(--text-dim);">
@@ -2130,9 +2120,7 @@ function startAzrobotApp(){
     participantInactivityMinutes: 20,
     modAlertEnabled: true,
     inactiveMarks: {}, // { "ник_lowercase": timestamp_окончания_метки }
-    prokachkaCooldowns: {}, // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn, drawnStreamNumber, eligibleFromStream } }
-    streamTracker: { number: 0, history: [], currentStartedAt: null },
-    streamAutoCountEnabled: true
+    prokachkaCooldowns: {} // { "ник_lowercase": { name, drawnAt, expireAt, withdrawn } }
   };
 
   function loadState() {
@@ -2144,7 +2132,6 @@ function startAzrobotApp(){
       } catch(e){}
     }
     
-    if (!Array.isArray(state.withdrawals)) state.withdrawals = [];
     if (!state.winnerStats || typeof state.winnerStats !== 'object') state.winnerStats = {};
     if (!state.followedSince || typeof state.followedSince !== 'object') state.followedSince = {};
     if (!Array.isArray(state.lastDrawnWinners)) state.lastDrawnWinners = [];
@@ -2152,10 +2139,6 @@ function startAzrobotApp(){
     if (!state.participantInactivityMinutes) state.participantInactivityMinutes = 20;
     if (!state.inactiveMarks || typeof state.inactiveMarks !== 'object') state.inactiveMarks = {};
     if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
-    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
-    if (typeof state.streamAutoCountEnabled !== 'boolean') state.streamAutoCountEnabled = true;
-    if (!Number.isFinite(Number(state.streamTracker.number))) state.streamTracker.number = 0;
-    if (!Array.isArray(state.streamTracker.history)) state.streamTracker.history = [];
 
     if (Array.isArray(state.participants)) {
       state.participants.forEach(p => {
@@ -2239,101 +2222,27 @@ function startAzrobotApp(){
     reader.readAsText(file);
   }
 
-  /* ---------- Прокачка: кулдаун по количеству стримов ---------- */
-  const PROKACHKA_NO_WITHDRAW_STREAMS = 1;
-  const PROKACHKA_WITHDRAW_STREAMS = 2;
-
-  function isStreamStarted() {
-    // При выключенной настройке работаем как в старом режиме: набор не блокируется.
-    if (state.streamAutoCountEnabled === false) return true;
-    return !!(state.streamTracker && Number(state.streamTracker.number) > 0 && state.streamTracker.currentStartedAt);
-  }
-
-  function currentStreamNumber() {
-    return Math.max(0, Number(state.streamTracker && state.streamTracker.number) || 0);
-  }
-
-  function renderStreamStatus() {
-    const el = document.getElementById('streamStatus');
-    if (!el) return;
-    const number = currentStreamNumber();
-    const startedAt = state.streamTracker && state.streamTracker.currentStartedAt;
-    if (state.streamAutoCountEnabled === false) {
-      el.textContent = '⚪ Кулдаун по стримам отключён';
-    } else {
-      el.textContent = isStreamStarted()
-        ? `🟢 Стрим #${number}${startedAt ? ' · ' + new Date(startedAt).toLocaleDateString('ru-RU') : ''}`
-        : '🔒 Первый стрим засчитается при выборе прокачки';
-    }
-  }
-
-  function countStreamOnProkachkaOpen() {
-    if (state.streamAutoCountEnabled === false) return;
-    // Каждое нажатие «Выбрать прокачку» при включённой настройке засчитывает новый стрим.
-    const nextNumber = currentStreamNumber() + 1;
-    const now = Date.now();
-    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
-    state.streamTracker.number = nextNumber;
-    state.streamTracker.currentStartedAt = now;
-    if (!Array.isArray(state.streamTracker.history)) state.streamTracker.history = [];
-    state.streamTracker.history.push({ number: nextNumber, startedAt: now, date: new Date(now).toLocaleDateString('ru-RU') });
-    if (state.streamTracker.history.length > 300) state.streamTracker.history = state.streamTracker.history.slice(-300);
-    cleanExpiredProkachkaCooldowns();
-    saveState();
-    renderStreamStatus();
-    renderCooldownList();
-  }
-
-  function initStreamAutoCountSetting() {
-    const slider = document.getElementById('streamAutoCountToggle');
-    const value = document.getElementById('streamAutoCountValue');
-    if (!slider) return;
-    slider.value = state.streamAutoCountEnabled === false ? '0' : '1';
-    const render = () => {
-      const enabled = slider.value === '1';
-      state.streamAutoCountEnabled = enabled;
-      if (value) value.textContent = enabled ? 'Включено — стрим засчитывается при первом открытии прокачки' : 'Выключено — прокачка работает без учёта стримов';
-      saveState();
-      renderStreamStatus();
-    };
-    slider.addEventListener('input', render);
-    render();
-  }
-  initStreamAutoCountSetting();
-  renderStreamStatus();
-
-  function startNewStream() {
-    const nextNumber = currentStreamNumber() + 1;
-    const now = Date.now();
-    if (!confirm(`Начать стрим #${nextNumber}? Это продвинет кулдауны участников на один стрим.`)) return;
-    if (!state.streamTracker || typeof state.streamTracker !== 'object') state.streamTracker = { number: 0, history: [], currentStartedAt: null };
-    state.streamTracker.number = nextNumber;
-    state.streamTracker.currentStartedAt = now;
-    state.streamTracker.history.push({ number: nextNumber, startedAt: now, date: new Date(now).toLocaleDateString('ru-RU') });
-    if (state.streamTracker.history.length > 300) state.streamTracker.history = state.streamTracker.history.slice(-300);
-    cleanExpiredProkachkaCooldowns();
-    saveState();
-    renderStreamStatus();
-    renderCooldownList();
-  }
-
+  /* ---------- Прокачка: кулдаун победителей ---------- */
+  const PROKACHKA_NO_WITHDRAW_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 1 день
+  const PROKACHKA_WITHDRAW_COOLDOWN_MS = 48 * 60 * 60 * 1000;    // 2 дня
 
   function cleanExpiredProkachkaCooldowns() {
-    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
-    const streamNo = currentStreamNumber();
+    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') {
+      state.prokachkaCooldowns = {};
+      return;
+    }
+
+    const now = Date.now();
     let changed = false;
+
     Object.keys(state.prokachkaCooldowns).forEach(key => {
       const item = state.prokachkaCooldowns[key];
-      if (!item) { delete state.prokachkaCooldowns[key]; changed = true; return; }
-      // Совместимость со старой базой: переводим прежний таймер в кулдаун по стримам.
-      if (!Number.isFinite(Number(item.eligibleFromStream))) {
-        const streams = item.withdrawn ? PROKACHKA_WITHDRAW_STREAMS : PROKACHKA_NO_WITHDRAW_STREAMS;
-        item.drawnStreamNumber = streamNo;
-        item.eligibleFromStream = streamNo + streams;
+      if (!item || !item.expireAt || item.expireAt <= now) {
+        delete state.prokachkaCooldowns[key];
         changed = true;
       }
-      if (streamNo >= Number(item.eligibleFromStream)) { delete state.prokachkaCooldowns[key]; changed = true; }
     });
+
     if (changed) saveState();
   }
 
@@ -2342,37 +2251,55 @@ function startAzrobotApp(){
     cleanExpiredProkachkaCooldowns();
     const key = String(name).trim().toLowerCase();
     const item = state.prokachkaCooldowns[key];
-    return !!(item && currentStreamNumber() < Number(item.eligibleFromStream));
+    return !!(item && item.expireAt > Date.now());
   }
 
   function registerProkachkaWinner(name) {
     if (!name) return;
-    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') state.prokachkaCooldowns = {};
+
+    if (!state.prokachkaCooldowns || typeof state.prokachkaCooldowns !== 'object') {
+      state.prokachkaCooldowns = {};
+    }
+
     const now = Date.now();
     const key = String(name).trim().toLowerCase();
-    const streamNo = currentStreamNumber();
+
+    // Сразу после выпадения даём 1 день. Если за это время оформлен вывод,
+    // markProkachkaWithdrawal() увеличит срок до 2 дней.
     state.prokachkaCooldowns[key] = {
-      name: String(name), drawnAt: now, drawnStreamNumber: streamNo,
-      eligibleFromStream: streamNo + PROKACHKA_NO_WITHDRAW_STREAMS,
-      expireAt: now + PROKACHKA_NO_WITHDRAW_STREAMS * 24 * 60 * 60 * 1000,
+      name: String(name),
+      drawnAt: now,
+      expireAt: now + PROKACHKA_NO_WITHDRAW_COOLDOWN_MS,
       withdrawn: false
     };
+
+    // Сразу выкидываем игрока из списка прокачки — пока кулдаун не спадёт,
+    // "+" в чат его туда не вернёт (см. проверку isProkachkaBlocked в addParticipant)
     const before = state.participants.length;
     state.participants = state.participants.filter(p => p.name.toLowerCase() !== key);
-    if (state.participants.length !== before) renderParticipants();
+    if (state.participants.length !== before) {
+      renderParticipants();
+    }
+
     saveState();
   }
 
   function markProkachkaWithdrawal(user) {
     if (!user || !state.prokachkaCooldowns) return;
+
     const key = String(user).trim().toLowerCase();
     const item = state.prokachkaCooldowns[key];
-    if (!item) return;
-    const drawnStream = Number.isFinite(Number(item.drawnStreamNumber)) ? Number(item.drawnStreamNumber) : currentStreamNumber();
-    item.drawnStreamNumber = drawnStream;
-    item.eligibleFromStream = drawnStream + PROKACHKA_WITHDRAW_STREAMS;
-    item.expireAt = (Number(item.drawnAt) || Date.now()) + PROKACHKA_WITHDRAW_STREAMS * 24 * 60 * 60 * 1000;
+    if (!item || !item.drawnAt) return;
+
+    const twoDaysExpireAt = item.drawnAt + PROKACHKA_WITHDRAW_COOLDOWN_MS;
     item.withdrawn = true;
+
+    // Если вывод внесён в течение первого дня, продлеваем кулдаун до 2 дней
+    // с момента выпадения. Если 2 дня уже прошли, блокировку не возвращаем.
+    if (twoDaysExpireAt > Date.now()) {
+      item.expireAt = twoDaysExpireAt;
+    }
+
     saveState();
   }
 
@@ -2535,26 +2462,8 @@ function startAzrobotApp(){
       // Перезагружаем страницу один раз за вкладку, если данные с GitHub отличаются от локальных —
       // так все счётчики/списки на экране корректно пересоберутся из свежего состояния.
       if (!alreadySyncedThisTab && localRaw !== remoteRaw) {
-        // Не даём старому/неполно загруженному GitHub-состоянию затереть локальную историю выводов.
-        let local = {};
-        try { local = localRaw ? JSON.parse(localRaw) : {}; } catch (_) { local = {}; }
-        const localWithdrawals = Array.isArray(local.withdrawals) ? local.withdrawals : [];
-        const remoteWithdrawals = Array.isArray(remote.withdrawals) ? remote.withdrawals : [];
-        const withdrawalKey = w => JSON.stringify([
-          String(w && w.user || '').trim().toLowerCase(),
-          String(w && w.site || '').trim().toLowerCase(),
-          String(w && w.amount || ''),
-          String(w && w.date || ''),
-          String(w && (w.id || w.createdAt || w.timestamp) || '')
-        ]);
-        const seenWithdrawals = new Set(remoteWithdrawals.map(withdrawalKey));
-        remote.withdrawals = remoteWithdrawals.concat(
-          localWithdrawals.filter(w => !seenWithdrawals.has(withdrawalKey(w)))
-        );
-        // Для остальных данных сохраняем прежнее поведение синхронизации.
-        const mergedRaw = JSON.stringify(remote);
         sessionStorage.setItem('azrobot_github_synced', '1');
-        localStorage.setItem('azrobot_data', mergedRaw);
+        localStorage.setItem('azrobot_data', remoteRaw);
         location.reload();
       }
     } catch(e) {
@@ -2816,7 +2725,6 @@ function startAzrobotApp(){
 
   function addParticipant(name){
     name = name.trim();
-    if (!isStreamStarted()) return false;
     if(!name || isBlacklisted(name)) return false;
     if(isProkachkaBlocked(name)) return false; // на кулдауне после прокачки — по "+" не добавляем, пока не спадёт
     if(isParticipant(name)) return false;
@@ -2840,7 +2748,6 @@ function startAzrobotApp(){
     },
     add: function(name){
       name = String(name || '').trim().replace(/^@+/, '');
-      if (!isStreamStarted()) return {ok:false, reason:'Сначала нажмите «Начать стрим», чтобы открыть набор на прокачку.'};
       if(!name) return {ok:false, reason:'Введите ник участника.'};
       if(isBlacklisted(name)) return {ok:false, reason:'Этот пользователь находится в чёрном списке.'};
 
@@ -3874,17 +3781,16 @@ function startAzrobotApp(){
     }
 
     // Сначала те, у кого меньше времени осталось
-    entries.sort((a, b) => (a[1].eligibleFromStream || 0) - (b[1].eligibleFromStream || 0));
+    entries.sort((a, b) => (a[1].expireAt || 0) - (b[1].expireAt || 0));
 
     entries.forEach(([key, item]) => {
       const div = document.createElement('div');
       div.className = 'blacklist-item';
 
-      const remainingStreams = Math.max(0, Number(item.eligibleFromStream || 0) - currentStreamNumber());
-      const timeStr = remainingStreams === 1 ? 'Остался 1 следующий стрим' : `Осталось стримов: ${remainingStreams}`;
+      const timeStr = formatRemainingTime(item.expireAt);
       const withdrawStr = item.withdrawn
-        ? '💰 Вывод записан · пропустить 2 стрима'
-        : '⏳ Без вывода · пропустить 1 стрим';
+        ? '💰 Вывод внесён (кулдаун 2 дня)'
+        : '⏳ Вывод не внесён (кулдаун 1 день)';
 
       div.innerHTML = `
         <div class="blacklist-item-info">
@@ -3904,8 +3810,6 @@ function startAzrobotApp(){
       cooldownContainer.appendChild(div);
     });
   }
-
-  renderStreamStatus();
 
   document.getElementById('openCooldownBtn').onclick = () => {
     renderCooldownList();
@@ -4082,7 +3986,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY", "SKINBRO"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -5368,14 +5272,7 @@ function startAzrobotApp(){
     const openBtn = document.getElementById('openProkachkaBtn');
     const closeX = document.getElementById('prokachkaModalCloseX');
     if (!bg || !openBtn || !closeX) return;
-    openBtn.onclick = () => {
-      if (typeof countStreamOnProkachkaOpen === 'function') countStreamOnProkachkaOpen();
-      if (typeof isStreamStarted === 'function' && !isStreamStarted()) {
-        alert('Сначала нажми «▶️ Начать стрим», чтобы открыть набор на прокачку.');
-        return;
-      }
-      bg.classList.add('show');
-    };
+    openBtn.onclick = () => bg.classList.add('show');
     closeX.onclick = () => bg.classList.remove('show');
     // Закрываем прокачку, как только выбрано конкретное действие
     bg.querySelectorAll('.prokachka-btn').forEach(btn=>{
@@ -6014,7 +5911,7 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY","SKINBRO"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
