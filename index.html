@@ -1109,24 +1109,42 @@
   /* Конный батл — премиальный гоночный интерфейс */
   .horse-battle-choice{background:linear-gradient(120deg,#713f12,#b45309 48%,#f59e0b)!important;border:1px solid #fbbf24!important;box-shadow:0 0 22px #f59e0b25!important;display:flex;flex-direction:column;gap:3px;}
   .horse-battle-choice span{font-size:10px;font-weight:700;opacity:.82;}
-  .horse-battle-card{width:min(720px,96vw)!important;max-width:720px!important;background:radial-gradient(ellipse at 0% 0%,#713f122c,transparent 48%),linear-gradient(145deg,#17130f,#111827 72%)!important;border:1px solid #d977064d!important;box-shadow:0 24px 80px #0009,0 0 42px #f59e0b13!important;}
-  .horse-battle-hero{display:flex;align-items:center;gap:14px;padding:6px 30px 16px 0;border-bottom:1px solid #f59e0b30;}
-  .horse-battle-horse{width:66px;height:66px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#78350f,#f59e0b);font-size:38px;box-shadow:inset 0 1px #ffffff45,0 8px 25px #f59e0b25;}
+  .horse-battle-card{width:min(880px,97vw)!important;max-width:880px!important;max-height:94vh;overflow-y:auto;text-align:left!important;padding:18px 20px 16px!important;background:radial-gradient(ellipse at 0% 0%,#713f1233,transparent 50%),radial-gradient(ellipse at 100% 100%,#16a34a14,transparent 45%),linear-gradient(145deg,#17130f,#0f1a12 75%)!important;border:1px solid #d977064d!important;box-shadow:0 24px 80px #000a,0 0 46px #f59e0b14!important;}
+  .horse-battle-hero{display:flex;align-items:center;gap:14px;padding:2px 34px 12px 0;}
+  .horse-battle-horse{width:60px;height:60px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(145deg,#78350f,#f59e0b);font-size:34px;box-shadow:0 6px 22px #f59e0b40,inset 0 1px 0 #fff4;flex:none;}
   .horse-battle-kicker{font-size:9px;letter-spacing:3px;color:#fbbf24;font-weight:900;}
-  .horse-battle-title{font-size:clamp(20px,4vw,29px);letter-spacing:1.4px;font-weight:1000;color:#fff7ed;text-shadow:0 2px 18px #f59e0b40;}
+  .horse-battle-title{font-size:clamp(20px,4vw,28px);letter-spacing:2px;font-weight:1000;color:#fff7ed;text-shadow:0 2px 18px #f59e0b55;}
   .horse-battle-subtitle{font-size:11px;color:#d6c7b4;margin-top:3px;}
-  .horse-battle-progress{height:5px;border-radius:99px;background:#ffffff12;overflow:hidden;margin:14px 0;}
-  .horse-battle-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#b45309,#fbbf24);transition:width .35s ease;}
-  .horse-battle-layout{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;}
+  .horse-battle-progress{height:5px;border-radius:99px;background:#ffffff12;overflow:hidden;margin:0 0 12px;}
+  .horse-battle-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#b45309,#fbbf24,#fde68a);transition:width .45s ease;}
+  .horse-track-wrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid #f59e0b55;box-shadow:0 8px 30px #0008,inset 0 0 30px #0008;background:#1b1209;line-height:0;}
+  #horseTrackCanvas{width:100%;height:auto;display:block;}
+  .horse-track-banner{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none;line-height:1.1;opacity:0;}
+  .horse-track-banner.show{opacity:1;animation:horseBannerPop .45s cubic-bezier(.2,1.4,.4,1);}
+  .horse-track-banner.big{font-size:clamp(54px,12vw,110px);font-weight:1000;color:#fde68a;text-shadow:0 0 30px #f59e0b,0 6px 0 #78350f,0 0 3px #000;}
+  .horse-track-banner.pill{font-size:clamp(12px,2.2vw,15px);font-weight:900;letter-spacing:.5px;color:#fff7ed;}
+  .horse-track-banner.pill span{display:inline-block;padding:9px 18px;border-radius:99px;background:#000a;border:1px solid #fbbf2477;box-shadow:0 4px 24px #000a;}
+  @keyframes horseBannerPop{0%{transform:translateY(-50%) scale(.4);opacity:0}100%{transform:translateY(-50%) scale(1);opacity:1}}
+  .horse-battle-layout{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;margin-top:14px;}
   .horse-battle-section-title{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24;font-weight:900;margin:0 0 10px;}
-  .horse-battle-roster{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-  .horse-battle-racer{min-width:0;padding:8px 9px;border-radius:9px;background:#ffffff08;border:1px solid #ffffff0d;color:#e5e7eb;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .horse-battle-racer.active{border-color:#fbbf24;background:#f59e0b20;color:#fef3c7;box-shadow:0 0 15px #f59e0b12;}
-  .horse-battle-racer.won{border-color:#22c55e55;background:#16a34a18;color:#bbf7d0;}
-  .horse-battle-current{border:1px solid #f59e0b30;border-radius:15px;padding:15px;background:linear-gradient(145deg,#f59e0b0d,#ffffff03);text-align:center;}
+  .horse-podium{display:flex;flex-direction:column;gap:7px;}
+  .horse-podium-slot{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:10px;padding:9px 11px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff10;transition:all .3s;}
+  .horse-podium-slot .hp-medal{font-size:26px;text-align:center;filter:grayscale(.85);opacity:.55;transition:all .3s;}
+  .horse-podium-slot .hp-name{font-size:14px;font-weight:900;color:#e7e5e4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .horse-podium-slot .hp-state{font-size:10px;color:#a8a29e;margin-top:2px;}
+  .horse-podium-slot.pending .hp-medal,.horse-podium-slot.active .hp-medal,.horse-podium-slot.ok .hp-medal{filter:none;opacity:1;}
+  .horse-podium-slot.active{border-color:#fbbf24;background:linear-gradient(120deg,#f59e0b24,#f59e0b08);box-shadow:0 0 22px #f59e0b22;}
+  .horse-podium-slot.active .hp-name{color:#fef3c7;}
+  .horse-podium-slot.active .hp-state{color:#fbbf24;}
+  .horse-podium-slot.ok{border-color:#22c55e66;background:linear-gradient(120deg,#16a34a26,#16a34a08);}
+  .horse-podium-slot.ok .hp-name{color:#bbf7d0;}
+  .horse-podium-slot.ok .hp-state{color:#86efac;}
+  .horse-battle-current{border:1px solid #f59e0b30;border-radius:15px;padding:14px;background:linear-gradient(145deg,#f59e0b0d,#ffffff03);text-align:center;}
   .horse-battle-winner-name{font-size:clamp(17px,3vw,23px);font-weight:900;overflow-wrap:anywhere;min-height:30px;color:#fff7ed;}
-  .horse-battle-countdown{font-size:48px;line-height:1.1;font-weight:1000;color:#fbbf24;text-shadow:0 0 25px #f59e0b38;margin:8px 0;}
+  .horse-battle-countdown{font-size:46px;line-height:1.1;font-weight:1000;color:#fbbf24;text-shadow:0 0 25px #f59e0b38;margin:6px 0;}
   .horse-battle-status{font-size:11px;color:#cbd5e1;min-height:30px;}
+  .horse-battle-footer{margin-top:12px;padding:9px 12px;border-radius:10px;background:#ffffff06;color:#a8a29e;font-size:10px;line-height:1.5;}
+  @media(max-width:620px){.horse-battle-layout{grid-template-columns:1fr}.horse-battle-hero{gap:10px}.horse-battle-horse{width:48px;height:48px;font-size:28px}.horse-battle-card{padding:14px!important}}
   .horse-quality-card{margin:10px 0 2px;padding:11px 12px;border-radius:12px;text-align:left;border:1px solid #ffffff18;background:linear-gradient(135deg,#ffffff0a,#00000012);box-shadow:inset 0 1px #ffffff08;}
   .horse-quality-card.good{border-color:#22c55e66;background:linear-gradient(135deg,#14532d55,#052e1633);}
   .horse-quality-card.warn{border-color:#f59e0b88;background:linear-gradient(135deg,#78350f66,#451a0344);}
@@ -1136,8 +1154,6 @@
   .horse-quality-pill{padding:3px 6px;border-radius:99px;background:#0003;border:1px solid #ffffff12;font-size:9px;color:#e5e7eb;}
   .horse-battle-main-btn,.horse-battle-reroll-btn{width:100%;margin-top:10px;padding:11px!important;font-weight:900!important;letter-spacing:.4px;}
   .horse-battle-main-btn{background:linear-gradient(120deg,#b45309,#f59e0b)!important;color:#211204!important;}
-  .horse-battle-footer{margin-top:14px;padding:10px 12px;border-radius:10px;background:#ffffff06;color:#a8a29e;font-size:10px;line-height:1.5;}
-  @media(max-width:560px){.horse-battle-layout{grid-template-columns:1fr}.horse-battle-hero{gap:10px}.horse-battle-horse{width:52px;height:52px;font-size:30px}.horse-battle-roster{grid-template-columns:1fr 1fr}.horse-battle-card{padding:18px!important}}
 </style>
 
 <style id="localCloudStyles">
@@ -1393,6 +1409,7 @@
               <option value="DASTSKIN">DASTSKIN</option>
               <option value="CSJOKER">CSJOKER</option>
               <option value="SKINITY">SKINITY</option>
+              <option value="SPYDROP">SPYDROP</option>
             </select>
             <input type="text" id="wUser" placeholder="Имя пользователя">
             <input type="number" id="wAmount" placeholder="Сумма вывода">
@@ -1694,22 +1711,23 @@
     <div class="prokachka-buttons">
       <button class="primary prokachka-btn battle-choice-btn" id="openBoxesBtn">📦 3 коробки (батл)</button>
       <button class="primary prokachka-btn battle-choice-btn" id="open3SlotsBtn">🎰 3 рулетки (батл)</button>
-      <button class="primary prokachka-btn battle-choice-btn horse-battle-choice" id="openHorseBattleBtn">🐎 Конный батл <span>10 участников · 3 победителя</span></button>
+      <button class="primary prokachka-btn battle-choice-btn horse-battle-choice" id="openHorseBattleBtn">🐎 Конные скачки <span>10 наездников · 3 призёра</span></button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Конный батл -->
+<!-- Modal: Конные скачки -->
 <div class="modal-bg" id="horseBattleModalBg" style="z-index:62;">
   <div class="modal-card horse-battle-card">
     <span class="close-modal-x" id="horseBattleCloseX">✕</span>
-    <div class="horse-battle-hero"><div class="horse-battle-horse">🐎</div><div><div class="horse-battle-kicker">SPECIAL BATTLE</div><div class="horse-battle-title">КОННЫЙ БАТЛ</div><div class="horse-battle-subtitle">10 всадников · 3 победителя · 15 секунд на ответ</div></div></div>
+    <div class="horse-battle-hero"><div class="horse-battle-horse">🏇</div><div><div class="horse-battle-kicker">HIPPODROME · SPECIAL BATTLE</div><div class="horse-battle-title">КОННЫЕ СКАЧКИ</div><div class="horse-battle-subtitle">10 наездников · 3 призёра · 15 секунд на ответ в чате</div></div></div>
     <div class="horse-battle-progress"><div class="horse-battle-progress-fill" id="horseBattleProgressFill"></div></div>
+    <div class="horse-track-wrap"><canvas id="horseTrackCanvas"></canvas><div class="horse-track-banner" id="horseTrackBanner"></div></div>
     <div class="horse-battle-layout">
-      <div class="horse-battle-roster-wrap"><div class="horse-battle-section-title">🏁 Состав заезда</div><div class="horse-battle-roster" id="horseBattleRoster"></div></div>
-      <div class="horse-battle-current"><div class="horse-battle-section-title">🏆 Текущий победитель</div><div class="horse-battle-winner-name" id="horseBattleWinnerName">Готовы к старту?</div><div class="horse-battle-countdown" id="horseBattleCountdown">15</div><div class="horse-battle-status" id="horseBattleStatus">Запусти заезд, чтобы определить победителей</div><div id="horseBattleQualityCard" class="horse-quality-card" style="display:none;"></div><button class="primary horse-battle-main-btn" id="horseBattleStartBtn">🚦 НАЧАТЬ ЗАЕЗД</button><button class="danger horse-battle-reroll-btn" id="horseBattleRerollBtn" style="display:none;">🔄 РЕРОЛЛ — следующий всадник</button></div>
+      <div><div class="horse-battle-section-title">🏆 Пьедестал</div><div class="horse-podium" id="horseBattlePodium"></div></div>
+      <div class="horse-battle-current"><div class="horse-battle-section-title">🎙 Сейчас отвечает</div><div class="horse-battle-winner-name" id="horseBattleWinnerName">Готовы к старту?</div><div class="horse-battle-countdown" id="horseBattleCountdown">15</div><div class="horse-battle-status" id="horseBattleStatus">Запусти заезд, чтобы определить призёров</div><div id="horseBattleQualityCard" class="horse-quality-card" style="display:none;"></div><button class="primary horse-battle-main-btn" id="horseBattleStartBtn">🚦 НАЧАТЬ ЗАЕЗД</button><button class="danger horse-battle-reroll-btn" id="horseBattleRerollBtn" style="display:none;">🔄 РЕРОЛЛ — заменить наездника</button></div>
     </div>
-    <div class="horse-battle-footer">Если победитель не ответил за 15 секунд — нажми <b>РЕРОЛЛ</b>. Новый участник выбирается из всего доступного списка батла. Победа засчитывается после ответа в чат.</div>
+    <div class="horse-battle-footer">Призёров определяют скачки, затем каждый по очереди (🥇→🥈→🥉) должен ответить в чат за 15 секунд. Не ответил — нажми <b>РЕРОЛЛ</b>: на его место встанет новый участник из списка батла. Победа засчитывается после ответа в чат.</div>
   </div>
 </div>
 
@@ -1782,6 +1800,7 @@
         <option value="DASTSKIN">DASTSKIN</option>
         <option value="CSJOKER">CSJOKER</option>
         <option value="SKINITY">SKINITY</option>
+        <option value="SPYDROP">SPYDROP</option>
       </select>
       <input type="number" id="depositEntryAmount" placeholder="Сумма депозита">
       <button class="primary" id="saveDepositEntryBtn" style="width:100%;">Сохранить депозит</button>
@@ -1805,7 +1824,7 @@
   <div class="modal-card wheel-modal-card">
     <span class="close-modal-x" id="sitesWheelModalCloseX">✕</span>
     <h3 style="margin:0 0 4px 0; font-size:16px;">🎡 Колесо сайтов (ТЕСТ)</h3>
-    <div style="font-size:12px; color:var(--text-dim);" id="sitesWheelSubText">Сайтов в колесе: 6</div>
+    <div style="font-size:12px; color:var(--text-dim);" id="sitesWheelSubText">Сайтов в колесе: 7</div>
 
     <div class="wheel-container">
       <div class="wheel-pointer"></div>
@@ -3986,7 +4005,7 @@ function startAzrobotApp(){
     });
   }
 
-  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY"];
+  const SITE_OPTIONS = ["MAGICDROP", "JABKA", "ECOCASE", "DASTSKIN", "CSJOKER", "SKINITY", "SPYDROP"];
 
   function renderWithdrawals() {
     withdrawList.innerHTML = '';
@@ -4235,24 +4254,234 @@ function startAzrobotApp(){
     }, 1000);
   }
 
-  /* ---------- 🐎 Конный батл: 10 выбранных участников, 3 ответа-победы ---------- */
-  const horseBattle = { active:false, roster:[], winners:[], current:null, seconds:15, timer:null, responded:false, expired:false, round:0 };
+  /* ---------- 🐎 Конные скачки: 10 наездников, скачки определяют 3 призёров, каждый отвечает в чат ---------- */
+  const HB_ROWS=10, HB_W=760, HB_H=426, HB_TOP=40, HB_LANE=36, HB_START=178, HB_FINISH=708, HB_K=0.82;
+  const HB_COATS=['#8b5a2b','#5b3a1e','#2e2422','#bfbfc8','#c99a4b','#7a4a2a','#3d3030','#d8bc8c','#6a4326','#a0522d'];
+  const HB_SILKS=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ec4899','#14b8a6','#f8fafc','#84cc16'];
+  const HB_MEDALS=['🥇','🥈','🥉'];
+  const horseBattle = { active:false, phase:'idle', horses:[], winners:[], podium:[{name:'',state:'wait'},{name:'',state:'wait'},{name:'',state:'wait'}], current:null, currentSlot:-1, seconds:15, timer:null, responded:false, expired:false, round:0, raf:0, lastFrame:0, raceStart:0, cdStart:0, cdShown:null, endAt:0, flashAt:0, doneAt:0, bannerTimer:null };
   const horseBattleModalBg = document.getElementById('horseBattleModalBg');
-  const horseBattleRosterEl = document.getElementById('horseBattleRoster');
   const horseBattleWinnerEl = document.getElementById('horseBattleWinnerName');
   const horseBattleCountdownEl = document.getElementById('horseBattleCountdown');
   const horseBattleStatusEl = document.getElementById('horseBattleStatus');
   const horseBattleProgressEl = document.getElementById('horseBattleProgressFill');
   const horseBattleStartBtn = document.getElementById('horseBattleStartBtn');
   const horseBattleRerollBtn = document.getElementById('horseBattleRerollBtn');
+  const horseTrackCanvas = document.getElementById('horseTrackCanvas');
+  const horseTrackBanner = document.getElementById('horseTrackBanner');
+  const horseBattlePodiumEl = document.getElementById('horseBattlePodium');
+  const hbCtx = horseTrackCanvas.getContext('2d');
+  const hbParticles = [];
+  const hbCrowd = Array.from({length:150},(_,i)=>({x:(i*37.3)%HB_W+Math.random()*6, y:HB_TOP-12-Math.random()*14, c:['#ef4444','#3b82f6','#eab308','#22c55e','#f97316','#e5e7eb','#a855f7'][i%7], ph:Math.random()*6.28}));
+  (function(){ const dpr=Math.min(2,window.devicePixelRatio||1); horseTrackCanvas.width=HB_W*dpr; horseTrackCanvas.height=HB_H*dpr; hbCtx.setTransform(dpr,0,0,dpr,0,0); })();
 
-  function renderHorseBattleRoster(){
-    horseBattleRosterEl.innerHTML = horseBattle.roster.map(name => {
-      const won = horseBattle.winners.some(n => n.toLowerCase() === name.toLowerCase());
-      const active = horseBattle.current && horseBattle.current.toLowerCase() === name.toLowerCase() && !won;
-      return `<div class="horse-battle-racer ${won?'won':active?'active':''}">${won?'🏆':active?'🐎':'🏇'} ${escapeHtml(name)}</div>`;
+  function hbShade(hex,amt){
+    const n=parseInt(hex.slice(1),16); const cl=v=>Math.max(0,Math.min(255,v));
+    return 'rgb('+cl((n>>16)+amt)+','+cl(((n>>8)&255)+amt)+','+cl((n&255)+amt)+')';
+  }
+  function hbBanner(html,cls,ms){
+    clearTimeout(horseBattle.bannerTimer);
+    horseTrackBanner.className='horse-track-banner';
+    if(html==null){return;}
+    horseTrackBanner.innerHTML=html;
+    void horseTrackBanner.offsetWidth;
+    horseTrackBanner.className='horse-track-banner show '+cls;
+    if(ms) horseBattle.bannerTimer=setTimeout(()=>{horseTrackBanner.className='horse-track-banner';},ms);
+  }
+  function hbRenderPodium(){
+    const txt={wait:'Определится по итогам скачек',pending:'Ждёт своей очереди',active:'Отвечает в чат…',ok:'✅ Ответ засчитан'};
+    horseBattlePodiumEl.innerHTML=horseBattle.podium.map((p,i)=>{
+      const s=p.state==='active'&&p.replaced?'Замена · отвечает в чат…':(txt[p.state]||'');
+      return `<div class="horse-podium-slot ${p.state}"><div class="hp-medal">${HB_MEDALS[i]}</div><div style="min-width:0"><div class="hp-name">${p.name?escapeHtml(p.name):'—'}</div><div class="hp-state">${s}</div></div></div>`;
     }).join('');
-    horseBattleProgressEl.style.width = `${Math.min(100, horseBattle.winners.length/3*100)}%`;
+    horseBattleProgressEl.style.width=`${Math.min(100,horseBattle.winners.length/3*100)}%`;
+  }
+
+  /* --- Модель скачек: порядок финиша выбирается случайно, ход лошади — гладкий случайный "темп" --- */
+  function hbBuildRace(names){
+    const order=[...Array(HB_ROWS).keys()];
+    for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+    const horses=names.map((name,i)=>({name,lane:i,coat:HB_COATS[i],silk:HB_SILKS[i],rank:0,T:0,ph:Math.random()*6,prev:0,finished:false}));
+    order.forEach((hi,r)=>{ const h=horses[hi]; h.rank=r+1; h.T = r<3 ? 8.6+r*0.42+Math.random()*0.14 : 9.9+(r-3)*0.22+Math.random()*0.08; });
+    horses.forEach(h=>{
+      const comps=[0,1,2].map(()=>({a:0.16+Math.random()*0.2,f:0.18+Math.random()*0.4,p:Math.random()*6.283}));
+      const dt=1/120, n=Math.ceil(h.T/dt)+3, cum=new Float32Array(n+1); let c=0;
+      for(let k=1;k<=n;k++){
+        const t=k*dt; let s=1; comps.forEach(o=>{s+=o.a*Math.sin(6.283*o.f*t+o.p);});
+        s=Math.max(0.35,s)*(1-Math.exp(-t*2.6));
+        c+=s*dt; cum[k]=c;
+      }
+      h.dt=dt; h.cum=cum;
+      const x=h.T/dt,i=Math.floor(x); h.total=cum[i]+(cum[i+1]-cum[i])*(x-i);
+    });
+    return horses;
+  }
+  function hbPos(h,t){
+    if(t<=0) return 0;
+    if(t>=h.T) return 1+Math.min(0.045,(t-h.T)*0.05);
+    const x=t/h.dt,i=Math.floor(x),f=x-i;
+    return (h.cum[i]+(h.cum[i+1]-h.cum[i])*f)/h.total;
+  }
+
+  /* --- Отрисовка --- */
+  function hbDrawHorse(c,x,y,k,coat,silk,ph,num){
+    const dark=hbShade(coat,-38), bob=-Math.abs(Math.sin(ph))*2.2;
+    c.save(); c.translate(x,y+bob); c.scale(k,k); c.lineCap='round'; c.lineJoin='round';
+    const leg=(hx,hy,off,col)=>{
+      const a1=Math.sin(ph+off)*0.95, a2=-0.45-0.75*Math.max(0,Math.cos(ph+off));
+      const kx=hx+Math.sin(a1)*9, ky=hy+Math.cos(a1)*9;
+      const fx=kx+Math.sin(a1+a2)*9, fy=ky+Math.cos(a1+a2)*9;
+      c.strokeStyle=col; c.lineWidth=3.4; c.beginPath(); c.moveTo(hx,hy); c.lineTo(kx,ky); c.lineTo(fx,fy); c.stroke();
+      c.fillStyle='#17110c'; c.beginPath(); c.arc(fx,fy,2,0,6.283); c.fill();
+    };
+    leg(9,-18,0.7,dark); leg(-9,-18,2.0,dark);
+    // хвост
+    c.strokeStyle=dark; c.lineWidth=3.2; c.beginPath(); c.moveTo(-13,-24); c.quadraticCurveTo(-23,-31,-27,-18+Math.sin(ph*1.1)*3.5); c.stroke();
+    // корпус
+    c.fillStyle=coat; c.beginPath(); c.ellipse(0,-22,14.5,7.2,0,0,6.283); c.fill();
+    c.fillStyle='#ffffff14'; c.beginPath(); c.ellipse(-1,-24.5,11,3,0,0,6.283); c.fill();
+    // шея и голова
+    c.fillStyle=coat; c.beginPath(); c.moveTo(7,-27); c.lineTo(17,-41); c.lineTo(23,-38); c.lineTo(14,-21); c.closePath(); c.fill();
+    c.beginPath(); c.ellipse(24.5,-37.5,6.6,3.2,0.62,0,6.283); c.fill();
+    c.fillStyle=dark; c.beginPath(); c.moveTo(17.5,-41); c.lineTo(18.5,-45); c.lineTo(20.5,-41); c.closePath(); c.fill();
+    c.fillStyle='#000'; c.beginPath(); c.arc(23,-38.6,0.9,0,6.283); c.fill();
+    c.strokeStyle=dark; c.lineWidth=2.6; c.beginPath(); c.moveTo(8,-29); c.quadraticCurveTo(11,-37+Math.sin(ph)*1,16.5,-42); c.stroke();
+    // ближние ноги
+    leg(9,-18,0,coat); leg(-9,-18,1.4,coat);
+    // попона с номером
+    c.fillStyle=silk; c.fillRect(-6,-28,10,7);
+    c.fillStyle=(silk==='#f8fafc'||silk==='#eab308'||silk==='#84cc16')?'#111':'#fff'; c.font='700 6.5px sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(String(num),-1,-24.2);
+    // жокей
+    c.strokeStyle=silk; c.lineWidth=4.2; c.beginPath(); c.moveTo(0,-28); c.lineTo(7,-37); c.stroke();
+    c.strokeStyle='#1f1f1f'; c.lineWidth=1.8; c.beginPath(); c.moveTo(7,-35); c.lineTo(15,-33.5); c.stroke();
+    c.fillStyle='#f1c9a5'; c.beginPath(); c.arc(8.6,-40.4,2.9,0,6.283); c.fill();
+    c.fillStyle=silk; c.beginPath(); c.arc(8.6,-41,3.1,Math.PI,0); c.fill();
+    c.restore();
+  }
+  function hbFit(c,text,maxW){
+    if(c.measureText(text).width<=maxW) return text;
+    while(text.length>1 && c.measureText(text+'…').width>maxW) text=text.slice(0,-1);
+    return text+'…';
+  }
+  function hbDraw(t,now,dtF){
+    const c=hbCtx, hb=horseBattle, racing=hb.phase==='racing', done=hb.phase==='done';
+    const list=hb.horses.length?hb.horses:Array.from({length:HB_ROWS},(_,i)=>({name:null,lane:i,coat:HB_COATS[i],silk:HB_SILKS[i],rank:0,T:0,ph:0}));
+    c.clearRect(0,0,HB_W,HB_H);
+    // верхняя трибуна
+    const g=c.createLinearGradient(0,0,0,HB_TOP); g.addColorStop(0,'#120c06'); g.addColorStop(1,'#2b1d0d'); c.fillStyle=g; c.fillRect(0,0,HB_W,HB_TOP);
+    const wave=racing?2.4:(done?1.6:0.7);
+    hbCrowd.forEach(p=>{ const yy=p.y+Math.sin(now/170+p.ph)*wave; c.fillStyle=p.c; c.fillRect(p.x-2.4,yy+3,4.8,5.5); c.fillStyle='#e8c9a6'; c.beginPath(); c.arc(p.x,yy+1,2.2,0,6.283); c.fill(); });
+    c.fillStyle='#000a'; c.fillRect(0,0,HB_W,14);
+    c.font='800 10px "Segoe UI",system-ui,sans-serif'; c.textBaseline='middle'; c.textAlign='left'; c.fillStyle='#fbbf24'; c.fillText('🏁 HIPPODROME',10,7);
+    let leader=null;
+    if(racing||done){ leader=list.reduce((a,b)=>hbPos(b,t)>hbPos(a,t)?b:a); }
+    c.textAlign='center'; c.fillStyle='#fff7ed';
+    c.fillText(racing&&leader?('▶ Лидер: '+hbFit(c,leader.name||'',140)):(done?'🏆 Заезд завершён':(hb.phase==='countdown'?'К старту!':'Ожидание заезда')),HB_W/2,7);
+    c.textAlign='right'; c.fillStyle='#fbbf24';
+    const tt=racing?t:(done?hb.endAt:0); c.fillText(String(Math.floor(tt/60)).padStart(2,'0')+':'+(tt%60).toFixed(1).padStart(4,'0'),HB_W-10,7);
+
+    // дорожки
+    for(let i=0;i<HB_ROWS;i++){
+      const y=HB_TOP+i*HB_LANE;
+      const lg=c.createLinearGradient(0,y,0,y+HB_LANE); const base=i%2?'#7a5a33':'#86643a'; lg.addColorStop(0,hbShade(base,12)); lg.addColorStop(1,hbShade(base,-14));
+      c.fillStyle=lg; c.fillRect(120,y,HB_W-120,HB_LANE);
+      c.strokeStyle='#ffffff26'; c.lineWidth=1; c.setLineDash([8,10]); c.beginPath(); c.moveTo(120,y+HB_LANE-.5); c.lineTo(HB_W,y+HB_LANE-.5); c.stroke(); c.setLineDash([]);
+    }
+    // линии старта и финиша
+    c.fillStyle='#ffffff55'; c.fillRect(HB_START,HB_TOP,2,HB_ROWS*HB_LANE);
+    for(let r=0;r<HB_ROWS*HB_LANE/6;r++){ for(let q=0;q<2;q++){ c.fillStyle=(r+q)%2?'#111':'#fff'; c.fillRect(HB_FINISH+q*6,HB_TOP+r*6,6,6); } }
+    // левая колонка
+    const cg=c.createLinearGradient(0,0,120,0); cg.addColorStop(0,'#18110a'); cg.addColorStop(1,'#241a0e'); c.fillStyle=cg; c.fillRect(0,HB_TOP,120,HB_ROWS*HB_LANE);
+    c.fillStyle='#f59e0b66'; c.fillRect(119,HB_TOP,1.5,HB_ROWS*HB_LANE);
+
+    // отметки финиша (по кадру)
+    list.forEach(h=>{ if(racing&&!h.finished&&t>=h.T){ h.finished=true; if(h.rank===1) hb.flashAt=now; } });
+
+    list.forEach((h,i)=>{
+      const y=HB_TOP+h.lane*HB_LANE, base=y+HB_LANE-4;
+      // подпись
+      c.textAlign='center'; c.textBaseline='middle';
+      c.fillStyle=h.silk; c.beginPath(); c.arc(15,y+HB_LANE/2,9,0,6.283); c.fill();
+      c.strokeStyle='#0006'; c.lineWidth=1; c.stroke();
+      c.fillStyle=(h.silk==='#f8fafc'||h.silk==='#eab308'||h.silk==='#84cc16')?'#111':'#fff'; c.font='900 10px "Segoe UI",system-ui,sans-serif'; c.fillText(String(h.lane+1),15,y+HB_LANE/2+.5);
+      const top=(racing||done)&&h.finished&&h.rank<=3;
+      c.textAlign='left'; c.font='800 11px "Segoe UI",system-ui,sans-serif';
+      c.fillStyle=h.name?(top?'#fde68a':'#f5efe6'):'#78716c';
+      c.fillText(hbFit(c,h.name||'Свободно',70),30,y+HB_LANE/2+.5);
+      if((racing||done)&&h.finished){ c.textAlign='center'; if(h.rank<=3){ c.font='15px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif'; c.fillText(HB_MEDALS[h.rank-1],110,y+HB_LANE/2+1); } else { c.font='800 9px "Segoe UI",sans-serif'; c.fillStyle='#a8a29e'; c.fillText('#'+h.rank,110,y+HB_LANE/2+.5); } }
+      // позиция и шаг
+      const pos=(racing||done)?hbPos(h,done?99:t):0;
+      let speed=0;
+      if(racing){ const p2=hbPos(h,Math.max(0,t-0.08)); speed=(pos-p2)/0.08; }
+      if(racing){ h.ph+=dtF*(4+speed*75); }
+      else if(hb.phase==='countdown'||hb.phase==='idle'){ h.ph+=dtF*1.8; }
+      else if(done){ h.ph+=dtF*Math.max(0,3-(now-hb.doneAt)/700); }
+      const nose=HB_START+pos*(HB_FINISH-HB_START);
+      const xc=nose-30*HB_K;
+      if(racing && speed>0.02 && hbParticles.length<260 && Math.random()<0.55){
+        hbParticles.push({x:xc-16*HB_K,y:base-2,vx:-(25+Math.random()*40),vy:-(6+Math.random()*18),l:0.55,m:0.55,r:1.6+Math.random()*2.2,t:'d'});
+      }
+      hbDrawHorse(c,xc,base,HB_K,h.coat,h.silk,h.ph,h.lane+1);
+    });
+
+    // стартовые боксы
+    const gateAlpha = hb.phase==='countdown'?1:(racing&&t<0.45?1-t/0.45:0);
+    if(gateAlpha>0){
+      c.globalAlpha=gateAlpha;
+      for(let i=0;i<HB_ROWS;i++){ const y=HB_TOP+i*HB_LANE; c.fillStyle='#2d2f36'; c.fillRect(HB_START+3,y+2,5,HB_LANE-4); c.fillStyle='#9ca3af'; c.fillRect(HB_START+3,y+5,5,2); c.fillRect(HB_START+3,y+HB_LANE-9,5,2); }
+      c.globalAlpha=1;
+    }
+    // нижняя трава и ограждение
+    const by=HB_TOP+HB_ROWS*HB_LANE; const gg=c.createLinearGradient(0,by,0,HB_H); gg.addColorStop(0,'#2f6b25'); gg.addColorStop(1,'#1d4a17'); c.fillStyle=gg; c.fillRect(0,by,HB_W,HB_H-by);
+    c.fillStyle='#f5f5f4'; c.fillRect(0,by+3,HB_W,3);
+    for(let x=6;x<HB_W;x+=38){ c.fillRect(x,by+3,3,12); }
+    c.textAlign='center'; c.fillStyle='#bbf7d0'; c.font='800 9px "Segoe UI",sans-serif'; c.fillText('СТАРТ',HB_START,by+HB_H-by-9+2); c.fillText('ФИНИШ',HB_FINISH+6,by+HB_H-by-9+2);
+
+    // частицы
+    for(let i=hbParticles.length-1;i>=0;i--){
+      const p=hbParticles[i]; p.l-=dtF; if(p.l<=0){hbParticles.splice(i,1);continue;}
+      p.x+=p.vx*dtF; p.y+=p.vy*dtF; if(p.t==='d'){p.vy+=40*dtF;} else {p.vy+=220*dtF;p.rot+=dtF*8;}
+      const a=p.l/p.m;
+      if(p.t==='d'){ c.globalAlpha=a*0.55; c.fillStyle='#d6b98a'; c.beginPath(); c.arc(p.x,p.y,p.r*(1.6-a*0.6),0,6.283); c.fill(); }
+      else { c.globalAlpha=Math.min(1,a*1.5); c.save(); c.translate(p.x,p.y); c.rotate(p.rot); c.fillStyle=p.c; c.fillRect(-p.r,-p.r/2,p.r*2,p.r); c.restore(); }
+      c.globalAlpha=1;
+    }
+    // вспышка фотофиниша
+    const fl=now-hb.flashAt; if(hb.flashAt&&fl<280){ c.globalAlpha=0.35*(1-fl/280); c.fillStyle='#fff'; c.fillRect(0,0,HB_W,HB_H); c.globalAlpha=1; }
+  }
+  function hbConfetti(){
+    const cols=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ec4899','#fde68a'];
+    for(let i=0;i<110;i++){ const m=1.6+Math.random()*1.4; hbParticles.push({x:HB_FINISH-60+Math.random()*120,y:HB_TOP+40+Math.random()*120,vx:-120+Math.random()*240,vy:-220-Math.random()*160,l:m,m:m,r:2.5+Math.random()*2.5,c:cols[i%cols.length],rot:Math.random()*6,t:'c'}); }
+  }
+  function hbFrame(now){
+    const hb=horseBattle;
+    if(!horseBattleModalBg.classList.contains('show')){ hb.raf=0; return; }
+    const dtF=Math.min(0.05,(now-(hb.lastFrame||now))/1000); hb.lastFrame=now;
+    let t=0;
+    if(hb.phase==='countdown'){
+      const e=(now-hb.cdStart)/1000, n=3-Math.floor(e);
+      if(e<3){ if(hb.cdShown!==n){hb.cdShown=n; hbBanner(String(n),'big',950);} }
+      else { hb.phase='racing'; hb.raceStart=now; hb.cdShown=null; hbBanner('СТАРТ!','big',900); horseBattleStatusEl.textContent='🏇 Скачки идут! Следим за финишем…'; }
+    }
+    if(hb.phase==='racing'){
+      t=(now-hb.raceStart)/1000;
+      if(t>=hb.endAt){ hb.phase='done'; hbFinishRace(now); }
+    }
+    hbDraw(t,now,dtF);
+    hb.raf=requestAnimationFrame(hbFrame);
+  }
+  function hbStartLoop(){ if(!horseBattle.raf){ horseBattle.lastFrame=0; horseBattle.raf=requestAnimationFrame(hbFrame); } }
+
+  /* --- Финиш скачек → пьедестал → по очереди подтверждение в чате --- */
+  function hbFinishRace(now){
+    const hb=horseBattle; hb.doneAt=now;
+    const top=hb.horses.slice().sort((a,b)=>a.rank-b.rank).slice(0,3);
+    hb.podium=top.map(h=>({name:h.name,state:'pending',replaced:false,horse:h}));
+    hbRenderPodium(); hbConfetti();
+    hbBanner('<span>🏁 ФИНИШ! 🥇 '+escapeHtml(top[0].name)+'</span>','pill',2600);
+    horseBattleStatusEl.textContent='Финиш! Сейчас призёры по очереди подтверждают участие.';
+    sendChatMessage(`🏁 КОННЫЕ СКАЧКИ · ФИНИШ! 🥇 ${top[0].name} · 🥈 ${top[1].name} · 🥉 ${top[2].name} — призёры, готовьтесь отписаться в чат по очереди!`);
+    setTimeout(()=>{ if(hb.active&&hb.phase==='done') nextHorseBattleWinner(); },2600);
   }
   function clearHorseBattleTimer(){ if(horseBattle.timer){clearInterval(horseBattle.timer);horseBattle.timer=null;} }
   function startHorseBattleTimer(){
@@ -4292,63 +4521,97 @@ function startAzrobotApp(){
     const historyNote=a.hasFullHistory?'Статистика собрана ботом':'Полная история сообщений недоступна; оценка предварительная';
     card.innerHTML=`<div class="horse-quality-head">${title}</div><div class="horse-quality-detail">${detail}<br><span style="opacity:.72">${historyNote}</span></div><div class="horse-quality-metrics"><span class="horse-quality-pill">Сообщений: ${a.total}</span><span class="horse-quality-pill">Коротких/команд: ${a.commandLike+a.oneWord}</span><span class="horse-quality-pill">Содержательных: ${a.meaningful}</span></div>`;
   }
-  function beginHorseBattleRound(name){
-    horseBattle.current=name; horseBattle.round=horseBattle.winners.length+1;
-    horseBattleWinnerEl.textContent=name; horseBattleCountdownEl.textContent='15';
+  function beginHorseBattleRound(slot){
+    const hb=horseBattle, p=hb.podium[slot], name=p.name;
+    hb.currentSlot=slot; hb.current=name; hb.round=slot+1; p.state='active';
+    horseBattleWinnerEl.textContent=`${HB_MEDALS[slot]} ${name}`; horseBattleCountdownEl.textContent='15';
     renderHorseBattleQuality(name);
-    horseBattleStatusEl.textContent=`Финиш ${horseBattle.round} из 3 · ответь в чат за 15 секунд`;
+    horseBattleStatusEl.textContent=`${slot+1} место · ответь в чат за 15 секунд`;
     horseBattleStatusEl.style.color='#cbd5e1';
     state.lastWinner=name; lastWinnerSource='horse-battle'; isBattleDraw=true;
     modalWinner.textContent=name;
-    renderHorseBattleRoster(); startHorseBattleTimer();
-    sendChatMessage(`🐎 КОННЫЙ БАТЛ · Победитель этапа ${horseBattle.round}/3 — ${name}! Отпишись в чат за 15 секунд!`);
+    hbRenderPodium(); startHorseBattleTimer();
+    sendChatMessage(`🐎 КОННЫЕ СКАЧКИ · ${HB_MEDALS[slot]} ${slot+1} место — ${name}! Отпишись в чат за 15 секунд!`);
   }
   function nextHorseBattleWinner(){
     clearHorseBattleTimer();
-    if(horseBattle.winners.length>=3){
-      horseBattle.active=false; horseBattle.current=null; horseBattleWinnerEl.textContent='🏆 Заезд завершён!';
-      horseBattleCountdownEl.textContent='3/3'; horseBattleStatusEl.textContent='Все три победителя подтвердили участие!';
+    const hb=horseBattle;
+    if(hb.winners.length>=3){
+      hb.active=false; hb.current=null; hb.currentSlot=-1; horseBattleWinnerEl.textContent='🏆 Заезд завершён!';
+      horseBattleCountdownEl.textContent='3/3'; horseBattleCountdownEl.style.color='#4ade80'; horseBattleStatusEl.textContent='Все три призёра подтвердили участие!';
       horseBattleRerollBtn.style.display='none'; horseBattleStartBtn.style.display='block'; horseBattleStartBtn.textContent='🔁 НОВЫЙ ЗАЕЗД';
-      renderHorseBattleRoster(); return;
+      const qc=document.getElementById('horseBattleQualityCard'); if(qc) qc.style.display='none';
+      hbRenderPodium(); hbConfetti(); hbBanner('<span>🏆 Все призёры на месте!</span>','pill',2400); return;
     }
-    const available=horseBattle.roster.filter(n=>!horseBattle.winners.some(w=>w.toLowerCase()===n.toLowerCase()));
-    if(!available.length){horseBattleStatusEl.textContent='Нет новых участников для выбора.';horseBattleRerollBtn.style.display='block';return;}
-    const name=available[Math.floor(Math.random()*available.length)]; beginHorseBattleRound(name);
+    beginHorseBattleRound(hb.winners.length);
+  }
+  function horseBattlePool(){
+    return [...new Map((state.battleParticipants||[]).map(p=>[String(p&&p.name||'').trim().toLowerCase(),String(p&&p.name||'').trim()])).values()].filter(n=>n&&!isBlacklisted(n)&&!isProkachkaBlocked(n));
   }
   function startHorseBattle(){
     clearHorseBattleTimer();
-    const pool=[...new Map((state.battleParticipants||[]).map(p=>[String(p&&p.name||'').trim().toLowerCase(),String(p&&p.name||'').trim()])).values()].filter(n=>n&&!isBlacklisted(n)&&!isProkachkaBlocked(n));
-    if(pool.length<10){alert(`Для конного батла нужно минимум 10 доступных участников «батл». Сейчас: ${pool.length}.`);return;}
+    const pool=horseBattlePool();
+    if(pool.length<10){alert(`Для конных скачек нужно минимум 10 доступных участников «батл». Сейчас: ${pool.length}.`);return;}
     const shuffled=pool.slice();
     for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
-    horseBattle.active=true;horseBattle.roster=shuffled.slice(0,10);horseBattle.winners=[];horseBattle.current=null;horseBattle.round=0;
-    const qualityCard=document.getElementById('horseBattleQualityCard');if(qualityCard)qualityCard.style.display='none';
-    horseBattleStartBtn.style.display='none';horseBattleWinnerEl.textContent='На старт…';horseBattleCountdownEl.textContent='15';horseBattleStatusEl.textContent='10 всадников готовы. Определяем победителей по очереди.';
-    horseBattleModalBg.classList.add('show');renderHorseBattleRoster();nextHorseBattleWinner();
+    const hb=horseBattle;
+    hb.active=true; hb.winners=[]; hb.current=null; hb.currentSlot=-1; hb.round=0; hb.responded=false; hb.expired=false;
+    hb.horses=hbBuildRace(shuffled.slice(0,10));
+    hb.endAt=Math.max(...hb.horses.map(h=>h.T))+0.9; hb.flashAt=0; hbParticles.length=0;
+    hb.podium=[{name:'',state:'wait'},{name:'',state:'wait'},{name:'',state:'wait'}];
+    const qc=document.getElementById('horseBattleQualityCard'); if(qc) qc.style.display='none';
+    horseBattleStartBtn.style.display='none'; horseBattleRerollBtn.style.display='none';
+    horseBattleWinnerEl.textContent='На старт…'; horseBattleCountdownEl.textContent='🏁'; horseBattleCountdownEl.style.color='#fbbf24';
+    horseBattleStatusEl.textContent='10 наездников в стартовых боксах. Скоро старт!'; horseBattleStatusEl.style.color='#cbd5e1';
+    hbRenderPodium(); hbBanner(null);
+    horseBattleModalBg.classList.add('show');
+    hb.phase='countdown'; hb.cdStart=performance.now()+400; hb.cdShown=null;
+    hbStartLoop();
+    sendChatMessage('🐎 КОННЫЕ СКАЧКИ начинаются! 10 наездников на старте — смотрим, кто придёт к финишу первым!');
   }
   function rerollHorseBattle(){
-    if(!horseBattle.active||!horseBattle.current)return;
+    const hb=horseBattle;
+    if(!hb.active||!hb.current||hb.currentSlot<0)return;
     clearHorseBattleTimer();
-    const used=new Set([...horseBattle.winners,...horseBattle.roster].map(n=>n.toLowerCase()));
-    used.delete(horseBattle.current.toLowerCase());
-    const pool=[...new Map((state.battleParticipants||[]).map(p=>[String(p&&p.name||'').trim().toLowerCase(),String(p&&p.name||'').trim()])).values()].filter(n=>n&&!used.has(n.toLowerCase())&&!isBlacklisted(n)&&!isProkachkaBlocked(n));
+    const used=new Set([...hb.winners,...hb.horses.map(h=>h.name)].map(n=>n.toLowerCase()));
+    used.delete(hb.current.toLowerCase());
+    const pool=horseBattlePool().filter(n=>!used.has(n.toLowerCase()));
     if(!pool.length){horseBattleStatusEl.textContent='Нет доступных новых участников для реролла.';horseBattleRerollBtn.style.display='block';return;}
-    const old=horseBattle.current;horseBattle.roster=horseBattle.roster.filter(n=>n.toLowerCase()!==old.toLowerCase());
-    const replacement=pool[Math.floor(Math.random()*pool.length)];horseBattle.roster.push(replacement);
-    horseBattleRerollBtn.style.display='none';beginHorseBattleRound(replacement);
+    const slot=hb.currentSlot, p=hb.podium[slot], replacement=pool[Math.floor(Math.random()*pool.length)];
+    if(p.horse) p.horse.name=replacement;
+    p.name=replacement; p.replaced=true;
+    horseBattleRerollBtn.style.display='none'; beginHorseBattleRound(slot);
   }
   function handleHorseBattleChatMessage(user,text){
-    if(!horseBattle.active||!horseBattle.current||horseBattle.responded||horseBattle.expired)return false;
-    if(String(user||'').toLowerCase()!==horseBattle.current.toLowerCase())return false;
-    horseBattle.responded=true;clearHorseBattleTimer();horseBattle.winners.push(horseBattle.current);
-    horseBattleCountdownEl.textContent='УСПЕЛ!';horseBattleCountdownEl.style.color='#4ade80';horseBattleStatusEl.textContent='✅ Ответ засчитан — победа подтверждена!';horseBattleStatusEl.style.color='#86efac';
-    horseBattleRerollBtn.style.display='none';renderHorseBattleRoster();
-    sendChatMessage(`🏆 ${horseBattle.current} подтвердил победу в конном батле! (${horseBattle.winners.length}/3)`);
-    setTimeout(()=>{if(horseBattle.active)nextHorseBattleWinner();},1200);
+    const hb=horseBattle;
+    if(!hb.active||!hb.current||hb.responded||hb.expired)return false;
+    if(String(user||'').toLowerCase()!==hb.current.toLowerCase())return false;
+    hb.responded=true; clearHorseBattleTimer(); hb.winners.push(hb.current);
+    const p=hb.podium[hb.currentSlot]; if(p) p.state='ok';
+    horseBattleCountdownEl.textContent='УСПЕЛ!'; horseBattleCountdownEl.style.color='#4ade80'; horseBattleStatusEl.textContent='✅ Ответ засчитан — победа подтверждена!'; horseBattleStatusEl.style.color='#86efac';
+    horseBattleRerollBtn.style.display='none'; hbRenderPodium();
+    sendChatMessage(`🏆 ${hb.current} подтвердил победу в конных скачках! (${hb.winners.length}/3)`);
+    setTimeout(()=>{if(hb.active)nextHorseBattleWinner();},1200);
     return true;
   }
-  document.getElementById('openHorseBattleBtn').onclick=()=>{horseBattleModalBg.classList.add('show');};
-  document.getElementById('horseBattleCloseX').onclick=()=>{clearHorseBattleTimer();horseBattle.active=false;horseBattleModalBg.classList.remove('show');};
+  function hbCloseModal(){
+    clearHorseBattleTimer(); clearTimeout(horseBattle.bannerTimer);
+    horseBattle.active=false; horseBattle.phase='idle'; horseBattle.horses=[]; horseBattle.current=null; horseBattle.currentSlot=-1; horseBattle.winners=[];
+    horseBattle.podium=[{name:'',state:'wait'},{name:'',state:'wait'},{name:'',state:'wait'}];
+    horseBattleStartBtn.style.display='block'; horseBattleStartBtn.textContent='🚦 НАЧАТЬ ЗАЕЗД'; horseBattleRerollBtn.style.display='none';
+    horseBattleModalBg.classList.remove('show');
+  }
+  function hbOpenModal(){
+    if(horseBattle.phase==='idle'){
+      horseBattleWinnerEl.textContent='Готовы к старту?'; horseBattleCountdownEl.textContent='15'; horseBattleCountdownEl.style.color='#fbbf24';
+      horseBattleStatusEl.textContent='Запусти заезд, чтобы определить призёров'; horseBattleStatusEl.style.color='#cbd5e1';
+      horseBattleProgressEl.style.width='0%'; hbRenderPodium(); hbParticles.length=0;
+      hbBanner('<span>🏇 Нажми «НАЧАТЬ ЗАЕЗД» — 10 наездников, 3 призёра</span>','pill');
+    }
+    horseBattleModalBg.classList.add('show'); hbStartLoop();
+  }
+  document.getElementById('openHorseBattleBtn').onclick=hbOpenModal;
+  document.getElementById('horseBattleCloseX').onclick=hbCloseModal;
   horseBattleStartBtn.onclick=startHorseBattle;
   horseBattleRerollBtn.onclick=rerollHorseBattle;
 
@@ -5911,13 +6174,13 @@ function startAzrobotApp(){
 (function(){
   // Список сайтов. Дубликаты убираются: иначе один и тот же сайт занял бы
   // два сектора и выпадал бы вдвое чаще остальных.
-  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY"]
+  var SITES = ["MAGICDROP","JABKA","ECOCASE","DASTSKIN","CSJOKER","SKINITY","SPYDROP"]
     .map(function(s){ return String(s).trim(); })
     .filter(function(s, i, arr){
       if(!s) return false;
       return arr.findIndex(function(x){ return x.toLowerCase() === s.toLowerCase(); }) === i;
     });
-  var COLORS = ['#65a30d','#a3e635','#4d7c0f','#bef264','#3f6212','#84cc16'];
+  var COLORS = ['#65a30d','#a3e635','#4d7c0f','#bef264','#3f6212','#84cc16','#365314'];
 
   // Равновероятный выбор индекса 0..n-1.
   // Math.random() * n даёт крошечный перекос из-за округления диапазона,
