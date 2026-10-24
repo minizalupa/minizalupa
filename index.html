@@ -6585,8 +6585,8 @@ function startAzrobotApp(){
   "use strict";
   var MARBLES_MAX = 20;   // сколько шариков максимум в одном заезде (выбираются случайно из тех, кто написал «+»)
   var MARBLES_MIN = 2;
-  var W = 520, H = 760, R = 11, FINISH_Y = 712, GATE_Y = 150;
-  var G = 480, DT = 1/240, E_BALL = 0.55, E_WALL = 0.5, MU = 0.002, MAX_V = 950;
+  var W = 520, VIEW_H = 760, R = 11, GATE_Y = 150;
+  var G = 480, DT = 1/240, E_BALL = 0.55, E_WALL = 0.5, E_BUMP = 1.1, BUMP_KICK = 240, MU = 0.002, MAX_V = 950;
   var COLORS = ['#a3e635','#38bdf8','#fb7185','#fbbf24','#c084fc','#34d399','#f97316','#60a5fa','#f472b6','#facc15',
                 '#2dd4bf','#a78bfa','#fb923c','#4ade80','#22d3ee','#e879f9','#f87171','#bef264','#93c5fd','#fcd34d'];
 
@@ -6596,58 +6596,129 @@ function startAzrobotApp(){
   var canvas = el('marblesCanvas'), ctx = canvas.getContext('2d');
   var subEl = el('marblesSub'), resEl = el('marblesResult'), cntEl = el('marblesCountdown'), infoEl = el('marblesCountInfo');
 
-  /* ---------- Трассы: несколько разных, каждый заезд выбирается случайно (и может быть зеркально отражена) ---------- */
-  function pegRows(pegs, y0, rows, dy, r){
+  /* ---------- Трассы: много разных, длинных; каждый заезд выбирается случайно (и может быть зеркально отражена) ---------- */
+  function newT(h){ return {pegs:[], segs:[], spinners:[], sliders:[], winds:[], h:h, finishY:h-50}; }
+  function pegRows(pegs, y0, rows, dy, r, sx, bump){
+    sx = sx || 80;
     for (var row = 0; row < rows; row++){
       var y = y0 + row * dy, odd = row % 2;
-      for (var x = (odd ? 80 : 40); x <= W - 30; x += 80) pegs.push({x:x, y:y, r:r || 8});
+      for (var x = (odd ? sx : sx/2); x <= W - sx/2 + 0.5; x += sx){ var p = {x:x, y:y, r:r || 8}; if(bump) p.bump = true; pegs.push(p); }
     }
   }
+  function zig(t, y0, n, dy, drop, gap, fromLeft, pegDy, bumpGap){
+    for (var i = 0; i < n; i++){
+      var y = y0 + i*dy, left = ((i % 2) === 0) === fromLeft, gx;
+      if(left){ t.segs.push({ax:0, ay:y, bx:W-gap, by:y+drop, t:4}); gx = W - gap/2; }
+      else    { t.segs.push({ax:W, ay:y, bx:gap, by:y+drop, t:4}); gx = gap/2; }
+      if(pegDy) t.pegs.push(bumpGap ? {x:gx, y:y+drop+pegDy, r:10, bump:true} : {x:gx, y:y+drop+pegDy, r:7});
+    }
+  }
+  function endT(t, y){ t.h = y + 95; t.finishY = t.h - 50; return t; }
+  function spin(t, cx, cy, len, w, a){ t.spinners.push({cx:cx, cy:cy, len:len, w:w, a:a||0}); }
+  function slide(t, y, mid, amp, len, per, ph){ t.sliders.push({y:y, mid:mid, amp:amp, len:len, t:5, w:6.2832/per, ph:ph||0, x:mid, vx:0}); }
+  function wind(t, x, y, w, h, ax, ay){ t.winds.push({x:x, y:y, w:w, h:h, ax:ax||0, ay:ay||0}); }
+  function bottomPegs(t, y){ for (var k=0;k<4;k++) t.pegs.push({x:60+k*133, y:y, r:7}); }
   var TRACK_DEFS = [
-    { name:'Классика', build:function(){
-      var pegs=[], segs=[], sp=[];
-      pegRows(pegs, 190, 3, 42);
-      segs.push({ax:0, ay:330, bx:W*0.76, by:375, t:4});
-      segs.push({ax:W, ay:425, bx:W*0.24, by:470, t:4});
-      segs.push({ax:0, ay:520, bx:W*0.76, by:565, t:4});
-      pegs.push({x:W*0.9,y:383,r:7}, {x:W*0.1,y:478,r:7}, {x:W*0.9,y:545,r:7});
-      sp.push({cx:W*0.30, cy:622, len:62, w:-2.3, a:0.4}, {cx:W*0.70, cy:622, len:62, w:2.3, a:2.2});
-      for (var k=0;k<3;k++){ pegs.push({x:60+k*40,y:668,r:7}, {x:W-60-k*40,y:668,r:7}); }
-      pegs.push({x:W/2,y:668,r:9});
-      return {pegs:pegs, segs:segs, spinners:sp};
+    { name:'Серпантин', build:function(){
+      var t = newT(2300);
+      zig(t, 250, 10, 150, 56, 135, true, 40);
+      pegRows(t.pegs, 1790, 3, 44);
+      spin(t, 140, 1990, 62, 2.4, 0.3); spin(t, 380, 1990, 62, -2.4, 1.5);
+      bottomPegs(t, 2130);
+      return t;
     }},
-    { name:'Плинко', build:function(){
-      var pegs=[], segs=[], sp=[];
-      pegRows(pegs, 185, 4, 40);
-      segs.push({ax:0, ay:340, bx:W*0.72, by:382, t:4}, {ax:W, ay:435, bx:W*0.28, by:477, t:4});
-      pegs.push({x:W*0.9,y:405,r:7}, {x:W*0.1,y:500,r:7});
-      segs.push({ax:0, ay:525, bx:W/2-45, by:563, t:4}, {ax:W, ay:525, bx:W/2+45, by:563, t:4});
-      sp.push({cx:130, cy:634, len:42, w:2.6, a:0.3}, {cx:260, cy:634, len:42, w:-2.6, a:1.2}, {cx:390, cy:634, len:42, w:2.6, a:2.4});
-      pegs.push({x:100,y:680,r:7}, {x:200,y:680,r:7}, {x:320,y:680,r:7}, {x:420,y:680,r:7});
-      return {pegs:pegs, segs:segs, spinners:sp};
-    }},
-    { name:'Змейка', build:function(){
-      var pegs=[], segs=[], sp=[];
-      pegs.push({x:130,y:195,r:8}, {x:260,y:195,r:8}, {x:390,y:195,r:8});
-      segs.push({ax:0, ay:240, bx:W*0.80, by:295, t:4});
-      segs.push({ax:W, ay:370, bx:W*0.20, by:425, t:4});
-      segs.push({ax:0, ay:500, bx:W*0.80, by:555, t:4});
-      pegs.push({x:W*0.93,y:330,r:7}, {x:W*0.07,y:462,r:7}, {x:W*0.93,y:592,r:7});
-      sp.push({cx:260, cy:628, len:66, w:2.2, a:0.5});
-      pegs.push({x:110,y:676,r:7}, {x:410,y:676,r:7});
-      return {pegs:pegs, segs:segs, spinners:sp};
+    { name:'Глубокий плинко', build:function(){
+      var t = newT(2500), sx = W/7;
+      pegRows(t.pegs, 200, 14, 42, 8);
+      zig(t, 830, 3, 120, 50, 150, true);
+      pegRows(t.pegs, 1260, 11, 40, 8, sx);
+      spin(t, 100, 1790, 42, 2.6, 0.3); spin(t, 260, 1790, 42, -2.6, 1.2); spin(t, 420, 1790, 42, 2.6, 2.4);
+      zig(t, 1900, 2, 130, 50, 170, false);
+      pegRows(t.pegs, 2200, 4, 44);
+      bottomPegs(t, 2380);
+      return t;
     }},
     { name:'Мельницы', build:function(){
-      var pegs=[], segs=[], sp=[];
-      pegs.push({x:90,y:192,r:8}, {x:200,y:192,r:8}, {x:320,y:192,r:8}, {x:430,y:192,r:8});
-      sp.push({cx:140, cy:250, len:55, w:2.4, a:0.2}, {cx:380, cy:250, len:55, w:-2.4, a:1.4},
-              {cx:260, cy:335, len:70, w:2.0, a:0.9},
-              {cx:140, cy:420, len:55, w:-2.4, a:2.0}, {cx:380, cy:420, len:55, w:2.4, a:0.6});
-      pegs.push({x:28,y:320,r:8}, {x:W-28,y:320,r:8});
-      segs.push({ax:0, ay:485, bx:W*0.78, by:530, t:4});
-      segs.push({ax:W, ay:575, bx:W*0.22, by:620, t:4});
-      pegs.push({x:W*0.93,y:533,r:7}, {x:60,y:668,r:7}, {x:180,y:668,r:7}, {x:300,y:668,r:7}, {x:420,y:668,r:7});
-      return {pegs:pegs, segs:segs, spinners:sp};
+      var t = newT(0), y = 260;
+      function tiers(n){ for (var i = 0; i < n; i++){
+        if(i % 2 === 0){ spin(t, 130, y, 55, 2.4, i*0.4); spin(t, 390, y, 55, -2.4, 1.4+i*0.3); }
+        else { spin(t, 260, y, 70, (i%4===1)?2.0:-2.0, 0.9+i*0.2); t.pegs.push({x:8,y:y,r:8}, {x:W-8,y:y,r:8}); }
+        y += 125; } }
+      tiers(4);
+      zig(t, y, 2, 130, 56, 150, false); y += 300;
+      tiers(4);
+      zig(t, y, 3, 130, 56, 150, true); y += 450;
+      tiers(3);
+      zig(t, y, 2, 130, 56, 150, false); y += 330;
+      spin(t, 100, y, 48, 2.4, 0.2); spin(t, 260, y, 48, -2.4, 1.0); spin(t, 420, y, 48, 2.4, 2.0);
+      spin(t, 180, y+110, 48, -2.4, 0.6); spin(t, 340, y+110, 48, 2.4, 1.6);
+      spin(t, 100, y+220, 48, 2.4, 1.1); spin(t, 260, y+220, 48, -2.4, 0.1); spin(t, 420, y+220, 48, 2.4, 2.6);
+      y += 340; pegRows(t.pegs, y, 3, 45); y += 170; bottomPegs(t, y);
+      return endT(t, y);
+    }},
+    { name:'Лабиринт', build:function(){
+      var t = newT(2500), i;
+      zig(t, 240, 11, 135, 50, 105, true, 36, true);
+      slide(t, 1900, 260, 120, 55, 3.4, 0); slide(t, 2000, 260, 120, 55, 3.4, 3.1);
+      pegRows(t.pegs, 2130, 2, 45);
+      bottomPegs(t, 2235);
+      return endT(t, 2235);
+    }},
+    { name:'Ветряки', build:function(){
+      var t = newT(0), y = 200;
+      pegRows(t.pegs, y, 7, 42, 8); wind(t, 3, y-10, W-6, 290, 300, 0); y += 345;
+      t.segs.push({ax:W, ay:y, bx:150, by:y+50, t:4}); y += 140;
+      pegRows(t.pegs, y, 7, 42, 8); wind(t, 3, y-10, W-6, 290, -300, 0); y += 345;
+      t.segs.push({ax:0, ay:y, bx:W-150, by:y+50, t:4}); t.pegs.push({x:W-75, y:y+100, r:7}); y += 190;
+      zig(t, y, 3, 130, 54, 140, true, 38); y += 430;
+      pegRows(t.pegs, y, 9, 42, 8); wind(t, 120, y-30, 280, 400, 0, -330); y += 450;
+      spin(t, 140, y, 62, 2.4, 0.4); spin(t, 380, y, 62, -2.4, 1.9); y += 150;
+      zig(t, y, 3, 130, 54, 140, false, 38); y += 430;
+      wind(t, 3, y-20, W-6, 190, -260, 0); pegRows(t.pegs, y, 3, 44); y += 160; bottomPegs(t, y);
+      return endT(t, y);
+    }},
+    { name:'Пинбол', build:function(){
+      var t = newT(0), y = 220;
+      pegRows(t.pegs, y, 8, 80, 14, W/5, true); y += 8*80 + 90;
+      zig(t, y, 2, 130, 52, 150, true, 40, true); y += 300;
+      pegRows(t.pegs, y, 5, 42, 8); y += 5*42 + 70;
+      zig(t, y, 3, 130, 52, 150, false); y += 430;
+      pegRows(t.pegs, y, 6, 85, 13, W/5, true); y += 6*85 + 100;
+      spin(t, 140, y, 60, 2.6, 0.3); spin(t, 380, y, 60, -2.6, 1.2); y += 150;
+      zig(t, y, 3, 130, 50, 160, true, 38, true); y += 430;
+      pegRows(t.pegs, y, 3, 80, 13, W/5, true); y += 200;
+      return endT(t, y);
+    }},
+    { name:'Колёса', build:function(){
+      var t = newT(0), y = 335;
+      spin(t, 260, y, 110, 1.6, 0.2); y += 205;
+      spin(t, 110, y, 75, -2.2, 0.8); spin(t, 410, y, 75, 2.2, 2.1); y += 200;
+      slide(t, y, 260, 130, 55, 3.6, 0); y += 180;
+      spin(t, 140, y, 100, 1.9, 1.0); spin(t, 380, y+140, 100, -1.9, 0.2); y += 310;
+      zig(t, y, 5, 130, 56, 150, true, 38); y += 5*130 + 170;
+      spin(t, 260, y, 110, -1.7, 0.5); y += 200;
+      spin(t, 100, y, 62, 2.4, 0.5); spin(t, 420, y, 62, -2.4, 1.5); y += 180;
+      slide(t, y, 260, 130, 55, 3.0, 1.6); y += 170;
+      spin(t, 140, y, 80, 2.0, 0.1); spin(t, 380, y, 80, -2.0, 1.1); y += 190;
+      zig(t, y, 3, 130, 56, 150, false, 38); y += 3*130 + 60;
+      pegRows(t.pegs, y, 2, 45); y += 150; bottomPegs(t, y);
+      return endT(t, y);
+    }},
+    { name:'Хаос', build:function(){
+      var t = newT(0), y = 200;
+      pegRows(t.pegs, y, 5, 42, 8); y += 250;
+      pegRows(t.pegs, y, 3, 80, 13, W/5, true); y += 240;
+      zig(t, y, 3, 130, 54, 140, true, 38); y += 445;
+      spin(t, 130, y, 55, 2.4, 0.3); spin(t, 390, y, 55, -2.4, 1.2); spin(t, 260, y+120, 70, 2.0, 0.9); y += 240;
+      slide(t, y, 260, 120, 55, 3.2, 0); slide(t, y+90, 260, 120, 55, 3.2, 3.1); y += 190;
+      pegRows(t.pegs, y, 6, 42, 8); wind(t, 3, y-20, W-6, 260, -300, 0); y += 300;
+      zig(t, y, 3, 130, 54, 150, false, 38); y += 430;
+      spin(t, 260, y+20, 105, 1.7, 0.4); t.pegs.push({x:8,y:y+20,r:8}, {x:W-8,y:y+20,r:8}); y += 230;
+      pegRows(t.pegs, y, 5, 44, 8); wind(t, 120, y-20, 280, 250, 0, -330); y += 290;
+      zig(t, y, 2, 130, 52, 150, true, 38, true); y += 310;
+      pegRows(t.pegs, y, 2, 70, 13, W/5, true); y += 175;
+      spin(t, 140, y, 50, 2.5, 0.3); spin(t, 380, y, 50, -2.5, 1.4); y += 80;
+      return endT(t, y);
     }}
   ];
   function makeTrack(idx, mirror){
@@ -6656,11 +6727,47 @@ function startAzrobotApp(){
       t.pegs.forEach(function(p){ p.x = W - p.x; });
       t.segs.forEach(function(p){ p.ax = W - p.ax; p.bx = W - p.bx; });
       t.spinners.forEach(function(p){ p.cx = W - p.cx; p.w = -p.w; p.a = Math.PI - p.a; });
+      t.sliders.forEach(function(p){ p.mid = W - p.mid; p.x = p.mid; });
+      t.winds.forEach(function(p){ p.x = W - p.x - p.w; p.ax = -p.ax; });
     }
+    t.segs.forEach(function(p){ p.y0 = Math.min(p.ay, p.by) - p.t - R - 1; p.y1 = Math.max(p.ay, p.by) + p.t + R + 1; });
     t.name = TRACK_DEFS[idx].name; t.idx = idx; t.mirror = !!mirror;
     return t;
   }
   var TRACK = makeTrack(0, false), lastTrackIdx = -1, trackBag = [];
+
+  /* Проверка геометрии: ищем узкие щели (меньше шарика), где можно застрять */
+  function validateTrack(t){
+    var out = [], MIN = 2*R + 4, items = [];
+    function ptSeg(px,py,ax,ay,bx,by){ var dx=bx-ax, dy=by-ay, l=dx*dx+dy*dy, u=l?((px-ax)*dx+(py-ay)*dy)/l:0; u=Math.max(0,Math.min(1,u)); var qx=ax+dx*u-px, qy=ay+dy*u-py; return Math.sqrt(qx*qx+qy*qy); }
+    function cross(ax,ay,bx,by,cx,cy,dx,dy){ function o(px,py,qx,qy,rx,ry){ return (qx-px)*(ry-py)-(qy-py)*(rx-px); } return (o(ax,ay,bx,by,cx,cy)>0)!==(o(ax,ay,bx,by,dx,dy)>0) && (o(cx,cy,dx,dy,ax,ay)>0)!==(o(cx,cy,dx,dy,bx,by)>0); }
+    function segSeg(a,b){ if(cross(a.ax,a.ay,a.bx,a.by,b.ax,b.ay,b.bx,b.by)) return -1;
+      return Math.min(ptSeg(a.ax,a.ay,b.ax,b.ay,b.bx,b.by), ptSeg(a.bx,a.by,b.ax,b.ay,b.bx,b.by), ptSeg(b.ax,b.ay,a.ax,a.ay,a.bx,a.by), ptSeg(b.bx,b.by,a.ax,a.ay,a.bx,a.by)); }
+    t.pegs.forEach(function(p,i){ items.push({k:'c', n:'штырь#'+i+'@'+Math.round(p.x)+','+Math.round(p.y), x:p.x, y:p.y, r:p.r, wall:'flush'}); });
+    t.spinners.forEach(function(p,i){ items.push({k:'c', n:'вертушка#'+i+'@'+Math.round(p.cx)+','+Math.round(p.cy), x:p.cx, y:p.cy, r:p.len+5, wall:'strict'}); });
+    t.segs.forEach(function(p,i){ items.push({k:'s', n:'жёлоб#'+i+'@'+Math.round(p.ay), ax:p.ax, ay:p.ay, bx:p.bx, by:p.by, r:p.t, wall:'flush'}); });
+    t.sliders.forEach(function(p,i){ items.push({k:'s', n:'ползунок#'+i+'@'+p.y, ax:p.mid-p.amp-p.len, ay:p.y, bx:p.mid+p.amp+p.len, by:p.y, r:p.t, wall:'strict'}); });
+    function gap(a,b){
+      if(a.k==='c' && b.k==='c') return Math.hypot(a.x-b.x,a.y-b.y)-a.r-b.r;
+      if(a.k==='c') return ptSeg(a.x,a.y,b.ax,b.ay,b.bx,b.by)-a.r-b.r;
+      if(b.k==='c') return ptSeg(b.x,b.y,a.ax,a.ay,a.bx,a.by)-a.r-b.r;
+      return segSeg(a,b)-a.r-b.r;
+    }
+    for(var i=0;i<items.length;i++){
+      var a=items[i];
+      for(var j=i+1;j<items.length;j++){ var b=items[j];
+        if(Math.abs((a.y||a.ay)-(b.y||b.ay))>400 && a.k==='c' && b.k==='c') continue;
+        var g=gap(a,b); if(g<MIN) out.push(a.n+' ~ '+b.n+' щель '+Math.round(g)); }
+      var lx, rx;
+      if(a.k==='c'){ lx=a.x-a.r; rx=W-(a.x+a.r); } else { lx=Math.min(a.ax,a.bx)-a.r; rx=W-Math.max(a.ax,a.bx)-a.r; }
+      var strict=a.wall==='strict';
+      [lx,rx].forEach(function(g){ if(g<MIN && (strict ? true : g>0.5 && g<MIN)) { out.push(a.n+' у стены '+Math.round(g)); } });
+      var top=(a.k==='c'?a.y-a.r:Math.min(a.ay,a.by)-a.r), bot=(a.k==='c'?a.y+a.r:Math.max(a.ay,a.by)+a.r);
+      if(top<GATE_Y+40) out.push(a.n+' слишком близко к воротам');
+      if(bot>t.finishY-30) out.push(a.n+' слишком близко к финишу');
+    }
+    return out;
+  }
 
   /* ---------- Честный случайный выбор ---------- */
   function rndInt(n){
@@ -6694,10 +6801,10 @@ function startAzrobotApp(){
       return { name:name, color:COLORS[i % COLORS.length], x:50 + col*47 + (row%2)*20, y:GATE_Y - R - 3 - row*30,
                vx:(rndInt(200)-100)/10, vy:0, finishedAt:null, still:0 };
     });
-    return { balls:balls, t:0, gateOpen:false, order:[], spin:TRACK.spinners.map(function(s){ return s.a; }) };
+    return { balls:balls, t:0, gateOpen:false, order:[], cam:0, spin:TRACK.spinners.map(function(s){ return s.a; }) };
   }
   var hitCb = null; // вызывается при заметном ударе шарика (для звука); в обычной симуляции null
-  function hitCircleStatic(b, px, py, rad, vsx, vsy, e, obj, kind){
+  function hitCircleStatic(b, px, py, rad, vsx, vsy, e, obj, kind, mu){
     var dx=b.x-px, dy=b.y-py, d=Math.sqrt(dx*dx+dy*dy), md=b.r+rad;
     if(d>=md || d<1e-6) return;
     var nx=dx/d, ny=dy/d;
@@ -6707,39 +6814,49 @@ function startAzrobotApp(){
       if(-vn>60 && obj) obj.flash=1;
       if(hitCb && -vn>140) hitCb(kind||'peg', -vn, obj);
       rvx-=(1+e)*vn*nx; rvy-=(1+e)*vn*ny;
-      var tvx=rvx-(rvx*nx+rvy*ny)*nx, tvy=rvy-(rvx*nx+rvy*ny)*ny;
-      rvx-=tvx*MU; rvy-=tvy*MU;
+      if(obj && obj.bump){ var out=rvx*nx+rvy*ny; if(out<BUMP_KICK){ rvx+=(BUMP_KICK-out)*nx; rvy+=(BUMP_KICK-out)*ny; } }
+      var tvx=rvx-(rvx*nx+rvy*ny)*nx, tvy=rvy-(rvx*nx+rvy*ny)*ny, m=mu||MU;
+      rvx-=tvx*m; rvy-=tvy*m;
       b.vx=rvx+vsx; b.vy=rvy+vsy;
     }
   }
-  function hitSegment(b, ax,ay,bx,by,th, ox,oy,w, e, obj, kind){
+  function hitSegment(b, ax,ay,bx,by,th, ox,oy,w, e, obj, kind, tvx, mu){
     var abx=bx-ax, aby=by-ay, l2=abx*abx+aby*aby, t=((b.x-ax)*abx+(b.y-ay)*aby)/l2;
     t=Math.max(0,Math.min(1,t));
     var px=ax+abx*t, py=ay+aby*t;
-    var vsx=0, vsy=0;
+    var vsx=tvx||0, vsy=0;
     if(w){ vsx=-w*(py-oy); vsy=w*(px-ox); }
-    hitCircleStatic(b, px, py, th, vsx, vsy, e, obj, kind);
+    hitCircleStatic(b, px, py, th, vsx, vsy, e, obj, kind, mu);
   }
   function step(s){
-    var balls=s.balls, i, j, b, p;
+    var balls=s.balls, i, j, b, p, T=TRACK, pegs=T.pegs, segs=T.segs, sps=T.spinners, sls=T.sliders, wds=T.winds;
     s.t+=DT;
-    for(i=0;i<s.spin.length;i++) s.spin[i]+=TRACK.spinners[i].w*DT;
-    var g = G * (s.t>40 ? 1.5 : 1); // подстраховка: если кто-то застрял, к 40-й секунде гравитация растёт
+    for(i=0;i<sps.length;i++) s.spin[i]+=sps[i].w*DT;
+    for(j=0;j<sls.length;j++){ p=sls[j]; var ph=p.w*s.t+p.ph; p.x=p.mid+p.amp*Math.sin(ph); p.vx=p.amp*p.w*Math.cos(ph); }
+    var g = G * (s.t>90 ? 1.5 : 1); // подстраховка: если кто-то застрял, к 90-й секунде гравитация растёт
     for(i=0;i<balls.length;i++){
       b=balls[i]; b.r=R;
       b.vy+=g*DT;
+      for(j=0;j<wds.length;j++){ p=wds[j]; if(b.x>=p.x && b.x<=p.x+p.w && b.y>=p.y && b.y<=p.y+p.h){ b.vx+=p.ax*DT; b.vy+=p.ay*DT; } }
       b.vx*=(1-0.05*DT); b.vy*=(1-0.05*DT);
       var sp=Math.sqrt(b.vx*b.vx+b.vy*b.vy); if(sp>MAX_V){ b.vx*=MAX_V/sp; b.vy*=MAX_V/sp; }
       b.x+=b.vx*DT; b.y+=b.vy*DT;
       if(b.x<R){ b.x=R; if(b.vx<0) b.vx=-b.vx*E_WALL; }
       if(b.x>W-R){ b.x=W-R; if(b.vx>0) b.vx=-b.vx*E_WALL; }
       if(!s.gateOpen && b.y>GATE_Y-R){ b.y=GATE_Y-R; if(b.vy>0) b.vy=-b.vy*0.2; b.vx*=0.98; }
-      if(b.y>H-R){ b.y=H-R; if(b.vy>0) b.vy=-b.vy*E_WALL; }
-      for(j=0;j<TRACK.pegs.length;j++){ p=TRACK.pegs[j]; hitCircleStatic(b,p.x,p.y,p.r,0,0,E_WALL,p,'peg'); }
-      for(j=0;j<TRACK.segs.length;j++){ p=TRACK.segs[j]; hitSegment(b,p.ax,p.ay,p.bx,p.by,p.t,0,0,0,E_WALL*0.7,p,'seg'); }
-      for(j=0;j<TRACK.spinners.length;j++){
-        p=TRACK.spinners[j]; var a=s.spin[j], dx=Math.cos(a)*p.len, dy=Math.sin(a)*p.len;
+      if(b.y>T.h-R){ b.y=T.h-R; if(b.vy>0) b.vy=-b.vy*E_WALL; }
+      for(j=0;j<pegs.length;j++){ p=pegs[j]; if(b.y-p.y>p.r+R || p.y-b.y>p.r+R) continue;
+        hitCircleStatic(b,p.x,p.y,p.r,0,0,p.bump?E_BUMP:E_WALL,p,p.bump?'bump':'peg'); }
+      for(j=0;j<segs.length;j++){ p=segs[j]; if(b.y<p.y0 || b.y>p.y1) continue;
+        hitSegment(b,p.ax,p.ay,p.bx,p.by,p.t,0,0,0,E_WALL*0.7,p,'seg'); }
+      for(j=0;j<sps.length;j++){
+        p=sps[j]; if(Math.abs(b.y-p.cy)>p.len+5+R) continue;
+        var a=s.spin[j], dx=Math.cos(a)*p.len, dy=Math.sin(a)*p.len;
         hitSegment(b,p.cx-dx,p.cy-dy,p.cx+dx,p.cy+dy,5,p.cx,p.cy,p.w,0.6,p,'spin');
+      }
+      for(j=0;j<sls.length;j++){
+        p=sls[j]; if(Math.abs(b.y-p.y)>p.t+R+1) continue;
+        hitSegment(b,p.x-p.len,p.y,p.x+p.len,p.y,p.t,0,0,0,0.3,p,'slide',p.vx,0.02);
       }
       // «застрявший» шарик слегка подталкиваем
       if(s.gateOpen && b.finishedAt===null){
@@ -6760,15 +6877,13 @@ function startAzrobotApp(){
     if(s.gateOpen){
       for(i=0;i<balls.length;i++){
         b=balls[i];
-        if(b.finishedAt===null && b.y>=FINISH_Y){ b.finishedAt=s.t; s.order.push(b); }
+        if(b.finishedAt===null && b.y>=T.finishY){ b.finishedAt=s.t; s.order.push(b); }
       }
     }
   }
-
-
   /* ---------- Звуки (синтез через Web Audio, внешних файлов не нужно) ---------- */
   var SOUND_VOLUME = 0.3; // общая громкость, 0.0–1.0
-  var AC = null, master = null, soundOn = true, lastPeg = 0, lastSeg = 0, lastSpin = 0;
+  var AC = null, master = null, soundOn = true, lastPeg = 0, lastSeg = 0, lastSpin = 0, lastBump = 0, lastSlide = 0;
   try { soundOn = localStorage.getItem('marblesSound') !== '0'; } catch(e) {}
   var SCALE = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.5, 1174.7, 1318.5]; // пентатоника: любая последовательность звучит приятно
   function ensureAudio(){
@@ -6822,6 +6937,14 @@ function startAzrobotApp(){
     } else if(kind === 'seg'){
       if(now - lastSeg < 110) return; lastSeg = now;
       tone(210, 0.09, 'sine', 0.08 + 0.12*k, 0, 140);
+    } else if(kind === 'bump'){
+      if(now - lastBump < 60) return; lastBump = now;
+      var bi = Math.max(0, Math.min(SCALE.length-1, Math.floor((obj ? obj.x : W/2) / W * SCALE.length)));
+      tone(SCALE[bi]*2, 0.22, 'sine', 0.10 + 0.20*k, 0, SCALE[bi]*2.4, true);
+      tone(SCALE[bi]/2, 0.12, 'triangle', 0.10 + 0.10*k);
+    } else if(kind === 'slide'){
+      if(now - lastSlide < 120) return; lastSlide = now;
+      tone(170, 0.07, 'sine', 0.08 + 0.10*k, 0, 120);
     } else if(kind === 'spin'){
       if(now - lastSpin < 90) return; lastSpin = now;
       tone(340, 0.08, 'triangle', 0.10 + 0.12*k, 0, 250);
@@ -6843,40 +6966,81 @@ function startAzrobotApp(){
   });
 
   /* ---------- Рисование ---------- */
+  function leaderOf(s){ var lead=null; s.balls.forEach(function(x){ if(!lead || x.y>lead.y) lead=x; }); return lead; }
   function draw(s){
-    var i, b;
-    ctx.clearRect(0,0,W,H);
-    var grd=ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#0e1706'); grd.addColorStop(1,'#07100a');
-    ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
+    var i, b, T=TRACK, cam=s.cam||0, top=cam-80, bot=cam+VIEW_H+80;
+    ctx.setTransform(1,0,0,1,0,0); ctx.setLineDash([]);
+    ctx.clearRect(0,0,W,VIEW_H);
+    var grd=ctx.createLinearGradient(0,0,0,VIEW_H); grd.addColorStop(0,'#0e1706'); grd.addColorStop(1,'#07100a');
+    ctx.fillStyle=grd; ctx.fillRect(0,0,W,VIEW_H);
+    ctx.strokeStyle='rgba(163,230,53,.05)'; ctx.lineWidth=1;
+    for(var gy=-(cam%80); gy<VIEW_H; gy+=80){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+    ctx.translate(0,-cam);
     // боковые стены
-    ctx.fillStyle='rgba(163,230,53,.25)'; ctx.fillRect(0,0,3,H); ctx.fillRect(W-3,0,3,H);
+    ctx.fillStyle='rgba(163,230,53,.25)'; ctx.fillRect(0,cam,3,VIEW_H); ctx.fillRect(W-3,cam,3,VIEW_H);
     // ворота
-    ctx.strokeStyle = s.gateOpen ? 'rgba(163,230,53,.12)' : '#a3e635'; ctx.lineWidth=4; ctx.setLineDash(s.gateOpen?[6,10]:[]);
-    ctx.beginPath(); ctx.moveTo(3,GATE_Y); ctx.lineTo(W-3,GATE_Y); ctx.stroke(); ctx.setLineDash([]);
+    if(GATE_Y>top){
+      ctx.strokeStyle = s.gateOpen ? 'rgba(163,230,53,.12)' : '#a3e635'; ctx.lineWidth=4; ctx.setLineDash(s.gateOpen?[6,10]:[]);
+      ctx.beginPath(); ctx.moveTo(3,GATE_Y); ctx.lineTo(W-3,GATE_Y); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // ветер
+    T.winds.forEach(function(p){
+      if(p.y>bot || p.y+p.h<top) return;
+      ctx.fillStyle='rgba(56,189,248,.07)'; ctx.fillRect(p.x,p.y,p.w,p.h);
+      ctx.strokeStyle='rgba(125,211,252,.45)'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round';
+      var sx=p.ax?(p.ax>0?1:-1):0, sy=p.ay?(p.ay>0?1:-1):0, off=(s.t*90)%60;
+      if(sx){
+        for(var yy=p.y+22; yy<p.y+p.h; yy+=48){ if(yy<top||yy>bot) continue;
+          for(var xx=p.x+(sx>0?off:60-off); xx<p.x+p.w-8; xx+=60){ if(xx<p.x+8) continue;
+            ctx.beginPath(); ctx.moveTo(xx-5*sx,yy-7); ctx.lineTo(xx+3*sx,yy); ctx.lineTo(xx-5*sx,yy+7); ctx.stroke(); } }
+      } else {
+        for(var xx2=p.x+30; xx2<p.x+p.w; xx2+=50)
+          for(var yy2=p.y+(sy>0?off:60-off); yy2<p.y+p.h-8; yy2+=60){ if(yy2<p.y+8||yy2<top||yy2>bot) continue;
+            ctx.beginPath(); ctx.moveTo(xx2-7,yy2-5*sy); ctx.lineTo(xx2,yy2+3*sy); ctx.lineTo(xx2+7,yy2-5*sy); ctx.stroke(); }
+      }
+    });
     // желоба
-    ctx.lineCap='round'; ctx.strokeStyle='#65a30d'; 
-    TRACK.segs.forEach(function(p){ var f=p.flash||0; if(f>0) p.flash=Math.max(0,f-0.05); ctx.strokeStyle=f>0.05?'#a3e635':'#65a30d'; ctx.lineWidth=p.t*2; ctx.beginPath(); ctx.moveTo(p.ax,p.ay); ctx.lineTo(p.bx,p.by); ctx.stroke(); });
-    // штыри
-    TRACK.pegs.forEach(function(p){
+    ctx.lineCap='round';
+    T.segs.forEach(function(p){ var f=p.flash||0; if(f>0) p.flash=Math.max(0,f-0.05);
+      if(p.y1<top||p.y0>bot) return;
+      ctx.strokeStyle=f>0.05?'#a3e635':'#65a30d'; ctx.lineWidth=p.t*2; ctx.beginPath(); ctx.moveTo(p.ax,p.ay); ctx.lineTo(p.bx,p.by); ctx.stroke(); });
+    // ползунки
+    T.sliders.forEach(function(p){ var f=p.flash||0; if(f>0) p.flash=Math.max(0,f-0.05);
+      if(p.y>bot||p.y<top) return;
+      ctx.strokeStyle=f>0.05?'#bae6fd':'#38bdf8'; ctx.lineWidth=p.t*2+2; ctx.beginPath(); ctx.moveTo(p.x-p.len,p.y); ctx.lineTo(p.x+p.len,p.y); ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x-p.len+6,p.y-2); ctx.lineTo(p.x+p.len-6,p.y-2); ctx.stroke(); });
+    // штыри и бамперы
+    T.pegs.forEach(function(p){
       var f=p.flash||0; if(f>0) p.flash=Math.max(0,f-0.05);
-      if(f>0.02){ ctx.shadowBlur=20*f; ctx.shadowColor='#d9f99d'; }
-      ctx.fillStyle=f>0.02?'#84cc16':'#4d7c0f'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r+2*f,0,6.2832); ctx.fill();
-      ctx.shadowBlur=0;
-      ctx.fillStyle=f>0.02?'#f7ffe0':'#a3e635'; ctx.beginPath(); ctx.arc(p.x-p.r*0.25,p.y-p.r*0.25,p.r*0.4,0,6.2832); ctx.fill(); });
+      if(p.y>bot||p.y<top) return;
+      if(f>0.02){ ctx.shadowBlur=20*f; ctx.shadowColor=p.bump?'#fb7185':'#d9f99d'; }
+      if(p.bump){
+        ctx.fillStyle=f>0.02?'#fb7185':'#be185d'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r+3*f,0,6.2832); ctx.fill(); ctx.shadowBlur=0;
+        ctx.strokeStyle='#fda4af'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(p.x,p.y,p.r-4,0,6.2832); ctx.stroke();
+        ctx.fillStyle=f>0.02?'#fff1f2':'#fecdd3'; ctx.beginPath(); ctx.arc(p.x-p.r*0.25,p.y-p.r*0.25,p.r*0.25,0,6.2832); ctx.fill();
+      } else {
+        ctx.fillStyle=f>0.02?'#84cc16':'#4d7c0f'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r+2*f,0,6.2832); ctx.fill();
+        ctx.shadowBlur=0;
+        ctx.fillStyle=f>0.02?'#f7ffe0':'#a3e635'; ctx.beginPath(); ctx.arc(p.x-p.r*0.25,p.y-p.r*0.25,p.r*0.4,0,6.2832); ctx.fill();
+      }
+      ctx.shadowBlur=0; });
     // лопасти
-    TRACK.spinners.forEach(function(p,idx){ var a=s.spin[idx], dx=Math.cos(a)*p.len, dy=Math.sin(a)*p.len;
+    T.spinners.forEach(function(p,idx){
+      if(p.cy>bot+p.len||p.cy<top-p.len) return;
+      var a=s.spin[idx], dx=Math.cos(a)*p.len, dy=Math.sin(a)*p.len;
       ctx.strokeStyle='#bef264'; ctx.lineWidth=10; ctx.beginPath(); ctx.moveTo(p.cx-dx,p.cy-dy); ctx.lineTo(p.cx+dx,p.cy+dy); ctx.stroke();
       ctx.fillStyle='#365314'; ctx.beginPath(); ctx.arc(p.cx,p.cy,7,0,6.2832); ctx.fill(); });
     // финиш — шахматная линия
-    var cs=14, rows=2;
-    for(var r=0;r<rows;r++) for(var c=0;c<Math.ceil(W/cs);c++){ ctx.fillStyle=((r+c)%2)?'#f7ffe0':'#111a03'; ctx.fillRect(c*cs,FINISH_Y+r*cs-cs,cs,cs); }
-    ctx.fillStyle='#f7ffe0'; ctx.font='bold 13px sans-serif'; ctx.textAlign='left'; ctx.fillText('ФИНИШ',8,FINISH_Y+26);
-    // лидер
-    var lead=null;
-    s.balls.forEach(function(x){ if(!lead || x.y>lead.y) lead=x; });
+    var FY=T.finishY;
+    if(FY+40>top && FY-40<bot){
+      var cs=14, rows=2;
+      for(var r=0;r<rows;r++) for(var c=0;c<Math.ceil(W/cs);c++){ ctx.fillStyle=((r+c)%2)?'#f7ffe0':'#111a03'; ctx.fillRect(c*cs,FY+r*cs-cs,cs,cs); }
+      ctx.fillStyle='#f7ffe0'; ctx.font='bold 13px sans-serif'; ctx.textAlign='left'; ctx.fillText('ФИНИШ',8,FY+26);
+    }
+    var lead=leaderOf(s);
     // шарики
     for(i=0;i<s.balls.length;i++){
-      b=s.balls[i];
+      b=s.balls[i]; if(b.y<top||b.y>bot) continue;
       ctx.beginPath(); ctx.arc(b.x,b.y,R,0,6.2832);
       var gr=ctx.createRadialGradient(b.x-R*0.35,b.y-R*0.4,1,b.x,b.y,R); gr.addColorStop(0,'#ffffff'); gr.addColorStop(0.25,b.color); gr.addColorStop(1,'#0b1405');
       ctx.fillStyle=gr; ctx.fill();
@@ -6885,10 +7049,25 @@ function startAzrobotApp(){
     // ники над шариками
     ctx.font='bold 12px "Segoe UI",Arial,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic'; ctx.lineJoin='round';
     for(i=0;i<s.balls.length;i++){
-      b=s.balls[i]; var nm=String(b.name); if(nm.length>11) nm=nm.slice(0,10)+'…';
-      var ty=b.y-R-5-(s.gateOpen?0:(i%3)*13); if(ty<14) ty=14;
+      b=s.balls[i]; if(b.y<top||b.y>bot) continue;
+      var nm=String(b.name); if(nm.length>11) nm=nm.slice(0,10)+'…';
+      var ty=b.y-R-5-(s.gateOpen?0:(i%3)*13); if(ty<cam+14) ty=cam+14;
       ctx.lineWidth=3.5; ctx.strokeStyle='rgba(5,10,2,.9)'; ctx.strokeText(nm,Math.max(34,Math.min(W-34,b.x)),ty);
       ctx.fillStyle='#f7ffe0'; ctx.fillText(nm,Math.max(34,Math.min(W-34,b.x)),ty);
+    }
+    // ----- интерфейс поверх (без камеры) -----
+    ctx.setTransform(1,0,0,1,0,0);
+    var my0=44, mh=VIEW_H-96, mx=W-13;
+    ctx.fillStyle='rgba(0,0,0,.35)'; ctx.fillRect(mx-1,my0,8,mh);
+    ctx.strokeStyle='rgba(253,224,71,.55)'; ctx.lineWidth=1; ctx.strokeRect(mx-1.5,my0+cam/T.h*mh,9,VIEW_H/T.h*mh);
+    ctx.fillStyle='#f7ffe0'; ctx.fillRect(mx-3,my0+T.finishY/T.h*mh-1,12,2);
+    for(i=0;i<s.balls.length;i++){ b=s.balls[i]; ctx.fillStyle=b.color; ctx.beginPath(); ctx.arc(mx+3,my0+Math.min(1,b.y/T.h)*mh,2.6,0,6.2832); ctx.fill(); }
+    if(lead && s.gateOpen){
+      var left=Math.max(0,Math.round((T.finishY-lead.y)/10)), txt='До финиша: '+left+' м';
+      ctx.font='bold 12px "Segoe UI",Arial,sans-serif'; ctx.textAlign='left';
+      var tw=ctx.measureText(txt).width+16;
+      ctx.fillStyle='rgba(0,0,0,.5)'; ctx.fillRect(8,8,tw,22);
+      ctx.fillStyle='#fde047'; ctx.fillText(txt,16,24);
     }
     return lead;
   }
@@ -6907,6 +7086,8 @@ function startAzrobotApp(){
         onWinner(winnerName);
       }
     }
+    var ld=leaderOf(sim);
+    if(running && ld){ var tgt=Math.max(0,Math.min(TRACK.h-VIEW_H, ld.y-360)); sim.cam+=(tgt-sim.cam)*Math.min(1,dt*6); }
     var lead=draw(sim);
     if(running && !winnerName && lead && lead.name!==leadName){ leadName=lead.name; subEl.textContent='Лидирует: '+lead.name; }
     raf=requestAnimationFrame(frame);
@@ -6947,7 +7128,7 @@ function startAzrobotApp(){
     sim=newSim(chosen); winnerName=null; leadName=''; running=false;
     resEl.textContent=''; startBtn.disabled=false; startBtn.textContent='🚀 ЗАПУСТИТЬ ШАРИКИ';
     infoEl.textContent=chosen.length+' шар.'+(c.length>chosen.length?' из '+c.length:'');
-    subEl.textContent='Трасса «'+TRACK.name+'». Нажми «ЗАПУСТИТЬ», когда будешь готов.';
+    subEl.textContent='Трасса «'+TRACK.name+'» · '+Math.round((TRACK.finishY-GATE_Y)/10)+' м. Нажми «ЗАПУСТИТЬ», когда будешь готов.';
     bg.classList.add('show');
     // дадим шарикам осесть на воротах
     for(var k=0;k<240;k++) step(sim);
@@ -6973,17 +7154,16 @@ function startAzrobotApp(){
   if(closeX) closeX.addEventListener('click', function(e){ e.preventDefault(); closeMarbles(); });
 
   // Для проверки скорости заезда без отрисовки (в обычной работе не используется)
-  window.azMarbles = { tracks: TRACK_DEFS.length, simulate: function(n, ti, mir){
+  window.azMarbles = { tracks: TRACK_DEFS.length, validate: function(ti, mir){ return validateTrack(makeTrack(ti, !!mir)); }, names: TRACK_DEFS.map(function(d){ return d.name; }), simulate: function(n, ti, mir){
     var savedTrack = TRACK; TRACK = makeTrack(ti||0, !!mir);
     var names=[]; for(var i=0;i<n;i++) names.push('p'+(i+1));
     var s=newSim(shuffle(names)); s.gateOpen=true; var idx={};
     s.balls.forEach(function(b,i){ idx[b.name]=i; });
-    for(var k=0;k<240*60 && !s.order.length;k++) step(s);
+    for(var k=0;k<240*150 && !s.order.length;k++) step(s);
     var res = { time:s.t, winnerSpawnIndex:s.order.length?idx[s.order[0].name]:-1, finished:s.order.length, pos:s.order.length?null:s.balls.map(function(b){return [Math.round(b.x),Math.round(b.y)];}) };
     TRACK = savedTrack; return res;
   }};
-})();
-</script>
+})();</script>
 
 <!-- ---------- Ручное добавление участников в прокачку ---------- -->
 <script>
