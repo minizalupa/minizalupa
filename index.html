@@ -1308,6 +1308,7 @@
       <div>
         <h1>azrobot</h1>
         <div class="sub" id="statusText">Не подключено</div>
+        <div class="sub" id="botStatusText" style="margin-top:2px;cursor:pointer;" title="Статус бота в чате Twitch (клик — переподключить)">🤖 Бот: …</div>
       </div>
     </div>
   </header>
@@ -2133,7 +2134,7 @@ function startAzrobotApp(){
   /* ---------- Twitch Bot Configuration ---------- */
   const BOT_CONFIG = {
     username: 'miniazro',
-    oauthToken: 'oauth:hbppk0yrnu99x61ri8l9p46by11onn',
+    oauthToken: 'oauth:lam6jcc0krndeylrundeq33a5hzy6d',
     channel: TARGET_CHANNEL
   };
 
@@ -2152,18 +2153,41 @@ function startAzrobotApp(){
     });
   }
 
+  function setBotStatus(kind, text) {
+    const el = document.getElementById('botStatusText');
+    if (!el) return;
+    if (!el.__bound) { el.__bound = true; el.onclick = function(){ botBackoff = 0; connectBot(); }; }
+    el.style.color = kind === 'ok' ? '#86efac' : (kind === 'err' ? '#fca5a5' : '#fde68a');
+    el.textContent = text;
+  }
+
+  let botBackoff = 0;       // растёт при неудачах: 5 → 10 → 20 → 40 → 60 сек
+  let botReconnectTimer = null;
+  function scheduleBotReconnect() {
+    if (botReconnectTimer) return;
+    botBackoff = botBackoff ? Math.min(60000, botBackoff * 2) : 5000;
+    botReconnectTimer = setTimeout(function(){ botReconnectTimer = null; connectBot(); }, botBackoff);
+  }
+
   function connectBot() {
+    setBotStatus('wait', '🤖 Бот: подключение…');
+    if (botReconnectTimer) { clearTimeout(botReconnectTimer); botReconnectTimer = null; }
     if (botWs) {
-      try { botWs.close(); } catch(e){}
+      const old = botWs; botWs = null;
+      old.onclose = old.onerror = old.onmessage = old.onopen = null;
+      try { old.close(); } catch(e){}
     }
     botAuthenticated = false;
-    botWs = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+    const myWs = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+    botWs = myWs;
 
     botWs.onopen = () => {
+      if (botWs !== myWs) return;
       botWs.send(`PASS ${BOT_CONFIG.oauthToken}`);
       botWs.send(`NICK ${BOT_CONFIG.username.toLowerCase()}`);
       botWs.send(`JOIN #${BOT_CONFIG.channel.toLowerCase()}`);
       console.log("Бот miniazro: соединение открыто, ждём подтверждения авторизации...");
+      setBotStatus('wait', '🤖 Бот: авторизация…');
     };
 
     botWs.onmessage = (evt) => {
@@ -2174,11 +2198,15 @@ function startAzrobotApp(){
       }
       if (data.includes('Login authentication failed') || data.includes('Improperly formatted auth')) {
         botAuthenticated = false;
+        setBotStatus('err', '🤖 Бот: не авторизован (токен), клик — переподключить');
+        botBackoff = 60000;
         console.error("Бот miniazro: ошибка авторизации в чате Twitch — проверьте oauthToken. Сообщения не будут отправляться.");
         return;
       }
       if (!botAuthenticated && (data.includes(' 001 ') || data.includes(' 376 ') || data.includes('GLHF'))) {
         botAuthenticated = true;
+        botBackoff = 0;
+        setBotStatus('ok', '🤖 Бот: в чате');
         console.log("Бот miniazro успешно авторизован и подключён к чату Twitch");
         flushPendingChatMessages();
       }
@@ -2188,12 +2216,15 @@ function startAzrobotApp(){
     };
 
     botWs.onerror = (e) => {
+      if (botWs !== myWs) return;
       console.warn("Бот miniazro: ошибка соединения с чатом Twitch", e);
     };
 
     botWs.onclose = () => {
+      if (botWs !== myWs) return;
       botAuthenticated = false;
-      setTimeout(connectBot, 5000);
+      setBotStatus('err', '🤖 Бот: нет связи, переподключаюсь…');
+      scheduleBotReconnect();
     };
   }
 
@@ -2477,6 +2508,7 @@ function startAzrobotApp(){
 
   function saveState() {
     try {
+      state.savedAt = Date.now();
       localStorage.setItem('azrobot_data', JSON.stringify(state));
     } catch(e) {
       console.warn('Не удалось сохранить состояние (localStorage недоступен):', e);
@@ -2760,6 +2792,32 @@ function startAzrobotApp(){
     }
   }, 20000);
 
+  // Не даём устаревшей копии с сервера затереть свежие кулдауны/чёрный список:
+  // активные записи из локального состояния добавляются в загруженное.
+  function mergeLocalProtected(remote) {
+    try {
+      const local = JSON.parse(localStorage.getItem('azrobot_data') || 'null');
+      if (!local || typeof local !== 'object') return remote;
+      const now = Date.now();
+      if (local.prokachkaCooldowns && typeof local.prokachkaCooldowns === 'object') {
+        if (!remote.prokachkaCooldowns || typeof remote.prokachkaCooldowns !== 'object') remote.prokachkaCooldowns = {};
+        Object.keys(local.prokachkaCooldowns).forEach(k => {
+          const l = local.prokachkaCooldowns[k], r = remote.prokachkaCooldowns[k];
+          if (l && l.expireAt > now && (!r || !(r.expireAt >= l.expireAt))) remote.prokachkaCooldowns[k] = l;
+        });
+      }
+      if (Array.isArray(local.blacklist)) {
+        if (!Array.isArray(remote.blacklist)) remote.blacklist = [];
+        local.blacklist.forEach(l => {
+          if (!l || !l.name) return;
+          const r = remote.blacklist.find(x => x && x.name && x.name.toLowerCase() === l.name.toLowerCase());
+          if (!r && (!l.expireAt || l.expireAt > now)) remote.blacklist.push(l);
+        });
+      }
+    } catch(e) {}
+    return remote;
+  }
+
   async function loadStateFromGithub() {
     try {
       const rawUrl = `https://raw.githubusercontent.com/${GITHUB_SYNC_CONFIG.owner}/${GITHUB_SYNC_CONFIG.repo}/${GITHUB_SYNC_CONFIG.branch}/${GITHUB_SYNC_CONFIG.path}?t=${Date.now()}`;
@@ -2772,6 +2830,15 @@ function startAzrobotApp(){
 
       const alreadySyncedThisTab = sessionStorage.getItem('azrobot_github_synced');
       const localRaw = localStorage.getItem('azrobot_data') || '';
+      // Если локальные данные новее копии на сервере/GitHub — не затираем их, а наоборот отправляем наверх.
+      try {
+        const localObj = JSON.parse(localStorage.getItem('azrobot_data') || 'null');
+        if (localObj && Number(localObj.savedAt || 0) > Number(remote.savedAt || 0)) {
+          pendingGithubSync = true;
+          return;
+        }
+      } catch(e) {}
+      mergeLocalProtected(remote);
       const remoteRaw = JSON.stringify(remote);
 
       // Перезагружаем страницу один раз за вкладку, если данные с GitHub отличаются от локальных —
@@ -5084,6 +5151,7 @@ function startAzrobotApp(){
   /* ---------- Twitch Chat Connection ---------- */
   let ws = null;
   let reconnectTimeout = null;
+  let viewerBackoff = 0;
 
   function setStatus(live, text){
     statusText.textContent = text;
@@ -5238,7 +5306,8 @@ function startAzrobotApp(){
     if(!channel) return;
 
     if(ws){
-      try{ ws.close(); }catch(e){}
+      const oldWs = ws; ws = null; oldWs.onclose = oldWs.onerror = oldWs.onmessage = oldWs.onopen = null;
+      try{ oldWs.close(); }catch(e){}
     }
 
     setStatus(false, 'Подключение...');
@@ -5267,6 +5336,7 @@ function startAzrobotApp(){
         }
 
         if(line.includes(' 376 ') || line.includes(' 001 ')){
+          viewerBackoff = 0;
           setStatus(true, 'Подключено: #' + channel);
         }
 
@@ -5319,7 +5389,8 @@ function startAzrobotApp(){
     ws.onclose = ()=>{
       setStatus(false, 'Переподключение...');
       clearTimeout(reconnectTimeout);
-      reconnectTimeout = setTimeout(()=> connectToTwitch(channel), 3000);
+      viewerBackoff = viewerBackoff ? Math.min(30000, viewerBackoff * 2) : 3000;
+      reconnectTimeout = setTimeout(()=> connectToTwitch(channel), viewerBackoff);
     };
 
     ws.onerror = ()=>{
@@ -7164,7 +7235,7 @@ function startAzrobotApp(){
   }
 
   /* ---------- Управление заездом ---------- */
-  var raf=null, last=0, running=false, winnerName=null, finishTimer=null, leadName='';
+  var raf=null, last=0, running=false, winnerName=null, finishTimer=null, pendingWin=null, moreTimer=null, leadName='';
   function stopLoop(){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
   function frame(ts){
     if(!sim){ return; }
@@ -7190,17 +7261,19 @@ function startAzrobotApp(){
     if(typeof confetti==='function') try{ confetti({particleCount:140,spread:80,origin:{y:.6}}); }catch(e){}
     // докручиваем физику ещё полторы секунды, чтобы остальные шарики докатились, потом открываем окно победителя
     var ticks=0;
-    var more=setInterval(function(){ for(var k=0;k<8;k++) step(sim); if(++ticks>40) clearInterval(more); },16);
-    finishTimer=setTimeout(function(){
+    if(moreTimer) clearInterval(moreTimer);
+    var more=moreTimer=setInterval(function(){ if(!sim){ clearInterval(more); return; } for(var k=0;k<8;k++) step(sim); if(++ticks>40) clearInterval(more); },16);
+    pendingWin=function(){
       closeMarbles();
       var br=window.azrobotRaceBridge;
       if(br && typeof br.openWinnerFromRace==='function') br.openWinnerFromRace(name,'marbles');
       else alert('Основной модуль победителя ещё не готов.');
-    },2200);
+        };
+    finishTimer=setTimeout(function(){ var pw=pendingWin; pendingWin=null; finishTimer=null; if(pw) pw(); },2200);
   }
   function closeMarbles(){
     stopLoop(); running=false; hitCb=null; sim=null;
-    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; }
+    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; var pw=pendingWin; pendingWin=null; if(pw) setTimeout(pw,0); }
     cntEl.classList.remove('show');
     bg.classList.remove('show');
   }
@@ -7983,7 +8056,7 @@ function startAzrobotApp(){
   }
 
   /* ---------- Управление ---------- */
-  var raf=null, last=0, running=false, speed=1, acc=0, finished=false, finishTimer=null, mapBag=[], lastMap=-1;
+  var raf=null, last=0, running=false, speed=1, acc=0, finished=false, finishTimer=null, pendingWin=null, mapBag=[], lastMap=-1;
   function paintSpeed(){ if(speedBtn) speedBtn.textContent='⏩ ×'+speed; }
   paintSpeed();
   if(speedBtn) speedBtn.addEventListener('click', function(){ speed = speed>=5?1:speed+1; paintSpeed(); });
@@ -8008,16 +8081,17 @@ function startAzrobotApp(){
     sfx.win();
     if(typeof confetti==='function') try{ confetti({particleCount:150,spread:85,origin:{y:.6}}); }catch(e){}
     var name=mv.name;
-    finishTimer=setTimeout(function(){
+    pendingWin=function(){
       closeCs();
       var br=window.azrobotRaceBridge;
       if(br && typeof br.openWinnerFromRace==='function') br.openWinnerFromRace(name,'cs');
       else alert('Основной модуль победителя ещё не готов.');
-    },3400);
+        };
+    finishTimer=setTimeout(function(){ var pw=pendingWin; pendingWin=null; finishTimer=null; if(pw) pw(); },3400);
   }
   function closeCs(){
     stopLoop(); running=false; G=null; finished=false;
-    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; }
+    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; var pw=pendingWin; pendingWin=null; if(pw) setTimeout(pw,0); }
     bg.classList.remove('show');
   }
   function openCs(){
@@ -8404,7 +8478,7 @@ function startAzrobotApp(){
   }
 
   /* ---------- Управление ---------- */
-  var raf=null, last=0, speed=1, acc=0, finished=false, finishTimer=null, bellDone=false;
+  var raf=null, last=0, speed=1, acc=0, finished=false, finishTimer=null, pendingWin=null, bellDone=false;
   function paintSpeed(){ if(speedBtn) speedBtn.textContent='⏩ ×'+speed; }
   paintSpeed();
   if(speedBtn) speedBtn.addEventListener('click', function(){ speed = speed>=3?1:speed+1; paintSpeed(); });
@@ -8443,16 +8517,17 @@ function startAzrobotApp(){
     S.banner=w.name.toUpperCase()+' ПЕРВЫЙ!'; S.bannerSub='Туда-обратно ×'+TRIPS+' за '+w.doneAt.toFixed(1)+' с'; S.bannerT=99;
     if(typeof confetti==='function') try{ confetti({particleCount:140,spread:80,origin:{y:.6}}); }catch(e){}
     var name=w.name;
-    finishTimer=setTimeout(function(){
+    pendingWin=function(){
       closeSwim();
       var br=window.azrobotRaceBridge;
       if(br && typeof br.openWinnerFromRace==='function') br.openWinnerFromRace(name,'swim');
       else alert('Основной модуль победителя ещё не готов.');
-    },3600);
+        };
+    finishTimer=setTimeout(function(){ var pw=pendingWin; pendingWin=null; finishTimer=null; if(pw) pw(); },3600);
   }
   function closeSwim(){
     stopLoop(); sfx.ambient(false); S=null; finished=false;
-    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; }
+    if(finishTimer){ clearTimeout(finishTimer); finishTimer=null; var pw=pendingWin; pendingWin=null; if(pw) setTimeout(pw,0); }
     bg.classList.remove('show');
   }
   function openSwim(){
